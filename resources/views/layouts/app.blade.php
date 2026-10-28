@@ -12,6 +12,10 @@
         @include('partials.preferences')
 
         @auth
+            @if (auth()->user()->user_type === 'partner')
+                <a href="{{ route('partner.hotels.index') }}">{{ __('ui.my_hotels') }}</a>
+            @endif
+
             <form method="POST" action="{{ route('logout') }}" style="display:inline">
                 @csrf
                 <button>{{ __('ui.logout') }}</button>
@@ -22,6 +26,12 @@
         @endauth
     </nav>
 
-    <main>@yield('content')</main>
+    <main>
+        @if (session('success'))
+            <p>{{ session('success') }}</p>
+        @endif
+
+        @yield('content')
+    </main>
 </body>
 </html>

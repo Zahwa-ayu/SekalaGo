@@ -37,6 +37,8 @@ Route::middleware(['auth', 'role:partner'])
     ->name('partner.')
     ->group(function () {
         Route::view('/', 'dashboard', ['title' => 'ui.dashboard_partner'])->name('dashboard');
+        Route::resource('hotels', \App\Http\Controllers\Partner\HotelController::class)
+            ->except(['show']);
     });
 
 // Corporate B2B
