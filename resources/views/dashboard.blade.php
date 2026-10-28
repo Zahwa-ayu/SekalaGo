@@ -1,3 +1,6 @@
-<h1>{{ $title }}</h1>
-<p>Login sebagai: {{ auth()->user()->email }}</p>
-<form method="POST" action="{{ route('logout') }}">@csrf <button>Logout</button></form>
+@extends('layouts.app')
+
+@section('content')
+    <h1>{{ __($title) }}</h1>
+    <p>{{ __('ui.logged_in_as', ['email' => auth()->user()->email]) }}</p>
+@endsection
