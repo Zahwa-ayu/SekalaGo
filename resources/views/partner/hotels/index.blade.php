@@ -25,6 +25,7 @@
                     <td>{{ $hotel->city }}</td>
                     <td>{{ __('ui.status_' . $hotel->status) }}</td>
                     <td>
+                        <a href="{{ route('partner.hotels.room-types.index', $hotel) }}">{{ __('ui.room_types') }}</a> |
                         <a href="{{ route('partner.hotels.edit', $hotel) }}">{{ __('ui.edit') }}</a>
                         <form method="POST" action="{{ route('partner.hotels.destroy', $hotel) }}"
                               style="display:inline"

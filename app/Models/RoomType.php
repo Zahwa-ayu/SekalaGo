@@ -9,7 +9,7 @@ class RoomType extends Model
 {
     use HasTranslations;
 
-    protected $fillable = ['hotel_id', 'base_price', 'capacity', 'total_rooms'];
+    protected $fillable = ['hotel_id', 'base_price', 'capacity', 'total_rooms', 'source_locale'];
 
     public function hotel()        { return $this->belongsTo(Hotel::class); }
     public function translations() { return $this->hasMany(RoomTypeTranslation::class); }

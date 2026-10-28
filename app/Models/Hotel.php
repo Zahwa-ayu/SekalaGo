@@ -9,7 +9,7 @@ class Hotel extends Model
 {
     use HasTranslations;
 
-    protected $fillable = ['partner_id', 'city', 'address', 'star_rating', 'status'];
+    protected $fillable = ['partner_id', 'city', 'address', 'star_rating', 'status', 'source_locale'];
 
     public function partner()      { return $this->belongsTo(Partner::class); }
     public function translations() { return $this->hasMany(HotelTranslation::class); }

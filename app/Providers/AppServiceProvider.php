@@ -12,6 +12,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(\App\Services\CurrencyService::class);
+        $this->app->bind(
+    \App\Services\Translation\TranslationProvider::class,
+    \App\Services\Translation\MockTranslationProvider::class
+);
     }
 
     /**

@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Partner\HotelController;
+use App\Http\Controllers\Partner\RoomStockController;
+use App\Http\Controllers\Partner\RoomTypeController;
 use App\Http\Controllers\PreferenceController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,8 +40,17 @@ Route::middleware(['auth', 'role:partner'])
     ->name('partner.')
     ->group(function () {
         Route::view('/', 'dashboard', ['title' => 'ui.dashboard_partner'])->name('dashboard');
-        Route::resource('hotels', \App\Http\Controllers\Partner\HotelController::class)
+
+        Route::resource('hotels', HotelController::class)->except(['show']);
+
+        Route::resource('hotels.room-types', RoomTypeController::class)
+            ->shallow()
             ->except(['show']);
+
+        Route::get('room-types/{room_type}/stocks', [RoomStockController::class, 'edit'])
+            ->name('room-types.stocks.edit');
+        Route::put('room-types/{room_type}/stocks', [RoomStockController::class, 'update'])
+            ->name('room-types.stocks.update');
     });
 
 // Corporate B2B

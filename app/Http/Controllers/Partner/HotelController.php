@@ -6,12 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Facility;
 use App\Models\Hotel;
 use App\Models\Partner;
+use App\Services\TranslationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class HotelController extends Controller
 {
+    use PartnerHelpers;
+
+    public function __construct(private TranslationService $translations)
+    {
+    }
+
     public function index(Request $request)
     {
         $partner = $this->partner($request);
@@ -37,12 +44,19 @@ class HotelController extends Controller
 
         DB::transaction(function () use ($partner, $data) {
             $hotel = $partner->hotels()->create([
-                'city'        => $data['city'],
-                'address'     => $data['address'] ?? null,
-                'star_rating' => $data['star_rating'] ?? null,
+                'city'          => $data['city'],
+                'address'       => $data['address'] ?? null,
+                'star_rating'   => $data['star_rating'] ?? null,
+                'source_locale' => $data['source_locale'],
             ]);
 
-            $this->saveTranslations($hotel, $data['translations']);
+            $this->translations->sync(
+                $hotel,
+                $data['source_locale'],
+                $this->sourceText($data),
+                $data['overrides'] ?? []
+            );
+
             $hotel->facilities()->sync($data['facilities'] ?? []);
         });
 
@@ -67,12 +81,19 @@ class HotelController extends Controller
 
         DB::transaction(function () use ($hotel, $data) {
             $hotel->update([
-                'city'        => $data['city'],
-                'address'     => $data['address'] ?? null,
-                'star_rating' => $data['star_rating'] ?? null,
+                'city'          => $data['city'],
+                'address'       => $data['address'] ?? null,
+                'star_rating'   => $data['star_rating'] ?? null,
+                'source_locale' => $data['source_locale'],
             ]);
 
-            $this->saveTranslations($hotel, $data['translations']);
+            $this->translations->sync(
+                $hotel,
+                $data['source_locale'],
+                $this->sourceText($data),
+                $data['overrides'] ?? []
+            );
+
             $hotel->facilities()->sync($data['facilities'] ?? []);
         });
 
@@ -87,61 +108,21 @@ class HotelController extends Controller
         return redirect()->route('partner.hotels.index')->with('success', __('ui.deleted'));
     }
 
-    // ---------------------------------------------------------------
-
     private function validated(Request $request): array
     {
-        $data = $request->validate([
-            'city'                       => ['required', 'string', 'max:100'],
-            'address'                    => ['nullable', 'string', 'max:255'],
-            'star_rating'                => ['nullable', 'integer', 'between:1,5'],
-            'facilities'                 => ['nullable', 'array'],
-            'facilities.*'               => ['exists:facilities,id'],
-            'translations'               => ['required', 'array'],
-            'translations.*.name'        => ['nullable', 'string', 'max:255'],
-            'translations.*.description' => ['nullable', 'string'],
+        return $request->validate([
+            'city'                    => ['required', 'string', 'max:100'],
+            'address'                 => ['nullable', 'string', 'max:255'],
+            'star_rating'             => ['nullable', 'integer', 'between:1,5'],
+            'facilities'              => ['nullable', 'array'],
+            'facilities.*'            => ['exists:facilities,id'],
+            'source_locale'           => ['required', Rule::in(array_keys(config('sekalago.locales')))],
+            'name'                    => ['required', 'string', 'max:255'],
+            'description'             => ['nullable', 'string'],
+            'overrides'               => ['nullable', 'array'],
+            'overrides.*.name'        => ['nullable', 'string', 'max:255'],
+            'overrides.*.description' => ['nullable', 'string'],
         ]);
-
-        // Minimal satu bahasa harus punya nama hotel
-        $hasName = collect(array_keys(config('sekalago.locales')))
-            ->contains(fn ($locale) => filled($data['translations'][$locale]['name'] ?? null));
-
-        if (! $hasName) {
-            throw ValidationException::withMessages([
-                'translations' => __('ui.hotel_name_required'),
-            ]);
-        }
-
-        return $data;
-    }
-
-    /** Simpan terjemahan per bahasa; bahasa yang namanya dikosongkan dihapus. */
-    private function saveTranslations(Hotel $hotel, array $input): void
-    {
-        foreach (array_keys(config('sekalago.locales')) as $locale) {
-            $name = $input[$locale]['name'] ?? null;
-
-            if (filled($name)) {
-                $hotel->translations()->updateOrCreate(
-                    ['locale' => $locale],
-                    [
-                        'name'               => $name,
-                        'description'        => $input[$locale]['description'] ?? null,
-                        'is_auto_translated' => false,
-                    ]
-                );
-            } else {
-                $hotel->translations()->where('locale', $locale)->delete();
-            }
-        }
-    }
-
-    private function partner(Request $request): Partner
-    {
-        $partner = $request->user()->partner;
-        abort_unless($partner, 403);
-
-        return $partner;
     }
 
     private function ensureVerified(Request $request): Partner
@@ -150,10 +131,5 @@ class HotelController extends Controller
         abort_unless($partner->verification_status === 'verified', 403, __('ui.not_verified_notice'));
 
         return $partner;
-    }
-
-    private function ownHotel(Request $request, Hotel $hotel): void
-    {
-        abort_unless($hotel->partner_id === $this->partner($request)->id, 403);
     }
 }

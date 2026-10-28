@@ -1,6 +1,4 @@
 @php
-    $locales  = config('sekalago.locales');
-    $existing = $hotel->exists ? $hotel->translations->keyBy('locale') : collect();
     $selectedFacilities = old('facilities', $hotel->exists ? $hotel->facilities->pluck('id')->all() : []);
 @endphp
 
@@ -35,20 +33,7 @@
     </label>
 </p>
 
-@foreach ($locales as $code => $label)
-    <fieldset>
-        <legend>{{ $label }}</legend>
-        <p>
-            <input name="translations[{{ $code }}][name]"
-                   value="{{ old('translations.' . $code . '.name', $existing->get($code)?->name) }}"
-                   placeholder="{{ __('ui.hotel_name') }}">
-        </p>
-        <p>
-            <textarea name="translations[{{ $code }}][description]" rows="3"
-                      placeholder="{{ __('ui.description') }}">{{ old('translations.' . $code . '.description', $existing->get($code)?->description) }}</textarea>
-        </p>
-    </fieldset>
-@endforeach
+@include('partials.translation-fields', ['model' => $hotel, 'nameLabel' => __('ui.hotel_name')])
 
 <fieldset>
     <legend>{{ __('ui.facilities') }}</legend>
