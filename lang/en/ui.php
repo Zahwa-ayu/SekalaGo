@@ -74,4 +74,19 @@ return [
     'edit_translations' => 'Edit translations (optional)',
     'edit_translations_hint' => 'Leave blank to use the automatic translation. Fill in to write your own.',
     'auto_translated' => 'automatic',
+
+    // reason by admin
+    'review_hotels' => 'Review Hotels',
+    'review' => 'Review',
+    'partner' => 'Partner',
+    'submitted_at' => 'Submitted',
+    'approve' => 'Approve',
+    'reject' => 'Reject',
+    'decision' => 'Decision',
+    'translations' => 'Translations',
+    'all' => 'All',
+    'rejection_reason_label' => 'Rejection reason',
+    'hotel_approved' => 'Hotel approved.',
+    'hotel_rejected' => 'Hotel rejected.',
+    'approve_needs_room' => 'This hotel cannot be approved yet because it has no room types.',
 ];

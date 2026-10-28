@@ -80,12 +80,20 @@ class HotelController extends Controller
         $data = $this->validated($request);
 
         DB::transaction(function () use ($hotel, $data) {
-            $hotel->update([
+            $changes = [
                 'city'          => $data['city'],
                 'address'       => $data['address'] ?? null,
                 'star_rating'   => $data['star_rating'] ?? null,
                 'source_locale' => $data['source_locale'],
-            ]);
+            ];
+
+            // Hotel yang ditolak diajukan ulang setelah diperbaiki mitra
+            if ($hotel->status === 'rejected') {
+                $changes['status']           = 'pending';
+                $changes['rejection_reason'] = null;
+            }
+
+            $hotel->update($changes);
 
             $this->translations->sync(
                 $hotel,

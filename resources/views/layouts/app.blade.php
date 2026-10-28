@@ -16,6 +16,10 @@
                 <a href="{{ route('partner.hotels.index') }}">{{ __('ui.my_hotels') }}</a>
             @endif
 
+            @if (auth()->user()->user_type === 'admin')
+                <a href="{{ route('admin.hotels.index') }}">{{ __('ui.review_hotels') }}</a>
+            @endif
+
             <form method="POST" action="{{ route('logout') }}" style="display:inline">
                 @csrf
                 <button>{{ __('ui.logout') }}</button>

@@ -74,4 +74,19 @@ return [
     'edit_translations' => 'Ubah terjemahan (opsional)',
     'edit_translations_hint' => 'Kosongkan untuk memakai terjemahan otomatis. Isi untuk menulis sendiri.',
     'auto_translated' => 'otomatis',
+
+    // alasan by admin
+    'review_hotels' => 'Tinjau Hotel',
+    'review' => 'Tinjau',
+    'partner' => 'Mitra',
+    'submitted_at' => 'Diajukan',
+    'approve' => 'Setujui',
+    'reject' => 'Tolak',
+    'decision' => 'Keputusan',
+    'translations' => 'Terjemahan',
+    'all' => 'Semua',
+    'rejection_reason_label' => 'Alasan penolakan',
+    'hotel_approved' => 'Hotel disetujui.',
+    'hotel_rejected' => 'Hotel ditolak.',
+    'approve_needs_room' => 'Hotel belum bisa disetujui karena belum punya tipe kamar.',
 ];

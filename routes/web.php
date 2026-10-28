@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\RoomStockController;
@@ -32,6 +33,11 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
         Route::view('/', 'dashboard', ['title' => 'ui.dashboard_admin'])->name('dashboard');
+
+        Route::get('hotels', [AdminHotelController::class, 'index'])->name('hotels.index');
+        Route::get('hotels/{hotel}', [AdminHotelController::class, 'show'])->name('hotels.show');
+        Route::post('hotels/{hotel}/approve', [AdminHotelController::class, 'approve'])->name('hotels.approve');
+        Route::post('hotels/{hotel}/reject', [AdminHotelController::class, 'reject'])->name('hotels.reject');
     });
 
 // Mitra / vendor

@@ -23,7 +23,12 @@
                 <tr>
                     <td>{{ $hotel->name }}</td>
                     <td>{{ $hotel->city }}</td>
-                    <td>{{ __('ui.status_' . $hotel->status) }}</td>
+                    <td>
+                        {{ __('ui.status_' . $hotel->status) }}
+                        @if ($hotel->status === 'rejected' && $hotel->rejection_reason)
+                            <br><small>{{ __('ui.rejection_reason_label') }}: {{ $hotel->rejection_reason }}</small>
+                        @endif
+                    </td>
                     <td>
                         <a href="{{ route('partner.hotels.room-types.index', $hotel) }}">{{ __('ui.room_types') }}</a> |
                         <a href="{{ route('partner.hotels.edit', $hotel) }}">{{ __('ui.edit') }}</a>

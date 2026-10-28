@@ -75,4 +75,19 @@ return [
     'edit_translations' => '번역 수정 (선택)',
     'edit_translations_hint' => '비워 두면 자동 번역이 사용됩니다. 직접 작성하려면 입력하세요.',
     'auto_translated' => '자동',
+
+    // reason by admin
+    'review_hotels' => '호텔 심사',
+    'review' => '심사',
+    'partner' => '파트너',
+    'submitted_at' => '제출일',
+    'approve' => '승인',
+    'reject' => '거절',
+    'decision' => '결정',
+    'translations' => '번역',
+    'all' => '전체',
+    'rejection_reason_label' => '거절 사유',
+    'hotel_approved' => '호텔이 승인되었습니다.',
+    'hotel_rejected' => '호텔이 거절되었습니다.',
+    'approve_needs_room' => '객실 유형이 없어 아직 이 호텔을 승인할 수 없습니다.',
 ];
