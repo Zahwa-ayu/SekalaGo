@@ -90,4 +90,22 @@ return [
     'hotel_approved' => '호텔이 승인되었습니다.',
     'hotel_rejected' => '호텔이 거절되었습니다.',
     'approve_needs_room' => '객실 유형이 없어 아직 이 호텔을 승인할 수 없습니다.',
+
+    // hotel search
+    'hero_title' => '어디에서 묵으시겠어요?',
+    'search' => '검색',
+    'check_in' => '체크인',
+    'check_out' => '체크아웃',
+    'guests' => '인원',
+    'search_results' => '검색 결과',
+    'stay_summary' => ':in - :out (:count박), :guests명',
+    'no_results' => '이 검색 조건에 맞는 호텔이 없습니다.',
+    'from_price' => '최저가',
+    'per_night' => '/박',
+    'for_nights' => ':count박 기준',
+    'total_price' => '총액',
+    'not_available' => '예약 불가',
+    'book' => '예약',
+    'book_soon' => '예약 기능 준비 중',
+    'max_nights' => '최대 :count박까지 숙박할 수 있습니다.',
 ];

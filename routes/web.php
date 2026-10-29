@@ -2,14 +2,17 @@
 
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\RoomStockController;
 use App\Http\Controllers\Partner\RoomTypeController;
 use App\Http\Controllers\PreferenceController;
 use Illuminate\Support\Facades\Route;
 
-// Halaman publik
-Route::view('/', 'home')->name('home');
+// Halaman publik: pencarian & detail hotel
+Route::get('/', [HotelSearchController::class, 'home'])->name('home');
+Route::get('/hotels', [HotelSearchController::class, 'search'])->name('hotels.search');
+Route::get('/hotels/{hotel}', [HotelSearchController::class, 'show'])->name('hotels.show');
 
 // Pilihan bahasa & mata uang (tamu dan user login)
 Route::post('/preferences', [PreferenceController::class, 'update'])->name('preferences.update');

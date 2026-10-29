@@ -89,4 +89,22 @@ return [
     'hotel_approved' => 'Hotel disetujui.',
     'hotel_rejected' => 'Hotel ditolak.',
     'approve_needs_room' => 'Hotel belum bisa disetujui karena belum punya tipe kamar.',
+
+    // hotel search
+    'hero_title' => 'Mau menginap di mana?',
+    'search' => 'Cari',
+    'check_in' => 'Check-in',
+    'check_out' => 'Check-out',
+    'guests' => 'Tamu',
+    'search_results' => 'Hasil pencarian',
+    'stay_summary' => ':in - :out (:count malam), :guests tamu',
+    'no_results' => 'Tidak ada hotel yang tersedia untuk pencarian ini.',
+    'from_price' => 'Mulai dari',
+    'per_night' => '/malam',
+    'for_nights' => 'untuk :count malam',
+    'total_price' => 'Total',
+    'not_available' => 'Tidak tersedia',
+    'book' => 'Pesan',
+    'book_soon' => 'Pemesanan segera hadir',
+    'max_nights' => 'Maksimal menginap :count malam.',
 ];

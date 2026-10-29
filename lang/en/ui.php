@@ -89,4 +89,22 @@ return [
     'hotel_approved' => 'Hotel approved.',
     'hotel_rejected' => 'Hotel rejected.',
     'approve_needs_room' => 'This hotel cannot be approved yet because it has no room types.',
+
+    // hotel search
+    'hero_title' => 'Where do you want to stay?',
+    'search' => 'Search',
+    'check_in' => 'Check-in',
+    'check_out' => 'Check-out',
+    'guests' => 'Guests',
+    'search_results' => 'Search results',
+    'stay_summary' => ':in - :out (:count nights), :guests guests',
+    'no_results' => 'No hotels are available for this search.',
+    'from_price' => 'From',
+    'per_night' => '/night',
+    'for_nights' => 'for :count nights',
+    'total_price' => 'Total',
+    'not_available' => 'Not available',
+    'book' => 'Book',
+    'book_soon' => 'Booking coming soon',
+    'max_nights' => 'Maximum stay is :count nights.',
 ];
