@@ -22,8 +22,27 @@ class AuthController extends Controller
 
         // is_active ikut dicek, akun nonaktif tidak bisa login
         if (Auth::attempt([...$credentials, 'is_active' => true], $request->boolean('remember'))) {
+            $user = Auth::user();
+
+            // Mitra hanya boleh masuk setelah diverifikasi admin
+            if ($user->user_type === 'partner') {
+                $partner = $user->partner;
+                $message = $partner ? $partner->loginBlockedMessage() : __('ui.partner_login_pending');
+
+                if ($message) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+
+                    return redirect()->route('login')
+                        ->with('error', $message)
+                        ->withInput($request->only('email'));
+                }
+            }
+
             $request->session()->regenerate();
-            return redirect()->intended(route(Auth::user()->dashboardRoute()));
+
+            return redirect()->intended(route($user->dashboardRoute()));
         }
 
         return back()

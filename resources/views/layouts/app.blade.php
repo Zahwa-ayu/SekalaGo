@@ -19,9 +19,11 @@
             @if (auth()->user()->user_type === 'partner')
                 <a href="{{ route('partner.hotels.index') }}">{{ __('ui.my_hotels') }}</a>
                 <a href="{{ route('partner.bookings.index') }}">{{ __('ui.incoming_bookings') }}</a>
+                <a href="{{ route('partner.profile.edit') }}">{{ __('ui.partner_profile') }}</a>
             @endif
 
             @if (auth()->user()->user_type === 'admin')
+                <a href="{{ route('admin.partners.index') }}">{{ __('ui.verify_partners') }}</a>
                 <a href="{{ route('admin.hotels.index') }}">{{ __('ui.review_hotels') }}</a>
                 <a href="{{ route('admin.bookings.index') }}">{{ __('ui.all_bookings') }}</a>
             @endif
@@ -33,6 +35,7 @@
         @else
             <a href="{{ route('login') }}">{{ __('ui.login') }}</a>
             <a href="{{ route('register') }}">{{ __('ui.register') }}</a>
+            <a href="{{ route('register.partner') }}">{{ __('ui.register_partner') }}</a>
         @endauth
     </nav>
 

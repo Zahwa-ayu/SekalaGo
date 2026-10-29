@@ -2,13 +2,16 @@
 
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
+use App\Http\Controllers\Admin\PartnerController as AdminPartnerController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
 use App\Http\Controllers\Partner\HotelController;
+use App\Http\Controllers\Partner\ProfileController;
 use App\Http\Controllers\Partner\RoomStockController;
 use App\Http\Controllers\Partner\RoomTypeController;
+use App\Http\Controllers\PartnerRegistrationController;
 use App\Http\Controllers\PreferenceController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +29,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    Route::get('/register/partner', [PartnerRegistrationController::class, 'create'])->name('register.partner');
+    Route::post('/register/partner', [PartnerRegistrationController::class, 'store'])->name('register.partner.store');
 });
 
 // Logout
@@ -50,6 +56,12 @@ Route::middleware(['auth', 'role:admin'])
     ->group(function () {
         Route::view('/', 'dashboard', ['title' => 'ui.dashboard_admin'])->name('dashboard');
 
+        Route::get('partners', [AdminPartnerController::class, 'index'])->name('partners.index');
+        Route::get('partners/{partner}', [AdminPartnerController::class, 'show'])->name('partners.show');
+        Route::post('partners/{partner}/verify', [AdminPartnerController::class, 'verify'])->name('partners.verify');
+        Route::post('partners/{partner}/reject', [AdminPartnerController::class, 'reject'])->name('partners.reject');
+        Route::post('partners/{partner}/reopen', [AdminPartnerController::class, 'reopen'])->name('partners.reopen');
+
         Route::get('hotels', [AdminHotelController::class, 'index'])->name('hotels.index');
         Route::get('hotels/{hotel}', [AdminHotelController::class, 'show'])->name('hotels.show');
         Route::post('hotels/{hotel}/approve', [AdminHotelController::class, 'approve'])->name('hotels.approve');
@@ -58,12 +70,15 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
     });
 
-// Mitra / vendor
-Route::middleware(['auth', 'role:partner'])
+// Mitra / vendor (hanya yang sudah diverifikasi)
+Route::middleware(['auth', 'role:partner', 'partner.verified'])
     ->prefix('partner')
     ->name('partner.')
     ->group(function () {
         Route::view('/', 'dashboard', ['title' => 'ui.dashboard_partner'])->name('dashboard');
+
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
         Route::resource('hotels', HotelController::class)->except(['show']);
 

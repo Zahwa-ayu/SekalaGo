@@ -5,6 +5,14 @@
 
     @if ($partner->verification_status === 'verified')
         <p><a href="{{ route('partner.hotels.create') }}">{{ __('ui.add_hotel') }}</a></p>
+    @elseif ($partner->verification_status === 'rejected')
+        <p style="color:red">
+            {{ __('ui.partner_rejected_notice') }}
+            @if ($partner->verification_note)
+                ({{ $partner->verification_note }})
+            @endif
+            <a href="{{ route('partner.profile.edit') }}">{{ __('ui.partner_profile') }}</a>
+        </p>
     @else
         <p>{{ __('ui.not_verified_notice') }}</p>
     @endif
