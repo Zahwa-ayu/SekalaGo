@@ -139,4 +139,14 @@ return [
     'payment_status_paid' => 'Paid',
     'payment_status_failed' => 'Failed',
     'payment_status_refunded' => 'Refunded',
+
+    // bookings ui partner & admin
+        'incoming_bookings' => 'Incoming Bookings',
+    'all_bookings' => 'All Bookings',
+    'orders_count' => 'Number of orders',
+    'gross_sales' => 'Gross sales',
+    'platform_commission' => 'Platform commission',
+    'net_revenue' => 'Net revenue',
+    'partner_payout' => 'Partner payout',
+    'revenue_note' => 'The summary counts confirmed bookings only. All amounts are in IDR.',
 ];

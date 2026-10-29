@@ -140,4 +140,14 @@ return [
     'payment_status_paid' => '결제 완료',
     'payment_status_failed' => '실패',
     'payment_status_refunded' => '환불됨',
+
+    // bookings ui partner & admin
+    'incoming_bookings' => '들어온 예약',
+    'all_bookings' => '전체 예약',
+    'orders_count' => '주문 수',
+    'gross_sales' => '총 매출',
+    'platform_commission' => '플랫폼 수수료',
+    'net_revenue' => '순수익',
+    'partner_payout' => '파트너 정산액',
+    'revenue_note' => '요약에는 확정된 예약만 포함됩니다. 모든 금액은 IDR 기준입니다.',
 ];

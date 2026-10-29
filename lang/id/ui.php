@@ -139,4 +139,14 @@ return [
     'payment_status_paid' => 'Lunas',
     'payment_status_failed' => 'Gagal',
     'payment_status_refunded' => 'Dikembalikan',
+
+    // bookings ui partner & admin
+        'incoming_bookings' => 'Pesanan Masuk',
+    'all_bookings' => 'Semua Pesanan',
+    'orders_count' => 'Jumlah pesanan',
+    'gross_sales' => 'Total penjualan',
+    'platform_commission' => 'Komisi platform',
+    'net_revenue' => 'Pendapatan bersih',
+    'partner_payout' => 'Hak mitra',
+    'revenue_note' => 'Ringkasan hanya menghitung pesanan terkonfirmasi. Semua angka dalam IDR.',
 ];

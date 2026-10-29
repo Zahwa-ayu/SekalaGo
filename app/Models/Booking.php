@@ -40,4 +40,6 @@ class Booking extends Model
         return ($currency?->symbol ?? $this->currency_code) . ' '
             . number_format($this->total_price_display, $decimals, $decimal, $thousand);
     }
+
+    public function partner() { return $this->belongsTo(Partner::class); }
 }

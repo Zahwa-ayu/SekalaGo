@@ -50,6 +50,7 @@ class BookingService
             return Booking::create([
                 'booking_code'        => 'SG-' . strtoupper(Str::random(8)),
                 'user_id'             => $user->id,
+                'partner_id'          => $roomType->hotel->partner_id,
                 'product_type'        => 'hotel',
                 'hotel_id'            => $roomType->hotel_id,
                 'room_type_id'        => $roomType->id,

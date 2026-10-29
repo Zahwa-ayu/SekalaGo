@@ -18,10 +18,12 @@
 
             @if (auth()->user()->user_type === 'partner')
                 <a href="{{ route('partner.hotels.index') }}">{{ __('ui.my_hotels') }}</a>
+                <a href="{{ route('partner.bookings.index') }}">{{ __('ui.incoming_bookings') }}</a>
             @endif
 
             @if (auth()->user()->user_type === 'admin')
                 <a href="{{ route('admin.hotels.index') }}">{{ __('ui.review_hotels') }}</a>
+                <a href="{{ route('admin.bookings.index') }}">{{ __('ui.all_bookings') }}</a>
             @endif
 
             <form method="POST" action="{{ route('logout') }}" style="display:inline">

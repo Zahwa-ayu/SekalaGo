@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HotelSearchController;
+use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\RoomStockController;
 use App\Http\Controllers\Partner\RoomTypeController;
@@ -52,6 +54,8 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('hotels/{hotel}', [AdminHotelController::class, 'show'])->name('hotels.show');
         Route::post('hotels/{hotel}/approve', [AdminHotelController::class, 'approve'])->name('hotels.approve');
         Route::post('hotels/{hotel}/reject', [AdminHotelController::class, 'reject'])->name('hotels.reject');
+
+        Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
     });
 
 // Mitra / vendor
@@ -71,6 +75,8 @@ Route::middleware(['auth', 'role:partner'])
             ->name('room-types.stocks.edit');
         Route::put('room-types/{room_type}/stocks', [RoomStockController::class, 'update'])
             ->name('room-types.stocks.update');
+
+        Route::get('bookings', [PartnerBookingController::class, 'index'])->name('bookings.index');
     });
 
 // Corporate B2B
