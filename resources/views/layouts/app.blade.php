@@ -12,6 +12,10 @@
         @include('partials.preferences')
 
         @auth
+            @if (auth()->user()->user_type === 'customer')
+                <a href="{{ route('bookings.index') }}">{{ __('ui.my_bookings') }}</a>
+            @endif
+
             @if (auth()->user()->user_type === 'partner')
                 <a href="{{ route('partner.hotels.index') }}">{{ __('ui.my_hotels') }}</a>
             @endif
@@ -32,7 +36,10 @@
 
     <main>
         @if (session('success'))
-            <p>{{ session('success') }}</p>
+            <p style="color:green">{{ session('success') }}</p>
+        @endif
+        @if (session('error'))
+            <p style="color:red">{{ session('error') }}</p>
         @endif
 
         @yield('content')

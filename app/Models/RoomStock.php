@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RoomStock extends Model
 {
-    protected $fillable = ['room_type_id', 'date', 'available'];
+    protected $fillable = ['room_type_id', 'date', 'available', 'booked'];
 
     protected function casts(): array { return ['date' => 'date']; }
 

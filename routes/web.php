@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\RoomStockController;
@@ -29,6 +30,16 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+// Pelanggan B2C: pemesanan
+Route::middleware(['auth', 'role:customer'])->group(function () {
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
+    Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+    Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::get('/bookings/{booking}/pay', [BookingController::class, 'pay'])->name('bookings.pay');
+    Route::post('/bookings/{booking}/pay', [BookingController::class, 'processPayment'])->name('bookings.pay.process');
+});
 
 // Admin internal
 Route::middleware(['auth', 'role:admin'])

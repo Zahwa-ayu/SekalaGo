@@ -30,7 +30,7 @@ class RoomType extends Model
 
         return $query->withCount(['stocks as open_nights' => function ($q) use ($checkIn, $lastNight) {
             $q->whereBetween('date', [$checkIn->toDateString(), $lastNight])
-              ->where('available', '>', 0);
+            ->whereColumn('available', '>', 'booked');
         }]);
     }
 }

@@ -27,6 +27,8 @@
                 'guests' => $params['guests'],
             ]) }}
         </p>
+    @else
+        <p><small>{{ __('ui.pick_dates_hint') }}</small></p>
     @endif
 
     <h2>{{ __('ui.room_types') }}</h2>
@@ -60,7 +62,16 @@
                         <td>{{ $roomType->is_open ? __('ui.available') : __('ui.not_available') }}</td>
                     @endif
                     <td>
-                        <button disabled title="{{ __('ui.book_soon') }}">{{ __('ui.book') }}</button>
+                        @if ($params && $roomType->is_open)
+                            <a href="{{ route('bookings.create', [
+                                'room_type' => $roomType->id,
+                                'check_in' => $params['check_in'],
+                                'check_out' => $params['check_out'],
+                                'guests' => $params['guests'],
+                            ]) }}">{{ __('ui.book') }}</a>
+                        @else
+                            <button disabled>{{ __('ui.book') }}</button>
+                        @endif
                     </td>
                 </tr>
             @empty

@@ -15,7 +15,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
     \App\Services\Translation\TranslationProvider::class,
     \App\Services\Translation\MockTranslationProvider::class
-);
+    );
+    $this->app->bind(
+    \App\Services\Payment\PaymentGateway::class,
+    \App\Services\Payment\MockPaymentGateway::class
+    );
     }
 
     /**
