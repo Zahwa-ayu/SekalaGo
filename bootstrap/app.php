@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'partner.verified' => \App\Http\Middleware\EnsurePartnerVerified::class,
+            'partner.mou'      => \App\Http\Middleware\EnsureMouSigned::class,
         ]);
 
         $middleware->web(append: [

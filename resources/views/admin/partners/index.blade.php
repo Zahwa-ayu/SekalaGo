@@ -22,6 +22,7 @@
                 <th>{{ __('ui.business_license_no') }}</th>
                 <th>{{ __('ui.registered_at') }}</th>
                 <th>{{ __('ui.status') }}</th>
+                <th>{{ __('ui.mou_menu') }}</th>
                 <th></th>
             </tr>
         </thead>
@@ -33,10 +34,15 @@
                     <td>{{ $partner->business_license_no }}</td>
                     <td>{{ $partner->created_at->format('d/m/Y') }}</td>
                     <td>{{ __('ui.verification_' . $partner->verification_status) }}</td>
+                    <td>
+                        {{ $partner->latestAgreement
+                            ? __('ui.mou_status_' . $partner->latestAgreement->status)
+                            : __('ui.mou_none') }}
+                    </td>
                     <td><a href="{{ route('admin.partners.show', $partner) }}">{{ __('ui.review') }}</a></td>
                 </tr>
             @empty
-                <tr><td colspan="6">{{ __('ui.no_partners') }}</td></tr>
+                <tr><td colspan="7">{{ __('ui.no_partners') }}</td></tr>
             @endforelse
         </tbody>
     </table>

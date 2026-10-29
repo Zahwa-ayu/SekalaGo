@@ -45,7 +45,7 @@ class BookingService
 
             $currency = $this->currencies->current();
             $total    = $roomType->base_price * $nights;
-            $fee      = (int) round($total * (float) config('sekalago.commission_rate'));
+            $fee      = (int) round($total * $roomType->hotel->partner->commissionRate());
 
             return Booking::create([
                 'booking_code'        => 'SG-' . strtoupper(Str::random(8)),

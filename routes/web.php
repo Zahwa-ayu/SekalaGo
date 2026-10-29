@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\PartnerController as AdminPartnerController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\HotelSearchController;
+use App\Http\Controllers\Partner\AgreementController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\ProfileController;
@@ -58,7 +59,8 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::get('partners', [AdminPartnerController::class, 'index'])->name('partners.index');
         Route::get('partners/{partner}', [AdminPartnerController::class, 'show'])->name('partners.show');
-        Route::post('partners/{partner}/verify', [AdminPartnerController::class, 'verify'])->name('partners.verify');
+        Route::get('partners/{partner}/agreement/download', [AdminPartnerController::class, 'downloadAgreement'])->name('partners.agreement.download');
+        Route::post('partners/{partner}/agreement', [AdminPartnerController::class, 'sendAgreement'])->name('partners.agreement');
         Route::post('partners/{partner}/reject', [AdminPartnerController::class, 'reject'])->name('partners.reject');
         Route::post('partners/{partner}/reopen', [AdminPartnerController::class, 'reopen'])->name('partners.reopen');
 
@@ -70,28 +72,35 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
     });
 
-// Mitra / vendor (hanya yang sudah diverifikasi)
+// Mitra / vendor (data sudah diverifikasi admin)
 Route::middleware(['auth', 'role:partner', 'partner.verified'])
     ->prefix('partner')
     ->name('partner.')
     ->group(function () {
-        Route::view('/', 'dashboard', ['title' => 'ui.dashboard_partner'])->name('dashboard');
-
+        // Bisa diakses sebelum MOU ditandatangani
+        Route::get('agreement', [AgreementController::class, 'show'])->name('agreement.show');
+        Route::get('agreement/download', [AgreementController::class, 'download'])->name('agreement.download');
+        Route::post('agreement/sign', [AgreementController::class, 'sign'])->name('agreement.sign');
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
-        Route::resource('hotels', HotelController::class)->except(['show']);
+        // Hanya setelah MOU ditandatangani
+        Route::middleware('partner.mou')->group(function () {
+            Route::view('/', 'dashboard', ['title' => 'ui.dashboard_partner'])->name('dashboard');
 
-        Route::resource('hotels.room-types', RoomTypeController::class)
-            ->shallow()
-            ->except(['show']);
+            Route::resource('hotels', HotelController::class)->except(['show']);
 
-        Route::get('room-types/{room_type}/stocks', [RoomStockController::class, 'edit'])
-            ->name('room-types.stocks.edit');
-        Route::put('room-types/{room_type}/stocks', [RoomStockController::class, 'update'])
-            ->name('room-types.stocks.update');
+            Route::resource('hotels.room-types', RoomTypeController::class)
+                ->shallow()
+                ->except(['show']);
 
-        Route::get('bookings', [PartnerBookingController::class, 'index'])->name('bookings.index');
+            Route::get('room-types/{room_type}/stocks', [RoomStockController::class, 'edit'])
+                ->name('room-types.stocks.edit');
+            Route::put('room-types/{room_type}/stocks', [RoomStockController::class, 'update'])
+                ->name('room-types.stocks.update');
+
+            Route::get('bookings', [PartnerBookingController::class, 'index'])->name('bookings.index');
+        });
     });
 
 // Corporate B2B

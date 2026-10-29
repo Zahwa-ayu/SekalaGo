@@ -11,10 +11,30 @@ class Partner extends Model
         'verification_status', 'verification_note',
     ];
 
-    public function user()   { return $this->belongsTo(User::class); }
-    public function hotels() { return $this->hasMany(Hotel::class); }
+    public function user()       { return $this->belongsTo(User::class); }
+    public function hotels()     { return $this->hasMany(Hotel::class); }
+    public function agreements() { return $this->hasMany(PartnerAgreement::class); }
 
-    /** Pesan alasan login ditolak, atau null jika mitra sudah terverifikasi. */
+    /** MOU terbaru (versi lama yang diganti selalu lebih tua). */
+    public function latestAgreement()
+    {
+        return $this->hasOne(PartnerAgreement::class)->latestOfMany();
+    }
+
+    public function hasSignedAgreement(): bool
+    {
+        return $this->agreements()->where('status', 'signed')->exists();
+    }
+
+    /** Komisi dari MOU yang ditandatangani; cadangan: nilai default di config. */
+    public function commissionRate(): float
+    {
+        $agreement = $this->agreements()->where('status', 'signed')->latest('signed_at')->first();
+
+        return $agreement ? (float) $agreement->commission_rate : (float) config('sekalago.commission_rate');
+    }
+
+    /** Pesan alasan login ditolak, atau null jika data mitra sudah diverifikasi. */
     public function loginBlockedMessage(): ?string
     {
         return match ($this->verification_status) {
