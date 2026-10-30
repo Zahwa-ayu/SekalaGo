@@ -11,4 +11,11 @@ interface PaymentGateway
      * @return array{success: bool, reference: string}
      */
     public function charge(Booking $booking, string $simulate): array;
+
+    /**
+     * Kembalikan dana pesanan secara penuh.
+     *
+     * @return array{success: bool, reference: string}
+     */
+    public function refund(Booking $booking): array;
 }

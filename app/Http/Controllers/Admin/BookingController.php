@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Services\BookingService;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
@@ -25,5 +26,23 @@ class BookingController extends Controller
             ->get();
 
         return view('admin.bookings.index', compact('summary', 'bookings', 'status'));
+    }
+
+    /** Pembatalan operasional oleh admin: refund penuh, alasan wajib diisi. */
+    public function cancel(Request $request, Booking $booking, BookingService $bookings)
+    {
+        $data = $request->validate([
+            'cancellation_reason' => ['required', 'string', 'max:500'],
+        ]);
+
+        if (! $booking->canBeCancelledByAdmin()) {
+            return back()->with('error', __('ui.cancel_not_allowed_admin'));
+        }
+
+        $bookings->cancel($booking, 'admin', $data['cancellation_reason']);
+
+        return back()->with('success', __('ui.booking_cancelled_refunded', [
+            'amount' => format_price($booking->refund_amount, 'IDR'),
+        ]));
     }
 }

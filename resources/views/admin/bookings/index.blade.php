@@ -39,6 +39,17 @@
             </a>
         </div>
 
+        {{-- ERROR VALIDASI (misalnya alasan pembatalan kosong) --}}
+        @if ($errors->any())
+            <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 text-red-700 px-5 py-4 text-sm">
+                <ul class="list-disc pl-5 space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         {{-- TABEL --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">
@@ -53,6 +64,7 @@
                             <th class="px-6 py-4 font-bold">{{ __('ui.status') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.total_price') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.platform_commission') }}</th>
+                            <th class="px-6 py-4 font-bold">{{ __('ui.action') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -65,7 +77,7 @@
                                     default => 'bg-slate-100 text-slate-600',
                                 };
                             @endphp
-                            <tr class="hover:bg-sky-50/50 transition">
+                            <tr class="hover:bg-sky-50/50 transition align-top">
                                 <td class="px-6 py-4 font-mono text-xs font-bold text-sagara-blue whitespace-nowrap">{{ $booking->booking_code }}</td>
                                 <td class="px-6 py-4 text-slate-600">{{ $booking->partner?->company_name ?? '-' }}</td>
                                 <td class="px-6 py-4">
@@ -79,10 +91,46 @@
                                 </td>
                                 <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">{{ format_price($booking->total_price, 'IDR') }}</td>
                                 <td class="px-6 py-4 font-bold text-sagara-blue whitespace-nowrap">{{ format_price($booking->platform_fee, 'IDR') }}</td>
+
+                                {{-- AKSI --}}
+                                <td class="px-6 py-4">
+                                    @if ($booking->canBeCancelledByAdmin())
+                                        <details>
+                                            <summary class="cursor-pointer list-none inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition whitespace-nowrap">
+                                                <i class="fa-solid fa-ban"></i> {{ __('ui.admin_cancel') }}
+                                            </summary>
+                                            <form method="POST" action="{{ route('admin.bookings.cancel', $booking) }}"
+                                                  onsubmit="return confirm(@js(__('ui.cancel_confirm')))"
+                                                  class="mt-2 w-64 space-y-2">
+                                                @csrf
+                                                <textarea name="cancellation_reason" rows="2" maxlength="500" required
+                                                          placeholder="{{ __('ui.admin_cancel_reason') }}"
+                                                          class="w-full rounded-lg border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue"></textarea>
+                                                <button class="w-full px-3 py-2 rounded-lg bg-red-600 text-white text-xs font-bold hover:bg-red-700 transition">
+                                                    {{ __('ui.admin_cancel') }}
+                                                </button>
+                                            </form>
+                                        </details>
+                                    @elseif ($booking->status === 'cancelled')
+                                        <div class="text-[11px] text-slate-500 leading-relaxed">
+                                            <span class="font-bold text-red-600">
+                                                {{ $booking->cancelled_by === 'admin' ? __('ui.cancelled_by_admin') : __('ui.cancelled_by_customer') }}
+                                            </span>
+                                            @if ($booking->cancellation_reason)
+                                                <br>{{ $booking->cancellation_reason }}
+                                            @endif
+                                            @if ($booking->refund_amount > 0)
+                                                <br><span class="font-semibold text-slate-700">{{ __('ui.refund_amount') }}: {{ format_price($booking->refund_amount, 'IDR') }}</span>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-slate-300">-</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-12 text-center text-slate-400">
+                                <td colspan="9" class="px-6 py-12 text-center text-slate-400">
                                     <i class="fa-solid fa-receipt text-3xl mb-2 block"></i>
                                     {{ __('ui.no_bookings') }}
                                 </td>

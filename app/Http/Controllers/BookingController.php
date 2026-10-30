@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\RoomType;
 use App\Services\BookingService;
 use App\Services\Payment\PaymentGateway;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
@@ -110,6 +111,42 @@ class BookingController extends Controller
         $this->bookings->markFailed($booking);
 
         return back()->with('error', __('ui.payment_failed'));
+    }
+
+    public function cancel(Request $request, Booking $booking)
+    {
+        $this->own($booking);
+
+        $data = $request->validate([
+            'cancellation_reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        if (! $booking->canBeCancelledByCustomer()) {
+            return back()->with('error', __('ui.cancel_not_allowed'));
+        }
+
+        $wasPaid = $booking->status === 'confirmed';
+
+        $this->bookings->cancel($booking, 'customer', $data['cancellation_reason'] ?? null);
+
+        $message = $wasPaid
+            ? __('ui.booking_cancelled_refunded', ['amount' => format_price($booking->refund_amount, 'IDR')])
+            : __('ui.booking_cancelled');
+
+        return redirect()->route('bookings.show', $booking)->with('success', $message);
+    }
+
+    public function ticket(Booking $booking)
+    {
+        $this->own($booking);
+        abort_unless($booking->status === 'confirmed', 404);
+
+        $booking->loadMissing('hotel');
+
+        return Pdf::loadView('bookings.ticket', [
+            'booking'  => $booking,
+            'platform' => config('app.name'),
+        ])->setPaper('a4')->download('E-Ticket-' . $booking->booking_code . '.pdf');
     }
 
     private function own(Booking $booking): void

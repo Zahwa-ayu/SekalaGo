@@ -43,4 +43,12 @@ class Partner extends Model
             default    => __('ui.partner_login_pending'),
         };
     }
+
+        /** Batas hari pembatalan gratis dari MOU yang ditandatangani; cadangan: 3 hari. */
+    public function freeCancelDays(): int
+    {
+        $agreement = $this->agreements()->where('status', 'signed')->latest('signed_at')->first();
+
+        return $agreement ? (int) $agreement->free_cancel_days : 3;
+    }
 }

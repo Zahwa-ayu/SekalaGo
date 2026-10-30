@@ -15,4 +15,12 @@ class MockPaymentGateway implements PaymentGateway
             'reference' => 'SBX-' . strtoupper(Str::random(10)),
         ];
     }
+
+    public function refund(Booking $booking): array
+    {
+        return [
+            'success'   => true,
+            'reference' => 'SBX-RF-' . strtoupper(Str::random(10)),
+        ];
+    }
 }

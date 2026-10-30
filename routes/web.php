@@ -48,6 +48,8 @@ Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::get('/bookings/{booking}/pay', [BookingController::class, 'pay'])->name('bookings.pay');
     Route::post('/bookings/{booking}/pay', [BookingController::class, 'processPayment'])->name('bookings.pay.process');
+    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::get('/bookings/{booking}/ticket', [BookingController::class, 'ticket'])->name('bookings.ticket');
 });
 
 // Admin internal
@@ -70,6 +72,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('hotels/{hotel}/reject', [AdminHotelController::class, 'reject'])->name('hotels.reject');
 
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+        Route::post('bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])->name('bookings.cancel');
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)
