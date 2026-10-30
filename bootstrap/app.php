@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'partner.verified' => \App\Http\Middleware\EnsurePartnerVerified::class,
             'partner.mou'      => \App\Http\Middleware\EnsureMouSigned::class,
+            'corporate.finance' => \App\Http\Middleware\EnsureCorporateFinance::class,
         ]);
 
         $middleware->web(append: [

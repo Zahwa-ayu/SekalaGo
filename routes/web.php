@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
+use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\Admin\PartnerController as AdminPartnerController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Corporate\DashboardController as CorporateDashboardController;
+use App\Http\Controllers\Corporate\EmployeeController;
+use App\Http\Controllers\Corporate\PositionController;
 use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\AgreementController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
@@ -73,6 +77,12 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
         Route::post('bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])->name('bookings.cancel');
+
+        Route::get('companies', [AdminCompanyController::class, 'index'])->name('companies.index');
+        Route::get('companies/create', [AdminCompanyController::class, 'create'])->name('companies.create');
+        Route::post('companies', [AdminCompanyController::class, 'store'])->name('companies.store');
+        Route::get('companies/{company}', [AdminCompanyController::class, 'show'])->name('companies.show');
+        Route::post('companies/{company}/topup', [AdminCompanyController::class, 'topup'])->name('companies.topup');
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)
@@ -111,5 +121,12 @@ Route::middleware(['auth', 'role:corporate'])
     ->prefix('corporate')
     ->name('corporate.')
     ->group(function () {
-        Route::view('/', 'dashboard', ['title' => 'ui.dashboard_corporate'])->name('dashboard');
+        Route::get('/', [CorporateDashboardController::class, 'index'])->name('dashboard');
+
+        // Hanya untuk Finance perusahaan
+        Route::middleware('corporate.finance')->group(function () {
+            Route::resource('employees', EmployeeController::class)->except(['show', 'destroy']);
+            Route::resource('positions', PositionController::class)->except(['show', 'create']);
+            Route::put('policy', [PositionController::class, 'updatePolicy'])->name('policy.update');
+        });
     });

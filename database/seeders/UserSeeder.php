@@ -4,11 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\AdminStaff;
 use App\Models\Company;
+use App\Models\CompanyPosition;
 use App\Models\CompanyUser;
 use App\Models\Customer;
 use App\Models\Partner;
 use App\Models\PartnerAgreement;
 use App\Models\User;
+use App\Services\DepositService;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -81,8 +83,15 @@ class UserSeeder extends Seeder
         $company = Company::create([
             'company_name'        => 'PT Maju Jaya',
             'corporate_code'      => 'MAJU01',
-            'deposit_balance'     => 50000000,
             'travel_policy_limit' => 2000000,
+        ]);
+        app(DepositService::class)->credit($company, 50000000, 'adjustment', 'Saldo awal');
+
+        $staff = CompanyPosition::create([
+            'company_id' => $company->id, 'name' => 'Staff', 'booking_limit' => 2000000,
+        ]);
+        $manager = CompanyPosition::create([
+            'company_id' => $company->id, 'name' => 'Manager', 'booking_limit' => 5000000,
         ]);
 
         $finance = User::create([
@@ -93,8 +102,10 @@ class UserSeeder extends Seeder
         CompanyUser::create([
             'company_id'      => $company->id,
             'user_id'         => $finance->id,
+            'full_name'       => 'Sari Finance',
             'role_in_company' => 'admin_finance',
             'department'      => 'Finance',
+            'position_id'     => $manager->id,
         ]);
 
         $employee = User::create([
@@ -105,8 +116,10 @@ class UserSeeder extends Seeder
         CompanyUser::create([
             'company_id'      => $company->id,
             'user_id'         => $employee->id,
+            'full_name'       => 'Dedi Karyawan',
             'role_in_company' => 'employee',
             'department'      => 'Marketing',
+            'position_id'     => $staff->id,
         ]);
     }
 }

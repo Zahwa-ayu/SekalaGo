@@ -72,6 +72,16 @@
                             <a href="{{ route('admin.partners.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.verify_partners') }}</a>
                             <a href="{{ route('admin.hotels.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.review_hotels') }}</a>
                             <a href="{{ route('admin.bookings.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.all_bookings') }}</a>
+                            <a href="{{ route('admin.companies.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.companies') }}</a>
+                        @endif
+
+                        @if (auth()->user()->user_type === 'corporate')
+                            <a href="{{ route('corporate.dashboard') }}">{{ __('ui.corp_dashboard') }}</a>
+
+                            @if (auth()->user()->companyUser?->isFinance())
+                                <a href="{{ route('corporate.employees.index') }}">{{ __('ui.employees') }}</a>
+                                <a href="{{ route('corporate.positions.index') }}">{{ __('ui.positions_limits') }}</a>
+                            @endif
                         @endif
 
                         <form method="POST" action="{{ route('logout') }}" class="inline">
