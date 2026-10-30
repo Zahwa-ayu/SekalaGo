@@ -8,13 +8,14 @@ use Illuminate\Support\Carbon;
 class Booking extends Model
 {
     protected $fillable = [
-        'booking_code', 'user_id', 'partner_id', 'product_type', 'hotel_id', 'room_type_id',
-        'hotel_name', 'room_name', 'check_in', 'check_out', 'nights', 'guests', 'guest_name',
-        'price_per_night', 'total_price', 'platform_fee', 'vendor_revenue',
+        'booking_code', 'user_id', 'partner_id', 'company_id', 'product_type', 'hotel_id', 'room_type_id',
+        'hotel_name', 'room_name', 'check_in', 'check_out', 'nights', 'guests', 'guest_name', 'department',
+        'price_per_night', 'total_price', 'platform_fee', 'vendor_revenue', 'policy_limit',
         'currency_code', 'exchange_rate', 'total_price_display',
-        'status', 'payment_status', 'payment_reference', 'expires_at', 'paid_at',
+        'status', 'payment_status', 'payment_method', 'payment_reference', 'expires_at', 'paid_at',
         'free_cancel_days', 'cancelled_at', 'cancelled_by', 'cancellation_reason',
         'refund_amount', 'refunded_at', 'refund_reference',
+        'decided_by', 'decided_at', 'decision_note',
     ];
 
     protected function casts(): array
@@ -26,6 +27,7 @@ class Booking extends Model
             'paid_at'             => 'datetime',
             'cancelled_at'        => 'datetime',
             'refunded_at'         => 'datetime',
+            'decided_at'          => 'datetime',
             'exchange_rate'       => 'float',
             'total_price_display' => 'float',
             'free_cancel_days'    => 'integer',
@@ -34,10 +36,16 @@ class Booking extends Model
 
     public function user()     { return $this->belongsTo(User::class); }
     public function partner()  { return $this->belongsTo(Partner::class); }
+    public function company()  { return $this->belongsTo(Company::class); }
     public function hotel()    { return $this->belongsTo(Hotel::class); }
     public function roomType() { return $this->belongsTo(RoomType::class); }
 
-    /** Total dalam mata uang yang dipilih pelanggan saat memesan (kurs terkunci). */
+    public function isCorporate(): bool
+    {
+        return $this->company_id !== null;
+    }
+
+    /** Total dalam mata uang yang dipilih pemesan saat memesan (kurs terkunci). */
     public function displayTotal(): string
     {
         $currency = Currency::find($this->currency_code);
@@ -56,7 +64,7 @@ class Booking extends Model
 
     public function canBeCancelledByCustomer(): bool
     {
-        if ($this->status === 'pending_payment') {
+        if (in_array($this->status, ['pending_payment', 'pending_approval'], true)) {
             return true;
         }
 

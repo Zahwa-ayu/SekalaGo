@@ -1,86 +1,85 @@
 @extends('layouts.app')
 
 @section('content')
-    @php $total = $roomType->base_price * $nights; @endphp
+    <h1>{{ __('ui.confirm_booking') }}</h1>
 
-    <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.confirm_booking') }}</h1>
+    @if ($errors->any())
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li style="color:red">{{ $error }}</li>
+            @endforeach
+        </ul>
+    @endif
 
-        @if ($errors->any())
-            <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        @endif
+    <h2>{{ $roomType->hotel->name }}</h2>
+    <p>{{ $roomType->name }} ({{ __('ui.capacity') }}: {{ $roomType->capacity }})</p>
+    <p>
+        {{ __('ui.stay_summary', [
+            'in' => $checkIn->format('d/m/Y'),
+            'out' => $checkOut->format('d/m/Y'),
+            'count' => $nights,
+            'guests' => $guests,
+        ]) }}
+    </p>
 
-        {{-- RINGKASAN MENGINAP --}}
-        <div class="bg-gradient-to-r from-sagara-navy via-sagara-blue to-sagara-navy rounded-3xl p-6 sm:p-8 text-white shadow-xl">
-            <div class="w-12 h-12 rounded-xl bg-sagara-teal/20 flex items-center justify-center text-sagara-teal text-xl mb-4">
-                <i class="fa-solid fa-hotel"></i>
-            </div>
-            <h2 class="text-xl sm:text-2xl font-extrabold">{{ $roomType->hotel->name }}</h2>
-            <p class="text-sky-200 text-sm mt-1">{{ $roomType->name }} ({{ __('ui.capacity') }}: {{ $roomType->capacity }})</p>
-            <p class="text-sm mt-4 pt-4 border-t border-white/15 flex items-start gap-2">
-                <i class="fa-solid fa-calendar-days text-sagara-teal mt-0.5"></i>
-                {{ __('ui.stay_summary', [
-                    'in' => $checkIn->format('d/m/Y'),
-                    'out' => $checkOut->format('d/m/Y'),
-                    'count' => $nights,
-                    'guests' => $guests,
-                ]) }}
+    <table border="1" cellpadding="6">
+        <tr>
+            <td>{{ __('ui.price_per_night') }}</td>
+            <td>{{ format_price($roomType->base_price) }}</td>
+        </tr>
+        <tr>
+            <td>{{ __('ui.nights') }}</td>
+            <td>{{ $nights }}</td>
+        </tr>
+        <tr>
+            <td><strong>{{ __('ui.total_price') }}</strong></td>
+            <td><strong>{{ format_price($total) }}</strong></td>
+        </tr>
+    </table>
+
+    {{-- BARU: keterangan pembayaran dan limit untuk karyawan corporate --}}
+    @if ($isCorporate)
+        <p><small>{{ __('ui.paid_by_deposit') }}</small></p>
+        <p>
+            {{ __('ui.your_limit') }}: <strong>{{ format_price($limit, 'IDR') }}</strong><br>
+            @if ($needsApproval)
+                <span style="color:#b45309">{{ __('ui.over_limit_notice', ['limit' => format_price($limit, 'IDR')]) }}</span>
+            @elseif ($isFinance && $total > $limit)
+                {{ __('ui.finance_exempt_notice') }}
+            @else
+                {{ __('ui.within_limit_notice') }}
+            @endif
+        </p>
+    @else
+        <p><small>{{ __('ui.charged_in_idr', ['amount' => format_price($total, 'IDR')]) }}</small></p>
+    @endif
+
+    @if ($isOpen)
+        <form method="POST" action="{{ route('bookings.store') }}">
+            @csrf
+            <input type="hidden" name="room_type" value="{{ $roomType->id }}">
+            <input type="hidden" name="check_in" value="{{ $checkIn->toDateString() }}">
+            <input type="hidden" name="check_out" value="{{ $checkOut->toDateString() }}">
+            <input type="hidden" name="guests" value="{{ $guests }}">
+
+            <p>
+                <label>{{ __('ui.guest_name') }}<br>
+                    {{-- BARU: nama bawaan juga dari data karyawan --}}
+                    <input name="guest_name"
+                           value="{{ old('guest_name', auth()->user()->customer?->full_name ?? auth()->user()->companyUser?->displayName()) }}" required>
+                </label>
             </p>
-        </div>
 
-        {{-- RINCIAN HARGA --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
-            <dl class="divide-y divide-slate-100 text-sm">
-                <div class="flex justify-between px-6 py-4">
-                    <dt class="text-slate-500">{{ __('ui.price_per_night') }}</dt>
-                    <dd class="font-semibold text-slate-800">{{ format_price($roomType->base_price) }}</dd>
-                </div>
-                <div class="flex justify-between px-6 py-4">
-                    <dt class="text-slate-500">{{ __('ui.nights') }}</dt>
-                    <dd class="font-semibold text-slate-800">{{ $nights }}</dd>
-                </div>
-                <div class="flex justify-between items-center px-6 py-4 bg-sky-50/60">
-                    <dt class="font-bold text-slate-900">{{ __('ui.total_price') }}</dt>
-                    <dd class="text-xl font-black text-sagara-blue">{{ format_price($total) }}</dd>
-                </div>
-            </dl>
-            <p class="px-6 py-3 text-[11px] text-slate-500 bg-slate-50 border-t border-slate-100">
-                <i class="fa-solid fa-circle-info"></i> {{ __('ui.charged_in_idr', ['amount' => format_price($total, 'IDR')]) }}
-            </p>
-        </div>
-
-        {{-- FORM --}}
-        @if ($isOpen)
-            <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8">
-                <form method="POST" action="{{ route('bookings.store') }}" class="space-y-4">
-                    @csrf
-                    <input type="hidden" name="room_type" value="{{ $roomType->id }}">
-                    <input type="hidden" name="check_in" value="{{ $checkIn->toDateString() }}">
-                    <input type="hidden" name="check_out" value="{{ $checkOut->toDateString() }}">
-                    <input type="hidden" name="guests" value="{{ $guests }}">
-
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 focus-within:border-sagara-blue transition">
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                            <i class="fa-solid fa-user text-sagara-blue"></i> {{ __('ui.guest_name') }}
-                        </label>
-                        <input name="guest_name" required
-                               value="{{ old('guest_name', auth()->user()->customer?->full_name) }}"
-                               class="w-full bg-transparent font-semibold text-slate-800 text-sm focus:outline-none">
-                    </div>
-
-                    <button class="w-full py-3.5 bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue text-white font-bold rounded-xl shadow-lg transition duration-300 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-credit-card"></i> {{ __('ui.continue_to_payment') }}
-                    </button>
-                </form>
-            </div>
-        @else
-            <div class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2">
-                <i class="fa-solid fa-triangle-exclamation"></i> {{ __('ui.room_unavailable') }}
-            </div>
-        @endif
-    </section>
+            {{-- BARU: tombol menyesuaikan alur --}}
+            <button>
+                @if ($isCorporate)
+                    {{ $needsApproval ? __('ui.submit_for_approval') : __('ui.submit_booking') }}
+                @else
+                    {{ __('ui.continue_to_payment') }}
+                @endif
+            </button>
+        </form>
+    @else
+        <p style="color:red">{{ __('ui.room_unavailable') }}</p>
+    @endif
 @endsection

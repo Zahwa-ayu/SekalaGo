@@ -55,8 +55,8 @@
                     @include('partials.preferences')
 
                     @auth
-                        @if (auth()->user()->user_type === 'customer')
-                            <a href="{{ route('bookings.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.my_bookings') }}</a>
+                        @if (in_array(auth()->user()->user_type, ['customer', 'corporate']))
+                            <a href="{{ route('bookings.index') }}">{{ __('ui.my_bookings') }}</a>
                         @endif
 
                         @if (auth()->user()->user_type === 'partner')
@@ -81,6 +81,7 @@
                             @if (auth()->user()->companyUser?->isFinance())
                                 <a href="{{ route('corporate.employees.index') }}">{{ __('ui.employees') }}</a>
                                 <a href="{{ route('corporate.positions.index') }}">{{ __('ui.positions_limits') }}</a>
+                                <a href="{{ route('corporate.bookings.index') }}">{{ __('ui.company_bookings') }}</a>
                             @endif
                         @endif
 

@@ -16,6 +16,8 @@
     <p>
         <strong>{{ __('ui.status') }}:</strong> {{ __('ui.booking_status_' . $booking->status) }}<br>
         <strong>{{ __('ui.payment') }}:</strong> {{ __('ui.payment_status_' . $booking->payment_status) }}
+        {{-- BARU --}}
+        @if ($booking->payment_method === 'deposit') ({{ __('ui.paid_by_deposit') }}) @endif
         @if ($booking->payment_reference) ({{ $booking->payment_reference }}) @endif
     </p>
 
@@ -45,7 +47,27 @@
         </p>
     @endif
 
-    @if ($booking->status === 'pending_payment')
+    {{-- BARU: pesanan corporate yang ditolak Finance --}}
+    @if ($booking->status === 'rejected')
+        <p style="color:red">
+            <strong>{{ __('ui.rejected_by_finance') }}</strong>
+            @if ($booking->decision_note): {{ $booking->decision_note }} @endif
+        </p>
+    @endif
+
+    {{-- BARU: pesanan corporate yang menunggu persetujuan Finance --}}
+    @if ($booking->status === 'pending_approval')
+        <p>
+            {{ __('ui.awaiting_approval_notice', ['time' => $booking->expires_at->format('d/m/Y H:i')]) }}<br>
+            {{ __('ui.your_limit') }}: {{ format_price($booking->policy_limit, 'IDR') }}
+        </p>
+
+        <form method="POST" action="{{ route('bookings.cancel', $booking) }}"
+              onsubmit="return confirm(@js(__('ui.cancel_confirm')))">
+            @csrf
+            <button>{{ __('ui.withdraw_request') }}</button>
+        </form>
+    @elseif ($booking->status === 'pending_payment')
         <p><a href="{{ route('bookings.pay', $booking) }}">{{ __('ui.pay_now') }}</a></p>
 
         <form method="POST" action="{{ route('bookings.cancel', $booking) }}"

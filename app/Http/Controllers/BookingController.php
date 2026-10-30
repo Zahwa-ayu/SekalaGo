@@ -30,18 +30,27 @@ class BookingController extends Controller
         return view('bookings.index', ['bookings' => $list]);
     }
 
-    /** Ringkasan pesanan sebelum lanjut ke pembayaran. */
+    /** Ringkasan pesanan sebelum dikonfirmasi. */
     public function create(Request $request)
     {
         [$roomType, $checkIn, $checkOut, $guests, $nights] = $this->resolveStay($request);
 
+        $member = $this->member($request);
+        $total  = $roomType->base_price * $nights;
+        $limit  = $member?->bookingLimit();
+
         return view('bookings.create', [
-            'roomType' => $roomType,
-            'checkIn'  => $checkIn,
-            'checkOut' => $checkOut,
-            'guests'   => $guests,
-            'nights'   => $nights,
-            'isOpen'   => $roomType->open_nights === $nights && $roomType->capacity >= $guests,
+            'roomType'      => $roomType,
+            'checkIn'       => $checkIn,
+            'checkOut'      => $checkOut,
+            'guests'        => $guests,
+            'nights'        => $nights,
+            'total'         => $total,
+            'isOpen'        => $roomType->open_nights === $nights && $roomType->capacity >= $guests,
+            'isCorporate'   => $member !== null,
+            'isFinance'     => $member?->isFinance() ?? false,
+            'limit'         => $limit,
+            'needsApproval' => $member && $total > $limit && ! $member->isFinance(),
         ]);
     }
 
@@ -51,14 +60,24 @@ class BookingController extends Controller
 
         [$roomType, $checkIn, $checkOut, $guests] = $this->resolveStay($request);
 
+        $member  = $this->member($request);
         $booking = $this->bookings->create(
             $request->user(),
             $roomType,
             $checkIn,
             $checkOut,
             $guests,
-            $request->input('guest_name')
+            $request->input('guest_name'),
+            $member
         );
+
+        if ($member) {
+            $message = $booking->status === 'confirmed'
+                ? __('ui.booking_confirmed_deposit')
+                : __('ui.booking_submitted');
+
+            return redirect()->route('bookings.show', $booking)->with('success', $message);
+        }
 
         return redirect()->route('bookings.pay', $booking);
     }
@@ -74,6 +93,7 @@ class BookingController extends Controller
     public function pay(Booking $booking)
     {
         $this->own($booking);
+        abort_if($booking->isCorporate(), 404);
 
         if ($this->bookings->expireIfNeeded($booking)) {
             return redirect()->route('bookings.show', $booking)->with('error', __('ui.booking_expired'));
@@ -91,6 +111,7 @@ class BookingController extends Controller
         $data = $request->validate(['outcome' => ['required', 'in:success,fail']]);
 
         $this->own($booking);
+        abort_if($booking->isCorporate(), 404);
 
         if ($this->bookings->expireIfNeeded($booking)) {
             return redirect()->route('bookings.show', $booking)->with('error', __('ui.booking_expired'));
@@ -152,6 +173,21 @@ class BookingController extends Controller
     private function own(Booking $booking): void
     {
         abort_unless($booking->user_id === auth()->id(), 403);
+    }
+
+    /** Data karyawan jika pemesan adalah user corporate; null untuk pelanggan biasa. */
+    private function member(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->user_type !== 'corporate') {
+            return null;
+        }
+
+        $member = $user->companyUser;
+        abort_unless($member, 403);
+
+        return $member->loadMissing('company', 'position');
     }
 
     /** @return array{0: RoomType, 1: Carbon, 2: Carbon, 3: int, 4: int} */

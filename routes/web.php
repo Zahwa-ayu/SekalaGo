@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\Admin\PartnerController as AdminPartnerController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Corporate\BookingController as CorporateBookingController;
 use App\Http\Controllers\Corporate\DashboardController as CorporateDashboardController;
 use App\Http\Controllers\Corporate\EmployeeController;
 use App\Http\Controllers\Corporate\PositionController;
@@ -44,8 +45,8 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// Pelanggan B2C: pemesanan
-Route::middleware(['auth', 'role:customer'])->group(function () {
+// Pemesanan: pelanggan B2C (bayar lewat gateway) dan karyawan corporate (saldo kantor)
+Route::middleware(['auth', 'role:customer,corporate'])->group(function () {
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
@@ -128,5 +129,9 @@ Route::middleware(['auth', 'role:corporate'])
             Route::resource('employees', EmployeeController::class)->except(['show', 'destroy']);
             Route::resource('positions', PositionController::class)->except(['show', 'create']);
             Route::put('policy', [PositionController::class, 'updatePolicy'])->name('policy.update');
+
+            Route::get('bookings', [CorporateBookingController::class, 'index'])->name('bookings.index');
+            Route::post('bookings/{booking}/approve', [CorporateBookingController::class, 'approve'])->name('bookings.approve');
+            Route::post('bookings/{booking}/reject', [CorporateBookingController::class, 'reject'])->name('bookings.reject');
         });
     });
