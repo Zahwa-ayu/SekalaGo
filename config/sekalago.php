@@ -10,6 +10,9 @@ return [
     'locales' => [
         'id' => 'Bahasa Indonesia',
         'en' => 'English',
-        'ko' => '한국어',
+        'ko' => 'Korea / 한국어',
+        'ja' => 'Jepang / 日本語',
+        'ms' => 'Melayu',
+        'es' => 'Spanyol / Español',
     ],
 ];
