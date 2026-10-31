@@ -77,6 +77,9 @@
                                     @if ($booking->decision_note)
                                         <div class="text-[11px] text-slate-500 mt-1">{{ $booking->decision_note }}</div>
                                     @endif
+                                    @if ($booking->status === 'pending_approval' && $booking->approval_reason)
+                                        <div class="text-[11px] text-amber-600 mt-1">{{ __('ui.approval_reason_' . $booking->approval_reason) }}</div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4">
                                     @if ($booking->status === 'pending_approval')

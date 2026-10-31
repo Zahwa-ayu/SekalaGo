@@ -14,6 +14,16 @@
         <small>({{ $member->position ? $member->position->name : __('ui.limit_from_default') }})</small>
     </p>
 
+    @if ($budget !== null)
+    <p>
+        <strong>{{ __('ui.monthly_budget') }}:</strong> {{ format_price($budget, 'IDR') }}
+        <small>
+            ({{ __('ui.used_this_month') }}: {{ format_price($spent, 'IDR') }},
+            {{ __('ui.remaining') }}: {{ format_price(max(0, $budget - $spent), 'IDR') }})
+        </small>
+    </p>
+    @endif
+
     <p>
         <a href="{{ route('home') }}">{{ __('ui.find_hotel') }}</a> |
         <a href="{{ route('bookings.index') }}">{{ __('ui.my_bookings') }}</a>

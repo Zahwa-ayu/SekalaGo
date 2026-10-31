@@ -31,13 +31,14 @@ class BookingController extends Controller
     }
 
     /** Ringkasan pesanan sebelum dikonfirmasi. */
+/** Ringkasan pesanan sebelum dikonfirmasi. */
     public function create(Request $request)
     {
         [$roomType, $checkIn, $checkOut, $guests, $nights] = $this->resolveStay($request);
 
         $member = $this->member($request);
         $total  = $roomType->base_price * $nights;
-        $limit  = $member?->bookingLimit();
+        $policy = $member?->evaluatePolicy($total);
 
         return view('bookings.create', [
             'roomType'      => $roomType,
@@ -49,8 +50,9 @@ class BookingController extends Controller
             'isOpen'        => $roomType->open_nights === $nights && $roomType->capacity >= $guests,
             'isCorporate'   => $member !== null,
             'isFinance'     => $member?->isFinance() ?? false,
-            'limit'         => $limit,
-            'needsApproval' => $member && $total > $limit && ! $member->isFinance(),
+            'policy'        => $policy,
+            'limit'         => $policy['limit'] ?? null,
+            'needsApproval' => $policy['needs_approval'] ?? false,
         ]);
     }
 

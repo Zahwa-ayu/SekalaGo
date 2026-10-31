@@ -24,9 +24,10 @@ class PositionController extends Controller
         $company = $this->company($request);
 
         $data = $request->validate([
-            'name'          => ['required', 'string', 'max:100',
-                                Rule::unique('company_positions', 'name')->where('company_id', $company->id)],
-            'booking_limit' => ['required', 'integer', 'min:0'],
+            'name'           => ['required', 'string', 'max:100',
+                                 Rule::unique('company_positions', 'name')->where('company_id', $company->id)],
+            'booking_limit'  => ['required', 'integer', 'min:0'],
+            'monthly_budget' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $company->positions()->create($data);
@@ -46,11 +47,12 @@ class PositionController extends Controller
         $this->ownPosition($request, $position);
 
         $data = $request->validate([
-            'name'          => ['required', 'string', 'max:100',
-                                Rule::unique('company_positions', 'name')
-                                    ->where('company_id', $position->company_id)
-                                    ->ignore($position->id)],
-            'booking_limit' => ['required', 'integer', 'min:0'],
+            'name'           => ['required', 'string', 'max:100',
+                                 Rule::unique('company_positions', 'name')
+                                     ->where('company_id', $position->company_id)
+                                     ->ignore($position->id)],
+            'booking_limit'  => ['required', 'integer', 'min:0'],
+            'monthly_budget' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $position->update($data);
@@ -62,19 +64,20 @@ class PositionController extends Controller
     {
         $this->ownPosition($request, $position);
 
-        // Karyawan di jabatan ini otomatis kembali memakai limit default perusahaan
+        // Karyawan di jabatan ini otomatis kembali memakai limit dan anggaran default perusahaan
         $position->delete();
 
         return redirect()->route('corporate.positions.index')->with('success', __('ui.position_deleted'));
     }
 
-    /** Ubah limit default perusahaan (berlaku untuk karyawan tanpa jabatan). */
+    /** Ubah limit dan anggaran bulanan default (berlaku untuk karyawan tanpa jabatan atau jabatan tanpa anggaran). */
     public function updatePolicy(Request $request)
     {
         $company = $this->company($request);
 
         $data = $request->validate([
-            'travel_policy_limit' => ['required', 'integer', 'min:0'],
+            'travel_policy_limit'    => ['required', 'integer', 'min:0'],
+            'default_monthly_budget' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $company->update($data);

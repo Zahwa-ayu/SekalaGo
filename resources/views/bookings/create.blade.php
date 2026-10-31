@@ -42,9 +42,23 @@
         <p><small>{{ __('ui.paid_by_deposit') }}</small></p>
         <p>
             {{ __('ui.your_limit') }}: <strong>{{ format_price($limit, 'IDR') }}</strong><br>
+
+            @if ($policy['budget'] !== null)
+                {{ __('ui.monthly_budget') }}: <strong>{{ format_price($policy['budget'], 'IDR') }}</strong>
+                ({{ __('ui.used_this_month') }}: {{ format_price($policy['spent'], 'IDR') }},
+                {{ __('ui.remaining') }}: {{ format_price(max(0, $policy['budget'] - $policy['spent']), 'IDR') }})<br>
+            @endif
+
             @if ($needsApproval)
-                <span style="color:#b45309">{{ __('ui.over_limit_notice', ['limit' => format_price($limit, 'IDR')]) }}</span>
-            @elseif ($isFinance && $total > $limit)
+                <span style="color:#b45309">
+                    @if ($policy['over_limit'])
+                        {{ __('ui.over_limit_notice', ['limit' => format_price($limit, 'IDR')]) }}
+                    @endif
+                    @if ($policy['over_budget'])
+                        {{ __('ui.over_budget_notice') }}
+                    @endif
+                </span>
+            @elseif ($isFinance && ($policy['over_limit'] || $policy['over_budget']))
                 {{ __('ui.finance_exempt_notice') }}
             @else
                 {{ __('ui.within_limit_notice') }}

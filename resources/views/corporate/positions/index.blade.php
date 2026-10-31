@@ -31,6 +31,10 @@
                         <label class="{{ $label }}"><i class="fa-solid fa-coins text-sagara-blue"></i> {{ __('ui.default_limit') }} (IDR)</label>
                         <input type="number" name="travel_policy_limit" min="0" required class="{{ $input }}"
                                value="{{ old('travel_policy_limit', $company->travel_policy_limit) }}">
+                        <input type="number" name="default_monthly_budget" min="0"
+                                value="{{ old('default_monthly_budget', $company->default_monthly_budget) }}"
+                                placeholder="{{ __('ui.default_monthly_budget') }}">
+                        <small>{{ __('ui.default_monthly_budget_hint') }}</small>
                     </div>
                     <button class="{{ $btn }} w-full"><i class="fa-solid fa-floppy-disk"></i> {{ __('ui.save') }}</button>
                 </form>
@@ -51,6 +55,8 @@
                         <label class="{{ $label }}"><i class="fa-solid fa-coins text-sagara-blue"></i> {{ __('ui.booking_limit') }}</label>
                         <input type="number" name="booking_limit" min="0" value="{{ old('booking_limit') }}"
                                placeholder="{{ __('ui.booking_limit') }}" required class="{{ $input }}">
+                        <input type="number" name="monthly_budget" min="0" value="{{ old('monthly_budget') }}"
+                                placeholder="{{ __('ui.monthly_budget') }}">
                     </div>
                     <button class="{{ $btn }} w-full"><i class="fa-solid fa-floppy-disk"></i> {{ __('ui.save') }}</button>
                 </form>
@@ -66,6 +72,7 @@
                             <th class="px-6 py-4 font-bold">{{ __('ui.position_name') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.booking_limit') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.employees_count') }}</th>
+                            <th>{{ __('ui.monthly_budget') }}</th>
                             <th class="px-6 py-4"></th>
                         </tr>
                     </thead>
@@ -75,6 +82,7 @@
                                 <td class="px-6 py-4 font-bold text-slate-900">{{ $position->name }}</td>
                                 <td class="px-6 py-4 font-bold text-sagara-blue whitespace-nowrap">{{ format_price($position->booking_limit, 'IDR') }}</td>
                                 <td class="px-6 py-4 text-slate-600"><i class="fa-solid fa-users text-slate-400"></i> {{ $position->members_count }}</td>
+                                <td>{{ $position->monthly_budget !== null ? format_price($position->monthly_budget, 'IDR') : '-' }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex items-center justify-end gap-2 whitespace-nowrap">
                                         <a href="{{ route('corporate.positions.edit', $position) }}"

@@ -10,6 +10,7 @@ use App\Http\Controllers\Corporate\BookingController as CorporateBookingControll
 use App\Http\Controllers\Corporate\DashboardController as CorporateDashboardController;
 use App\Http\Controllers\Corporate\EmployeeController;
 use App\Http\Controllers\Corporate\PositionController;
+use App\Http\Controllers\Corporate\ReportController;
 use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\AgreementController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
@@ -133,5 +134,9 @@ Route::middleware(['auth', 'role:corporate'])
             Route::get('bookings', [CorporateBookingController::class, 'index'])->name('bookings.index');
             Route::post('bookings/{booking}/approve', [CorporateBookingController::class, 'approve'])->name('bookings.approve');
             Route::post('bookings/{booking}/reject', [CorporateBookingController::class, 'reject'])->name('bookings.reject');
+
+            Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('reports/csv', [ReportController::class, 'csv'])->name('reports.csv');
+            Route::get('reports/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
         });
     });

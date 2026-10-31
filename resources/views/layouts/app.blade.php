@@ -82,6 +82,7 @@
                                 <a href="{{ route('corporate.employees.index') }}">{{ __('ui.employees') }}</a>
                                 <a href="{{ route('corporate.positions.index') }}">{{ __('ui.positions_limits') }}</a>
                                 <a href="{{ route('corporate.bookings.index') }}">{{ __('ui.company_bookings') }}</a>
+                                <a href="{{ route('corporate.reports.index') }}">{{ __('ui.reports') }}</a>
                             @endif
                         @endif
 

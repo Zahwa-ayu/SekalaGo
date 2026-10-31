@@ -105,24 +105,26 @@ class BookingService
 
     private function createCorporateBooking(User $user, CompanyUser $member, array $attributes, int $total): Booking
     {
-        $member->loadMissing('company', 'position');
+        // Kunci baris karyawan supaya dua pemesanan bersamaan tidak sama-sama lolos cek anggaran
+        CompanyUser::lockForUpdate()->find($member->id);
 
-        $limit         = $member->bookingLimit();
-        $needsApproval = $total > $limit && ! $member->isFinance();
+        $member->loadMissing('company', 'position');
+        $policy = $member->evaluatePolicy($total);
 
         $attributes += [
             'company_id'     => $member->company_id,
             'department'     => $member->department,
-            'policy_limit'   => $limit,
+            'policy_limit'   => $policy['limit'],
             'payment_method' => 'deposit',
         ];
 
-        if ($needsApproval) {
+        if ($policy['needs_approval']) {
             // Kamar ditahan, saldo belum dipotong sampai Finance menyetujui
             return Booking::create($attributes + [
-                'status'         => 'pending_approval',
-                'payment_status' => 'unpaid',
-                'expires_at'     => now()->addHours((int) config('sekalago.approval_hold_hours')),
+                'status'          => 'pending_approval',
+                'payment_status'  => 'unpaid',
+                'approval_reason' => $policy['reason'],
+                'expires_at'      => now()->addHours((int) config('sekalago.approval_hold_hours')),
             ]);
         }
 

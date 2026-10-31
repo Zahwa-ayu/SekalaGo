@@ -15,7 +15,7 @@ class Booking extends Model
         'status', 'payment_status', 'payment_method', 'payment_reference', 'expires_at', 'paid_at',
         'free_cancel_days', 'cancelled_at', 'cancelled_by', 'cancellation_reason',
         'refund_amount', 'refunded_at', 'refund_reference',
-        'decided_by', 'decided_at', 'decision_note',
+        'decided_by', 'decided_at', 'decision_note', 'approval_reason',
     ];
 
     protected function casts(): array

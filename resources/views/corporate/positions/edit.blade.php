@@ -38,6 +38,14 @@
                            value="{{ old('booking_limit', $position->booking_limit) }}">
                 </div>
 
+                <p>
+                    <label>{{ __('ui.monthly_budget') }}<br>
+                        <input type="number" name="monthly_budget" min="0"
+                            value="{{ old('monthly_budget', $position->monthly_budget) }}">
+                    </label>
+                    <small>{{ __('ui.monthly_budget_hint') }}</small>
+                </p>
+
                 <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
                     <button class="px-8 py-3 bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2">
                         <i class="fa-solid fa-floppy-disk"></i> {{ __('ui.save') }}

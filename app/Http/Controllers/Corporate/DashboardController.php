@@ -19,6 +19,8 @@ class DashboardController extends Controller
             'member'  => $member,
             'company' => $company,
             'limit'   => $member->bookingLimit(),
+            'budget'  => $member->monthlyBudget(),
+            'spent'   => $member->monthlySpent(),
         ];
 
         if ($member->isFinance()) {
