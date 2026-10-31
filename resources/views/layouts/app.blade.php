@@ -73,6 +73,7 @@
                             <a href="{{ route('admin.hotels.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.review_hotels') }}</a>
                             <a href="{{ route('admin.bookings.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.all_bookings') }}</a>
                             <a href="{{ route('admin.companies.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.companies') }}</a>
+                            <a href="{{ route('admin.social-media.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.social_media') }}</a>
                         @endif
 
                         @if (auth()->user()->user_type === 'corporate')

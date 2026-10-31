@@ -20,6 +20,7 @@ use App\Http\Controllers\Partner\RoomStockController;
 use App\Http\Controllers\Partner\RoomTypeController;
 use App\Http\Controllers\PartnerRegistrationController;
 use App\Http\Controllers\PreferenceController;
+use App\Http\Controllers\Admin\SocialMediaController as AdminSocialMediaController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman publik: pencarian & detail hotel
@@ -85,6 +86,14 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('companies', [AdminCompanyController::class, 'store'])->name('companies.store');
         Route::get('companies/{company}', [AdminCompanyController::class, 'show'])->name('companies.show');
         Route::post('companies/{company}/topup', [AdminCompanyController::class, 'topup'])->name('companies.topup');
+
+        // Social media management
+        Route::patch('social-media/{socialMedia}/status', [AdminSocialMediaController::class, 'updateStatus'])
+            ->name('social-media.status');
+
+        Route::resource('social-media', AdminSocialMediaController::class)
+            ->parameters(['social-media' => 'socialMedia'])   // PENTING, lihat catatan
+            ->except(['create', 'edit', 'show']);
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)
