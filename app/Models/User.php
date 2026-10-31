@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -35,5 +36,16 @@ class User extends Authenticatable
             'corporate' => 'corporate.dashboard',
             default     => 'home',
         };
+    }
+
+        protected function displayName(): Attribute
+    {
+        return Attribute::get(fn () => match ($this->user_type) {
+            'admin'     => $this->adminStaff?->full_name,
+            'customer'  => $this->customer?->full_name,
+            'partner'   => $this->partner?->company_name,
+            'corporate' => $this->companyUser?->full_name,
+            default     => null,
+        } ?? $this->email);
     }
 }
