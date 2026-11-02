@@ -403,4 +403,17 @@ return [
     'um_activated'              => 'Pengguna diaktifkan.',
     'um_deactivated'            => 'Pengguna dinonaktifkan.',
     'um_cannot_deactivate_self' => 'Anda tidak dapat menonaktifkan akun sendiri.',
+
+    // dashboard menu
+    'dashboard' => 'Dashboard',
+    'view_site' => 'Lihat situs',
+    'open_menu' => 'Buka menu',
+    'needs_action' => 'Perlu tindakan',
+    'pending_partners_label' => 'Mitra menunggu verifikasi',
+    'pending_hotels_label' => 'Hotel menunggu persetujuan',
+    'mou_waiting_label' => 'MOU menunggu tanda tangan',
+    'this_month' => 'Bulan ini',
+    'recent_bookings' => 'Pesanan terbaru',
+    'deposit_total' => 'Total saldo deposit',
+    'upcoming_checkins' => 'Check-in mendatang',
 ];

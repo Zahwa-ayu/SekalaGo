@@ -403,4 +403,17 @@ return [
     'um_activated'              => 'User activated.',
     'um_deactivated'            => 'User deactivated.',
     'um_cannot_deactivate_self' => 'You cannot deactivate your own account.',
+
+    // dashboard
+    'dashboard' => 'Dashboard',
+    'view_site' => 'View site',
+    'open_menu' => 'Open menu',
+    'needs_action' => 'Needs action',
+    'pending_partners_label' => 'Partners awaiting verification',
+    'pending_hotels_label' => 'Hotels awaiting approval',
+    'mou_waiting_label' => 'MOUs awaiting signature',
+    'this_month' => 'This month',
+    'recent_bookings' => 'Recent bookings',
+    'deposit_total' => 'Total deposit balance',
+    'upcoming_checkins' => 'Upcoming check-ins',
 ];

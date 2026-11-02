@@ -22,6 +22,8 @@ use App\Http\Controllers\PartnerRegistrationController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\Admin\SocialMediaController as AdminSocialMediaController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Partner\DashboardController as PartnerDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman publik: pencarian & detail hotel
@@ -65,7 +67,7 @@ Route::middleware(['auth', 'role:admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::view('/', 'dashboard', ['title' => 'ui.dashboard_admin'])->name('dashboard');
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         Route::get('partners', [AdminPartnerController::class, 'index'])->name('partners.index');
         Route::get('partners/{partner}', [AdminPartnerController::class, 'show'])->name('partners.show');
@@ -118,7 +120,7 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
 
         // Hanya setelah MOU ditandatangani
         Route::middleware('partner.mou')->group(function () {
-            Route::view('/', 'dashboard', ['title' => 'ui.dashboard_partner'])->name('dashboard');
+            Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
 
             Route::resource('hotels', HotelController::class)->except(['show']);
 
