@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\SocialMediaController as AdminSocialMediaControll
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Partner\DashboardController as PartnerDashboardController;
+use App\Http\Controllers\Partner\PhotoController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman publik: pencarian & detail hotel
@@ -134,6 +135,14 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
                 ->name('room-types.stocks.update');
 
             Route::get('bookings', [PartnerBookingController::class, 'index'])->name('bookings.index');
+
+            // Foto hotel dan tipe kamar
+            Route::get('hotels/{hotel}/photos', [PhotoController::class, 'hotelIndex'])->name('hotels.photos.index');
+            Route::post('hotels/{hotel}/photos', [PhotoController::class, 'hotelStore'])->name('hotels.photos.store');
+            Route::get('room-types/{room_type}/photos', [PhotoController::class, 'roomTypeIndex'])->name('room-types.photos.index');
+            Route::post('room-types/{room_type}/photos', [PhotoController::class, 'roomTypeStore'])->name('room-types.photos.store');
+            Route::post('photos/{photo}/cover', [PhotoController::class, 'cover'])->name('photos.cover');
+            Route::delete('photos/{photo}', [PhotoController::class, 'destroy'])->name('photos.destroy');
         });
     });
 

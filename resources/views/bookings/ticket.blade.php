@@ -37,6 +37,8 @@
                 @if ($booking->hotel?->address), {{ $booking->hotel->address }}@endif
             </td>
         </tr>
+        <tr><td class="label">Jam check-in / Check-in time</td><td>{{ $booking->hotel ? $booking->hotel->checkInLabel() : '-' }}</td></tr>
+        <tr><td class="label">Jam check-out / Check-out time</td><td>{{ $booking->hotel ? $booking->hotel->checkOutLabel() : '-' }}</td></tr>
     </table>
 
     <h2>Menginap / Stay</h2>

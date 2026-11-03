@@ -25,15 +25,24 @@
         <div class="space-y-5">
             @forelse ($results as $row)
                 @php $hotel = $row['hotel']; @endphp
+
                 <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md hover:shadow-xl transition duration-300 flex flex-col sm:flex-row">
-                    <div class="sm:w-56 h-40 sm:h-auto bg-gradient-to-br from-sagara-navy to-sagara-teal flex items-center justify-center text-white/70 text-5xl shrink-0">
-                        <i class="fa-solid fa-hotel"></i>
+                    {{-- FOTO SAMPUL --}}
+                    <div class="sm:w-56 h-40 sm:h-auto shrink-0 bg-slate-200">
+                        @if ($hotel->coverUrl())
+                            <img src="{{ $hotel->coverUrl() }}" alt="{{ $hotel->name }}" class="w-full h-full object-cover" loading="lazy">
+                        @else
+                            <div class="w-full h-full min-h-40 bg-gradient-to-br from-sagara-navy to-sagara-teal flex items-center justify-center text-white/70 text-5xl">
+                                <i class="fa-solid fa-hotel"></i>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="p-6 flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
                         <div class="min-w-0">
                             <span class="text-[11px] font-extrabold text-sagara-blue uppercase tracking-wider">
-                                <i class="fa-solid fa-location-dot"></i> {{ $hotel->city }}
+                                <i class="fa-solid fa-location-dot"></i>
+                                {{ collect([$hotel->area, $hotel->city])->filter()->join(', ') }}
                             </span>
                             <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">
                                 <a href="{{ route('hotels.show', ['hotel' => $hotel] + $params) }}" class="hover:text-sagara-blue transition">{{ $hotel->name }}</a>

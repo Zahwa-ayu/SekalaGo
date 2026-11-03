@@ -46,6 +46,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-xs font-bold space-x-3">
                                     <a href="{{ route('partner.hotels.room-types.index', $hotel) }}" class="text-sagara-blue hover:underline">{{ __('ui.room_types') }}</a>
+                                    <a href="{{ route('partner.hotels.photos.index', $hotel) }}" class="text-sagara-blue hover:underline">{{ __('ui.photos') }}</a>
                                     <a href="{{ route('partner.hotels.edit', $hotel) }}" class="text-slate-600 hover:underline">{{ __('ui.edit') }}</a>
                                     <form method="POST" action="{{ route('partner.hotels.destroy', $hotel) }}" class="inline"
                                           onsubmit="return confirm(@js(__('ui.delete_confirm')))">

@@ -30,7 +30,7 @@ class HotelController extends Controller
 
     public function show(Hotel $hotel)
     {
-        $hotel->load(['partner', 'translations', 'facilities', 'roomTypes.translations']);
+        $hotel->load(['partner', 'translations', 'facilities', 'photos', 'nearbyPlaces', 'roomTypes.translations', 'roomTypes.photos', 'roomTypes.facilities']);
 
         return view('admin.hotels.show', compact('hotel'));
     }

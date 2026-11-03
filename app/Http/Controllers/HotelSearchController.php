@@ -37,7 +37,7 @@ class HotelSearchController extends Controller
             ->whereHas('hotel', fn ($q) => $q
                 ->where('status', 'approved')
                 ->where('city', 'like', "%{$city}%"))
-            ->with(['translations', 'hotel.translations', 'hotel.facilities'])
+            ->with(['translations', 'hotel.translations', 'hotel.facilities', 'hotel.photos'])
             ->get();
 
         $results = $roomTypes
@@ -61,9 +61,9 @@ class HotelSearchController extends Controller
     {
         abort_unless($hotel->status === 'approved', 404);
 
-        $hotel->load('translations', 'facilities');
+        $hotel->load('translations', 'facilities', 'photos', 'nearbyPlaces');
 
-        $query  = $hotel->roomTypes()->with('translations')->orderBy('base_price');
+        $query  = $hotel->roomTypes()->with('translations', 'photos', 'facilities')->orderBy('base_price');
         $params = null;
         $nights = null;
 

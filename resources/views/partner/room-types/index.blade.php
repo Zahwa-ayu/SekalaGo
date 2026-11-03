@@ -28,6 +28,7 @@
                         <td>
                             <a href="{{ route('partner.room-types.edit', $roomType) }}">{{ __('ui.edit') }}</a> |
                             <a href="{{ route('partner.room-types.stocks.edit', $roomType) }}">{{ __('ui.manage_stock') }}</a>
+                            <a href="{{ route('partner.room-types.photos.index', $roomType) }}">{{ __('ui.photos') }}</a>
                             <form method="POST" action="{{ route('partner.room-types.destroy', $roomType) }}"
                                 style="display:inline"
                                 onsubmit="return confirm(@js(__('ui.delete_confirm')))">
