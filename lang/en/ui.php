@@ -532,4 +532,36 @@ return [
     'log_attr_to' => 'To date',
     'log_attr_available' => 'Quota',
     'log_attr_days' => 'Number of dates',
+
+    // register
+    // === Register partner page: paste inside the return array of lang/en/ui.php ===
+   // === Register partner page: paste inside the return array of lang/en/ui.php ===
+    'partner_why_title' => 'Why Partner with Us?',
+    'partner_why_hint' => 'A small platform focused on helping your property get more guests.',
+
+    // Order must match the $icons array in the blade
+    'partner_benefits' => [
+        ['title' => 'Be Listed on Our Platform', 'desc' => 'Your hotel and room types can be found by customers through search, complete with photos and descriptions.'],
+        ['title' => 'Reach Corporate Guests', 'desc' => 'Besides regular customers, your property can also be booked by employees of our partner companies for business trips.'],
+        ['title' => 'Easy Self-Management', 'desc' => 'Manage room types, prices, stock, and photos anytime from the partner dashboard.'],
+        ['title' => 'Track Bookings', 'desc' => 'See all bookings made at your property in one place.'],
+        ['title' => 'Multi-Language & Currency', 'desc' => 'Your property information can be shown in several languages and currencies to reach more guests.'],
+        ['title' => 'Clear Partnership Terms', 'desc' => 'A transparent partnership agreement (MOU) is in place before your property goes live.'],
+    ],
+
+    'partner_steps_title' => 'Get Started in 4 Steps',
+    'partner_steps' => [
+        ['title' => 'Register', 'desc' => 'Fill in the form above with your business details.'],
+        ['title' => 'Verification', 'desc' => 'Our team reviews your business data and documents.'],
+        ['title' => 'Sign the MOU', 'desc' => 'Agree to the partnership agreement online.'],
+        ['title' => 'Go live', 'desc' => 'Add your hotel, rooms, and stock, then start receiving bookings.'],
+    ],
+
+    'partner_faq_title' => 'Frequently Asked Questions',
+    'partner_faq' => [
+        ['q' => 'Who can join?', 'a' => 'Owners or managers of hotels, guesthouses, villas, or homestays with a business license.'],
+        // TODO: adjust the two answers below to your actual policy
+        ['q' => 'Is there a registration fee?', 'a' => 'Registration is free. Commission terms are explained in the MOU.'],
+        ['q' => 'How long does verification take?', 'a' => 'Usually 1-3 business days.'],
+    ],
 ];

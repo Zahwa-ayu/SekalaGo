@@ -532,4 +532,38 @@ return [
     'log_attr_to' => 'Sampai tanggal',
     'log_attr_available' => 'Kuota',
     'log_attr_days' => 'Jumlah tanggal',
+
+    // register
+    // === Halaman register partner: tempel di dalam array return lang/id/ui.php ===
+    //// awok
+
+    // === Halaman register partner: tempel di dalam array return lang/id/ui.php ===
+    'partner_why_title' => 'Kenapa Bermitra dengan Kami?',
+    'partner_why_hint' => 'Platform kecil yang fokus membantu properti kamu dapat tamu lebih banyak.',
+
+    // Urutan harus sama dengan array $icons di blade
+    'partner_benefits' => [
+        ['title' => 'Tampil di Platform Kami', 'desc' => 'Hotel dan tipe kamarmu bisa ditemukan pelanggan lewat pencarian, lengkap dengan foto dan deskripsi.'],
+        ['title' => 'Akses ke Tamu Perusahaan', 'desc' => 'Selain pelanggan umum, properti kamu juga bisa dipesan karyawan perusahaan mitra kami untuk perjalanan dinas.'],
+        ['title' => 'Kelola Sendiri dengan Mudah', 'desc' => 'Atur tipe kamar, harga, stok, dan foto kapan saja lewat dashboard mitra.'],
+        ['title' => 'Pantau Pesanan', 'desc' => 'Lihat semua pesanan yang masuk ke propertimu dalam satu tempat.'],
+        ['title' => 'Multi Bahasa & Mata Uang', 'desc' => 'Informasi propertimu bisa ditampilkan dalam beberapa bahasa dan mata uang untuk menjangkau lebih banyak tamu.'],
+        ['title' => 'Kerja Sama yang Jelas', 'desc' => 'Ada perjanjian kerja sama (MOU) yang transparan sebelum properti kamu mulai tayang.'],
+    ],
+
+    'partner_steps_title' => 'Mulai dalam 4 Langkah',
+    'partner_steps' => [
+        ['title' => 'Daftar', 'desc' => 'Isi formulir di atas dengan data usaha kamu.'],
+        ['title' => 'Verifikasi', 'desc' => 'Tim kami memeriksa data dan dokumen usahamu.'],
+        ['title' => 'Tanda tangan MOU', 'desc' => 'Setujui perjanjian kerja sama secara online.'],
+        ['title' => 'Mulai tayang', 'desc' => 'Tambahkan hotel, kamar, dan stok, lalu terima pesanan.'],
+    ],
+
+    'partner_faq_title' => 'Pertanyaan Umum',
+    'partner_faq' => [
+        ['q' => 'Siapa yang bisa bergabung?', 'a' => 'Pemilik atau pengelola hotel, penginapan, villa, atau homestay yang punya izin usaha.'],
+        // TODO: sesuaikan dua jawaban di bawah dengan kebijakan sebenarnya
+        ['q' => 'Apakah ada biaya pendaftaran?', 'a' => 'Pendaftaran gratis. Ketentuan komisi dijelaskan di MOU.'],
+        ['q' => 'Berapa lama proses verifikasi?', 'a' => 'Biasanya 1-3 hari kerja.'],
+    ],
 ];
