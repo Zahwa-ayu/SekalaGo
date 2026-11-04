@@ -19,6 +19,7 @@ class DashboardMenu
                 ['fa-building', 'ui.companies', 'admin.companies.index', ['admin.companies.*']],
                 ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
                 ['fa-users', 'ui.users', 'admin.users.index', ['admin.users.*']],
+                ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
             ],
 
             'partner' => $user->partner?->hasSignedAgreement()

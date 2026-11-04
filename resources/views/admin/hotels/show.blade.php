@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@include('partials.activity-timeline', ['activities' => $activities, 'showActor' => true])
     @php
         $badge = match ($hotel->status) {
             'approved' => 'bg-emerald-100 text-emerald-700',

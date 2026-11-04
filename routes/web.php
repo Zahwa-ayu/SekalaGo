@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\BookingController as AdminBookingController;
 use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
@@ -105,6 +106,9 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::patch('users/{user}/status', [AdminUserController::class, 'updateStatus'])
             ->name('users.status');
+
+        // Log aktivitas
+        Route::get('activity', [ActivityLogController::class, 'index'])->name('activity.index');
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)

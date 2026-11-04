@@ -7,6 +7,7 @@ use App\Models\Facility;
 use App\Models\Hotel;
 use App\Models\RoomType;
 use App\Services\TranslationService;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +62,7 @@ class RoomTypeController extends Controller
             return $roomType;
         });
 
+        ActivityLogger::record($roomType, 'created', [], ['base_price' => $roomType->base_price, 'meal_plan' => $roomType->meal_plan]);
         return redirect()->route('partner.room-types.photos.index', $roomType)
             ->with('success', __('ui.room_created_add_photos'));
     }

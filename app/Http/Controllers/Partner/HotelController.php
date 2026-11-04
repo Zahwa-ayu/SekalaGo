@@ -8,6 +8,7 @@ use App\Models\Hotel;
 use App\Models\NearbyPlace;
 use App\Models\Partner;
 use App\Services\TranslationService;
+use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -59,6 +60,8 @@ class HotelController extends Controller
             return $hotel;
         });
 
+        ActivityLogger::record($hotel, 'created', [], ['city' => $hotel->city, 'status' => 'pending']);
+
         return redirect()->route('partner.hotels.photos.index', $hotel)
             ->with('success', __('ui.hotel_created_add_photos'));
     }
@@ -71,6 +74,7 @@ class HotelController extends Controller
         return view('partner.hotels.edit', [
             'hotel'      => $hotel,
             'facilities' => Facility::forHotel()->orderBy('code')->get(),
+            'activities' => $hotel->activities()->limit(15)->get()
         ]);
     }
 

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsActivity;
 
 class Partner extends Model
 {
+    use LogsActivity;
+    
     protected $fillable = [
         'user_id', 'company_name', 'business_license_no', 'bank_account_no',
         'verification_status', 'verification_note',
@@ -51,4 +54,12 @@ class Partner extends Model
 
         return $agreement ? (int) $agreement->free_cancel_days : 3;
     }
+
+    // log
+    protected function logAttributes(): array
+    {
+        return ['company_name', 'business_license_no', 'verification_status', 'verification_note'];
+    }
+
+    public function logLabel(): string { return $this->company_name; }
 }

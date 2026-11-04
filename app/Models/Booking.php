@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use App\Models\Concerns\LogsActivity;
 
 class Booking extends Model
 {
+    use LogsActivity;
+
     protected $fillable = [
         'booking_code', 'user_id', 'partner_id', 'company_id', 'product_type', 'hotel_id', 'room_type_id',
         'hotel_name', 'room_name', 'check_in', 'check_out', 'nights', 'guests', 'guest_name', 'department',
@@ -75,4 +78,14 @@ class Booking extends Model
     {
         return $this->status === 'confirmed' && today()->lte($this->check_in);
     }
+
+    protected function logAttributes(): array
+    {
+        return ['status', 'payment_status', 'total_price', 'refund_amount',
+                'cancelled_by', 'cancellation_reason', 'decision_note'];
+    }
+
+    protected function logEvents(): array { return ['created', 'updated']; }
+
+    public function logLabel(): string { return $this->booking_code; }
 }

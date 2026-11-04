@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsActivity;
 use Illuminate\Support\Carbon;
 
 class RoomType extends Model
 {
-    use HasTranslations;
+    use HasTranslations, LogsActivity;
 
     public const BED_TYPES  = ['single', 'double', 'queen', 'king', 'bunk'];
     public const MEAL_PLANS = ['room_only', 'breakfast', 'half_board', 'full_board', 'all_inclusive'];
@@ -61,4 +62,19 @@ class RoomType extends Model
               ->whereColumn('available', '>', 'booked');
         }]);
     }
+
+    // log
+    protected function logAttributes(): array
+    {
+        return ['base_price', 'capacity', 'bed_type', 'bed_count', 'smoking_allowed', 'meal_plan', 'total_rooms'];
+    }
+
+    protected function logEvents(): array { return ['updated', 'deleted']; }
+
+    public function logLabel(): string
+    {
+        return trim(($this->hotel?->name ?? '') . ' / ' . ($this->name ?: '#' . $this->getKey()), ' /');
+    }
+
+    public function logScope(): ?Model { return $this->hotel; }
 }

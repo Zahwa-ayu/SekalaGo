@@ -32,7 +32,9 @@ class HotelController extends Controller
     {
         $hotel->load(['partner', 'translations', 'facilities', 'photos', 'nearbyPlaces', 'roomTypes.translations', 'roomTypes.photos', 'roomTypes.facilities']);
 
-        return view('admin.hotels.show', compact('hotel'));
+        $activities = $hotel->activities()->limit(20)->get();
+
+        return view('admin.hotels.show', compact('hotel', 'activities'));
     }
 
     public function approve(Hotel $hotel)

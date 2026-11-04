@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@include('partials.activity-timeline', ['activities' => $activities, 'showActor' => false])
     <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
         <a href="{{ route('partner.hotels.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
             <i class="fa-solid fa-arrow-left"></i> {{ __('ui.my_hotels') }}

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Partner;
 use App\Http\Controllers\Controller;
 use App\Models\RoomStock;
 use App\Models\RoomType;
+use App\Support\ActivityLogger;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 
@@ -67,6 +68,12 @@ class RoomStockController extends Controller
             RoomStock::upsert($chunk, ['room_type_id', 'date'], ['available', 'updated_at']);
         }
 
+        ActivityLogger::record($roomType, 'stock_updated', [], [
+            'from'      => $data['start_date'],
+            'to'        => $data['end_date'],
+            'available' => (int) $data['available'],
+            'days'      => count($rows),
+        ]);
         return redirect()->route('partner.room-types.stocks.edit', $roomType)
             ->with('success', __('ui.stock_saved', ['count' => count($rows)]));
     }

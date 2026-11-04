@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsActivity;
 
 class PartnerAgreement extends Model
 {
+    use LogsActivity;
     protected $fillable = [
         'partner_id', 'version', 'commission_rate', 'payout_schedule', 'free_cancel_days',
         'content', 'status', 'sent_at', 'signed_at', 'signed_name', 'signed_ip',
@@ -59,4 +61,16 @@ class PartnerAgreement extends Model
 
         return hash_equals($this->signature_hash, (string) $this->expectedHash());
     }
+
+    // log
+    protected function logAttributes(): array
+    {
+        return ['version', 'commission_rate', 'payout_schedule', 'free_cancel_days', 'status'];
+    }
+
+    protected function logEvents(): array { return ['created', 'updated']; }
+
+    public function logLabel(): string { return 'MOU ' . $this->documentNumber(); }
+
+    public function logScope(): ?Model { return $this->partner; }
 }

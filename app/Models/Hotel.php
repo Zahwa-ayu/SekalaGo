@@ -4,11 +4,12 @@ namespace App\Models;
 
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\LogsActivity;
 
 class Hotel extends Model
 {
-    use HasTranslations;
-
+    use HasTranslations, LogsActivity;
+    
     protected $fillable = [
         'partner_id', 'city', 'area', 'address', 'latitude', 'longitude', 'star_rating',
         'check_in_time', 'check_out_time', 'status', 'rejection_reason', 'source_locale',
@@ -55,4 +56,23 @@ class Hotel extends Model
             $hotel->roomTypes->each(fn ($roomType) => $roomType->photos->each->delete());
         });
     }
-}
+
+    // log
+        protected function logAttributes(): array
+    {
+        return ['city', 'area', 'address', 'latitude', 'longitude', 'star_rating',
+                'check_in_time', 'check_out_time', 'status', 'rejection_reason'];
+    }
+
+    // "created" dicatat manual di controller (nama hotel baru ada setelah terjemahan tersimpan)
+    protected function logEvents(): array { return ['updated', 'deleted']; }
+
+    public function logLabel(): string { return $this->name ?: 'Hotel #' . $this->getKey(); }
+
+    public function logScope(): ?Model { return $this; }
+
+    public function activities()
+    {
+        return $this->morphMany(ActivityLog::class, 'scope')->latest('created_at')->latest('id');
+    }
+} 
