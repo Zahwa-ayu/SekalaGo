@@ -6,6 +6,7 @@ use App\Models\Hotel;
 use App\Models\Partner;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
+use App\Models\Vehicle;
 
 trait PartnerHelpers
 {
@@ -34,5 +35,10 @@ trait PartnerHelpers
             'name'        => $data['name'],
             'description' => $data['description'] ?? null,
         ];
+    }
+
+    protected function ownVehicle(Request $request, Vehicle $vehicle): void
+    {
+        abort_unless($vehicle->partner_id === $this->partner($request)->id, 403);
     }
 }

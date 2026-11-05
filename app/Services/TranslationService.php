@@ -94,4 +94,12 @@ class TranslationService
     {
         return filled($text) ? $this->provider->translate($text, $from, $to) : null;
     }
+
+    private function contextFor(Model $model): ?string
+    {
+        return match (class_basename($model)) {
+            'Vehicle' => 'The "name" field is the name of a car model (for example "Toyota Avanza"): keep it as is.',
+            default   => null,
+        };
+    }
 }

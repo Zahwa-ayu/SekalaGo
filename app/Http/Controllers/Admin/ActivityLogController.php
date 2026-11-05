@@ -12,10 +12,12 @@ use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
+use App\Models\Vehicle;
 
 class ActivityLogController extends Controller
 {
     private const TYPES = [
+        'vehicle'           => Vehicle::class,
         'hotel'             => Hotel::class,
         'room_type'         => RoomType::class,
         'partner'           => Partner::class,

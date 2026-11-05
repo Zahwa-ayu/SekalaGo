@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Hotel;
 use App\Models\RoomType;
+use App\Models\Vehicle;
 use App\Services\TranslationService;
 use Illuminate\Console\Command;
 
@@ -23,6 +24,10 @@ class FillMissingTranslations extends Command
 
         foreach (RoomType::with('translations')->get() as $roomType) {
             $count += $service->fillMissing($roomType);
+        }
+
+        foreach (Vehicle::with('translations')->get() as $vehicle) {
+            $count += $service->fillMissing($vehicle);
         }
 
         $this->info("Selesai. {$count} terjemahan baru dibuat.");

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Hotel;
 use App\Models\Photo;
 use App\Models\RoomType;
+use App\Models\Vehicle;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +16,9 @@ class PhotoController extends Controller
 {
     use PartnerHelpers;
 
-    private const MAX_HOTEL = 10;
-    private const MAX_ROOM  = 6;
+    private const MAX_HOTEL   = 10;
+    private const MAX_ROOM    = 6;
+    private const MAX_VEHICLE = 8;
 
     public function hotelIndex(Request $request, Hotel $hotel)
     {
@@ -60,6 +62,28 @@ class PhotoController extends Controller
         $this->ownRoomType($request, $roomType);
 
         return $this->upload($request, $roomType, 'room-types', self::MAX_ROOM, route('partner.room-types.photos.index', $roomType));
+    }
+
+    public function vehicleIndex(Request $request, Vehicle $vehicle)
+    {
+        $this->ownVehicle($request, $vehicle);
+        $vehicle->load('translations', 'photos');
+
+        return view('partner.photos.index', [
+            'title'     => $vehicle->name,
+            'photos'    => $vehicle->photos,
+            'max'       => self::MAX_VEHICLE,
+            'storeUrl'  => route('partner.vehicles.photos.store', $vehicle),
+            'backUrl'   => route('partner.vehicles.index'),
+            'backLabel' => __('ui.my_vehicles'),
+        ]);
+    }
+
+    public function vehicleStore(Request $request, Vehicle $vehicle)
+    {
+        $this->ownVehicle($request, $vehicle);
+
+        return $this->upload($request, $vehicle, 'vehicles', self::MAX_VEHICLE, route('partner.vehicles.photos.index', $vehicle));
     }
 
     /** Jadikan satu foto sebagai sampul. */
@@ -126,18 +150,11 @@ class PhotoController extends Controller
     {
         $owner = $photo->photoable;
 
-        if ($owner instanceof Hotel) {
-            $this->ownHotel($request, $owner);
-
-            return;
-        }
-
-        if ($owner instanceof RoomType) {
-            $this->ownRoomType($request, $owner);
-
-            return;
-        }
-
-        abort(404);
+        match (true) {
+            $owner instanceof Hotel    => $this->ownHotel($request, $owner),
+            $owner instanceof RoomType => $this->ownRoomType($request, $owner),
+            $owner instanceof Vehicle  => $this->ownVehicle($request, $owner),
+            default                    => abort(404),
+        };
     }
 }

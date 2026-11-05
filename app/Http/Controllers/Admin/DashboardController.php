@@ -7,6 +7,7 @@ use App\Models\Booking;
 use App\Models\Company;
 use App\Models\Hotel;
 use App\Models\Partner;
+use App\Models\Vehicle;
 use App\Models\PartnerAgreement;
 
 class DashboardController extends Controller
@@ -26,6 +27,7 @@ class DashboardController extends Controller
             'depositTotal'    => (int) Company::sum('deposit_balance'),
             'monthly'         => $monthly,
             'recent'          => Booking::with('partner')->latest()->limit(6)->get(),
+            'pendingVehicles' => Vehicle::where('status', 'pending')->count(),
         ]);
     }
 }

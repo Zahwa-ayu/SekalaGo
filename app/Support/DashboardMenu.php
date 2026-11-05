@@ -20,6 +20,7 @@ class DashboardMenu
                 ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
                 ['fa-users', 'ui.users', 'admin.users.index', ['admin.users.*']],
                 ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
+                ['fa-car-side', 'ui.review_vehicles', 'admin.vehicles.index', ['admin.vehicles.*']],
             ],
 
             'partner' => $user->partner?->hasSignedAgreement()
@@ -29,6 +30,7 @@ class DashboardMenu
                     ['fa-receipt', 'ui.incoming_bookings', 'partner.bookings.index', ['partner.bookings.*']],
                     ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
                     ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
+                    ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']],
                 ]
                 : [
                     ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],

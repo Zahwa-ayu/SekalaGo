@@ -62,4 +62,6 @@ class Partner extends Model
     }
 
     public function logLabel(): string { return $this->company_name; }
+
+    public function vehicles() { return $this->hasMany(Vehicle::class); }
 }

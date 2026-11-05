@@ -12,6 +12,7 @@
                     ['fa-handshake', __('ui.pending_partners_label'), $pendingPartners, route('admin.partners.index')],
                     ['fa-hotel', __('ui.pending_hotels_label'), $pendingHotels, route('admin.hotels.index')],
                     ['fa-file-signature', __('ui.mou_waiting_label'), $unsignedMou, route('admin.partners.index', ['status' => 'verified'])],
+                    ['fa-car-side', __('ui.pending_vehicles_label'), $pendingVehicles, route('admin.vehicles.index')],
                 ] as [$icon, $label, $count, $url])
                     <a href="{{ $url }}"
                        class="bg-white rounded-2xl border {{ $count > 0 ? 'border-amber-200' : 'border-slate-100' }} shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition">

@@ -26,6 +26,9 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Partner\DashboardController as PartnerDashboardController;
 use App\Http\Controllers\Partner\PhotoController;
+use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
+use App\Http\Controllers\Partner\BlackoutController;
+use App\Http\Controllers\Partner\VehicleController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman publik: pencarian & detail hotel
@@ -109,6 +112,12 @@ Route::middleware(['auth', 'role:admin'])
 
         // Log aktivitas
         Route::get('activity', [ActivityLogController::class, 'index'])->name('activity.index');
+
+        // rental cars
+                Route::get('vehicles', [AdminVehicleController::class, 'index'])->name('vehicles.index');
+        Route::get('vehicles/{vehicle}', [AdminVehicleController::class, 'show'])->name('vehicles.show');
+        Route::post('vehicles/{vehicle}/approve', [AdminVehicleController::class, 'approve'])->name('vehicles.approve');
+        Route::post('vehicles/{vehicle}/reject', [AdminVehicleController::class, 'reject'])->name('vehicles.reject');
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)
@@ -147,6 +156,16 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::post('room-types/{room_type}/photos', [PhotoController::class, 'roomTypeStore'])->name('room-types.photos.store');
             Route::post('photos/{photo}/cover', [PhotoController::class, 'cover'])->name('photos.cover');
             Route::delete('photos/{photo}', [PhotoController::class, 'destroy'])->name('photos.destroy');
+
+            // rental cars
+            Route::resource('vehicles', VehicleController::class)->except(['show']);
+
+            Route::get('vehicles/{vehicle}/photos', [PhotoController::class, 'vehicleIndex'])->name('vehicles.photos.index');
+            Route::post('vehicles/{vehicle}/photos', [PhotoController::class, 'vehicleStore'])->name('vehicles.photos.store');
+
+            Route::get('vehicles/{vehicle}/blackouts', [BlackoutController::class, 'index'])->name('vehicles.blackouts.index');
+            Route::post('vehicles/{vehicle}/blackouts', [BlackoutController::class, 'store'])->name('vehicles.blackouts.store');
+            Route::delete('blackouts/{blackout}', [BlackoutController::class, 'destroy'])->name('blackouts.destroy');
         });
     });
 
