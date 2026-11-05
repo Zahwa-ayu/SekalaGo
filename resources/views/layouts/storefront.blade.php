@@ -3,6 +3,11 @@
 <head>
     @include('partials.head')
     @stack('head')
+
+    <!-- FAVICON (Gunakan shortcut icon untuk file .ico) -->
+    <link rel="shortcut icon" href="{{ asset('images/Untitled_design__1_-removebg-preview.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/Untitled_design__1_-removebg-preview.png') }}" type="image/x-icon">
+
     <style>
         /* Hilangkan box background & border bawaan dari partial preferences */
         .pref-wrapper, 
@@ -17,13 +22,11 @@
             box-shadow: none !important;
         }
 
-        /* Opsi dropdown saat dibuka tetap berlatar putih dengan teks gelap */
         .pref-wrapper option {
             color: #0f172a !important;
             background-color: #ffffff !important;
         }
 
-        /* Saat navbar di-scroll down, ubah teks preferensi & link navigasi menjadi gelap */
         .is-scrolled .pref-wrapper, 
         .is-scrolled .pref-wrapper *, 
         .is-scrolled .pref-wrapper select, 
@@ -42,18 +45,19 @@
 </head>
 <body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
 
-    {{-- NAVBAR TRANSPARENT TO WHITE ON SCROLL (SOLID COLOR, NO GRADIENT) --}}
+    {{-- NAVBAR TRANSPARENT TO WHITE ON SCROLL --}}
     <nav id="main-navbar" 
          class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent text-white border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Brand Logo (Sky Solid) -->
+                <!-- Brand Logo (Menggunakan Logo Baru dari public/images) -->
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
-                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 group-hover:scale-105 transition">
-                        <i class="fa-solid fa-hotel text-white text-sm"></i>
-                    </div>
-                    <span id="nav-brand" class="text-xl font-black tracking-tight text-white transition-colors duration-300">{{ config('app.name') }}</span>
+                    <img src="{{ asset('images/Untitled_design__1_-removebg-preview.png') }}" 
+                        alt="SekalaGo" 
+                        class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
                 </a>
+
+                
 
                 <!-- Mobile Hamburger Button -->
                 <button id="mobile-menu-btn" class="lg:hidden text-current p-2" aria-label="Menu" aria-controls="nav-menu" aria-expanded="false">
@@ -94,7 +98,6 @@
                     @else
                         <a href="{{ route('login') }}" class="nav-link-text px-3 py-1.5 hover:opacity-80 transition">{{ __('ui.login') }}</a>
                         <a href="{{ route('register.partner') }}" class="nav-link-text px-3 py-1.5 hover:opacity-80 transition">{{ __('ui.register_partner') }}</a>
-                        <!-- Tombol Register Solid Sky (Bukan Gradasi) -->
                         <a href="{{ route('register') }}" class="px-4 py-2 text-center font-bold text-white bg-sky-500 hover:bg-sky-600 rounded-lg shadow-md shadow-sky-500/20 transition">{{ __('ui.register') }}</a>
                     @endauth
                 </div>
@@ -108,15 +111,13 @@
         @yield('content')
     </main>
 
-    {{-- FOOTER SLATE-900 SOLID (NO GRADIENT) --}}
+    {{-- FOOTER SLATE-900 SOLID --}}
     <footer class="bg-slate-900 text-slate-300 text-xs border-t border-slate-800 mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-col md:flex-row justify-between gap-8">
                 <div class="max-w-sm space-y-3">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center text-white font-bold shadow-md shadow-sky-500/20">
-                            <i class="fa-solid fa-car text-sm"></i>
-                        </div>
+                    <a href="{{ route('home') }}" class="flex items-center gap-2.5">
+                        <img src="{{ asset('images/logo_home.ico') }}" alt="SekalaGo" class="w-8 h-8 object-contain">
                         <span class="text-lg font-black text-white tracking-tight">{{ config('app.name') }}</span>
                     </a>
                     <p class="leading-relaxed text-slate-400">Platform reservasi hotel, villa, dan sewa kendaraan terpercaya Nusantara. Pilihan lengkap, aman, dan harga transparan.</p>
