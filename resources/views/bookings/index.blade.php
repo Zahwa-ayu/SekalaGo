@@ -1,10 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-6">{{ __('ui.my_bookings') }}</h1>
+    {{-- BANNER GELAP: berada di bawah navbar transparan agar menu & logo putih tetap terbaca --}}
+    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 pt-24 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white">{{ __('ui.my_bookings') }}</h1>
+        </div>
+    </div>
 
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
+    {{-- KONTEN: -mt-12 membuat kartu sedikit menimpa banner --}}
+    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-12">
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-lg overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">
@@ -28,7 +34,7 @@
                                 };
                             @endphp
                             <tr class="hover:bg-sky-50/50 transition">
-                                <td class="px-6 py-4 font-mono text-xs font-bold text-sagara-blue whitespace-nowrap">{{ $booking->booking_code }}</td>
+                                <td class="px-6 py-4 font-mono text-xs font-bold text-sky-600 whitespace-nowrap">{{ $booking->booking_code }}</td>
                                 <td class="px-6 py-4">
                                     <div class="font-bold text-slate-900">{{ $booking->hotel_name }}</div>
                                     <div class="text-[11px] text-slate-500">{{ $booking->room_name }}</div>
@@ -43,7 +49,7 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-xs font-bold space-x-3">
-                                    <a href="{{ route('bookings.show', $booking) }}" class="text-sagara-blue hover:underline">{{ __('ui.view') }}</a>
+                                    <a href="{{ route('bookings.show', $booking) }}" class="text-sky-600 hover:underline">{{ __('ui.view') }}</a>
 
                                     @if ($booking->status === 'pending_payment' && ! $booking->isCorporate())
                                         <a href="{{ route('bookings.pay', $booking) }}" class="text-amber-600 hover:underline">{{ __('ui.pay_now') }}</a>

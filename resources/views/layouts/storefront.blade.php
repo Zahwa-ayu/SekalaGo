@@ -9,6 +9,11 @@
     <link rel="icon" href="{{ asset('images/logo_home.png') }}" type="image/x-icon">
 
     <style>
+        /* Logo navbar: putih saat transparan, berwarna saat sudah scroll */
+        .nav-logo-dark { display: none; }
+        .is-scrolled .nav-logo-light { display: none; }
+        .is-scrolled .nav-logo-dark { display: block; }
+
         /* Hilangkan box background & border bawaan dari partial preferences */
         .pref-wrapper, 
         .pref-wrapper *, 
@@ -50,11 +55,17 @@
          class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent text-white border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Brand Logo (Menggunakan Logo Baru dari public/images) -->
+                <!-- Brand Logo: putih sebelum scroll, berwarna setelah scroll -->
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
-                    <img src="{{ asset('images/logo_home.png') }}" 
-                        alt="SekalaGo" 
-                        class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
+                    {{-- Sebelum scroll (navbar transparan) --}}
+                    <img src="{{ asset('images/logo_home_white.png') }}"
+                         alt="SekalaGo"
+                         class="nav-logo-light h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
+
+                    {{-- Setelah scroll (navbar putih) --}}
+                    <img src="{{ asset('images/logo_home.png') }}"
+                         alt="SekalaGo"
+                         class="nav-logo-dark h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
                 </a>
 
                 <!-- Mobile Hamburger Button -->
@@ -114,11 +125,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-col md:flex-row justify-between gap-8">
                 <div class="max-w-sm space-y-3">
-                <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
-                    <img src="{{ asset('images/logo_home_white.png') }}" 
-                        alt="SekalaGo" 
-                        class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
-                </a>
+                    <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
+                        <img src="{{ asset('images/logo_home_white.png') }}" 
+                            alt="SekalaGo" 
+                            class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
+                    </a>
                     <p class="leading-relaxed text-slate-400">Platform reservasi hotel, villa, dan sewa kendaraan terpercaya Nusantara. Pilihan lengkap, aman, dan harga transparan.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-10">
@@ -155,7 +166,6 @@
     <script>
         (function () {
             const nav = document.getElementById('main-navbar');
-            const brand = document.getElementById('nav-brand');
             const btnLogout = document.getElementById('btn-logout');
             const btnMobile = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('nav-menu');
@@ -165,10 +175,8 @@
                     nav.classList.add('is-scrolled');
                     nav.classList.remove('bg-transparent', 'text-white', 'border-white/10');
                     nav.classList.add('bg-white/95', 'backdrop-blur-md', 'text-slate-900', 'shadow-md', 'border-slate-200/80');
-                    brand.classList.remove('text-white');
-                    brand.classList.add('text-slate-900');
 
-                    if(btnLogout) {
+                    if (btnLogout) {
                         btnLogout.classList.remove('border-white/30');
                         btnLogout.classList.add('border-slate-300', 'text-slate-700');
                     }
@@ -179,10 +187,8 @@
                     nav.classList.remove('is-scrolled');
                     nav.classList.add('bg-transparent', 'text-white', 'border-white/10');
                     nav.classList.remove('bg-white/95', 'backdrop-blur-md', 'text-slate-900', 'shadow-md', 'border-slate-200/80');
-                    brand.classList.add('text-white');
-                    brand.classList.remove('text-slate-900');
 
-                    if(btnLogout) {
+                    if (btnLogout) {
                         btnLogout.classList.add('border-white/30');
                         btnLogout.classList.remove('border-slate-300', 'text-slate-700');
                     }
@@ -191,6 +197,9 @@
                     menu.classList.remove('bg-white');
                 }
             });
+
+            // Sinkronkan state navbar saat halaman dimuat/refresh di posisi yang sudah ter-scroll
+            window.dispatchEvent(new Event('scroll'));
 
             btnMobile.addEventListener('click', () => {
                 const hidden = menu.classList.toggle('hidden');
