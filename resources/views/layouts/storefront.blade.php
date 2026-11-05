@@ -5,8 +5,8 @@
     @stack('head')
 
     <!-- FAVICON (Gunakan shortcut icon untuk file .ico) -->
-    <link rel="shortcut icon" href="{{ asset('images/Untitled_design__1_-removebg-preview.png') }}" type="image/x-icon">
-    <link rel="icon" href="{{ asset('images/Untitled_design__1_-removebg-preview.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('images/logo_home.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo_home.png') }}" type="image/x-icon">
 
     <style>
         /* Hilangkan box background & border bawaan dari partial preferences */
@@ -52,7 +52,7 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Brand Logo (Menggunakan Logo Baru dari public/images) -->
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
-                    <img src="{{ asset('images/Untitled_design__1_-removebg-preview.png') }}" 
+                    <img src="{{ asset('images/logo_home.png') }}" 
                         alt="SekalaGo" 
                         class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
                 </a>
