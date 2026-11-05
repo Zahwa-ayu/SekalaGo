@@ -3,51 +3,99 @@
 <head>
     @include('partials.head')
     @stack('head')
-</head>
-<body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sagara-teal selection:text-white">
+    <style>
+        /* Hilangkan box background & border bawaan dari partial preferences */
+        .pref-wrapper, 
+        .pref-wrapper *, 
+        .pref-wrapper form, 
+        .pref-wrapper div, 
+        .pref-wrapper select, 
+        .pref-wrapper button {
+            background-color: transparent !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
+            box-shadow: none !important;
+        }
 
-    {{-- NAVBAR --}}
-    <nav class="sticky top-0 z-50 bg-sagara-dark/95 backdrop-blur-md border-b border-white/10 text-white shadow-lg">
+        /* Opsi dropdown saat dibuka tetap berlatar putih dengan teks gelap */
+        .pref-wrapper option {
+            color: #0f172a !important;
+            background-color: #ffffff !important;
+        }
+
+        /* Saat navbar di-scroll down, ubah teks preferensi & link navigasi menjadi gelap */
+        .is-scrolled .pref-wrapper, 
+        .is-scrolled .pref-wrapper *, 
+        .is-scrolled .pref-wrapper select, 
+        .is-scrolled .pref-wrapper button {
+            color: #0f172a !important;
+            border-color: rgba(15, 23, 42, 0.15) !important;
+        }
+
+        .is-scrolled .nav-link-text {
+            color: #334155 !important;
+        }
+        .is-scrolled .nav-link-text:hover {
+            color: #0284c7 !important;
+        }
+    </style>
+</head>
+<body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
+
+    {{-- NAVBAR TRANSPARENT TO WHITE ON SCROLL (SOLID COLOR, NO GRADIENT) --}}
+    <nav id="main-navbar" 
+         class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent text-white border-b border-white/10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sagara-teal to-sky-400 flex items-center justify-center shadow-lg group-hover:scale-105 transition">
-                        <i class="fa-solid fa-water text-sagara-dark text-xl"></i>
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo (Sky Solid) -->
+                <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
+                    <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-md shadow-sky-500/20 group-hover:scale-105 transition">
+                        <i class="fa-solid fa-hotel text-white text-sm"></i>
                     </div>
-                    <span class="text-2xl font-extrabold tracking-tight">{{ config('app.name') }}</span>
+                    <span id="nav-brand" class="text-xl font-black tracking-tight text-white transition-colors duration-300">{{ config('app.name') }}</span>
                 </a>
 
-                <button id="mobile-menu-btn" class="lg:hidden text-slate-300 hover:text-white p-2" aria-label="Menu">
-                    <i class="fa-solid fa-bars text-2xl"></i>
+                <!-- Mobile Hamburger Button -->
+                <button id="mobile-menu-btn" class="lg:hidden text-current p-2" aria-label="Menu" aria-controls="nav-menu" aria-expanded="false">
+                    <i class="fa-solid fa-bars text-xl"></i>
                 </button>
 
+                <!-- Navigation Items -->
                 <div id="nav-menu"
-                     class="hidden lg:flex flex-col lg:flex-row lg:items-center gap-1 lg:gap-2 text-sm font-medium
-                            absolute lg:static top-20 left-0 right-0 bg-sagara-dark lg:bg-transparent
-                            px-4 pb-6 pt-2 lg:p-0 border-b border-white/10 lg:border-0">
+                     class="hidden lg:flex flex-col lg:flex-row lg:items-center gap-3 text-xs font-semibold
+                            absolute lg:static top-16 left-0 right-0 bg-slate-900 lg:bg-transparent
+                            px-4 pb-4 pt-2 lg:p-0 border-b border-white/10 lg:border-0">
 
-                    @include('partials.preferences')
+                    {{-- PREFERENCES (BAHASA & MATA UANG) --}}
+                    <div class="pref-wrapper flex items-center gap-1.5">
+                        @include('partials.preferences')
+                    </div>
 
                     @auth
                         @if (in_array(auth()->user()->user_type, ['customer', 'corporate']))
-                            <a href="{{ route('bookings.index') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">{{ __('ui.my_bookings') }}</a>
-                        @endif
-
-                        {{-- Admin, mitra, dan corporate masuk ke ruang kerjanya lewat satu tautan --}}
-                        @if (auth()->user()->user_type !== 'customer')
-                            <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">
-                                <i class="fa-solid fa-gauge mr-1"></i> {{ __('ui.dashboard') }}
+                            <a href="{{ route('bookings.index') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-receipt text-sky-400"></i> {{ __('ui.my_bookings') }}
                             </a>
                         @endif
 
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @if (auth()->user()->user_type !== 'customer')
+                            <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-gauge text-sky-400"></i> {{ __('ui.dashboard') }}
+                            </a>
+                        @endif
+
+                        {{-- TOMBOL KELUAR / LOGOUT --}}
+                        <form method="POST" action="{{ route('logout') }}" class="inline-block ml-1">
                             @csrf
-                            <button class="w-full text-left px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition">{{ __('ui.logout') }}</button>
+                            <button id="btn-logout" class="px-3.5 py-1.5 rounded-lg border border-white/30 hover:bg-rose-600 hover:border-rose-600 hover:text-white transition flex items-center gap-1.5 font-bold shadow-sm">
+                                <i class="fa-solid fa-right-from-bracket"></i> {{ __('ui.logout') }}
+                            </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="px-3 py-2 text-slate-200 hover:text-white transition">{{ __('ui.login') }}</a>
-                        <a href="{{ route('register.partner') }}" class="px-3 py-2 text-slate-200 hover:text-sky-300 transition">{{ __('ui.register_partner') }}</a>
-                        <a href="{{ route('register') }}" class="px-5 py-2.5 text-center font-semibold text-sagara-dark bg-gradient-to-r from-sky-300 to-sagara-teal hover:from-sky-200 hover:to-sky-400 rounded-xl shadow-md transition">{{ __('ui.register') }}</a>
+                        <a href="{{ route('login') }}" class="nav-link-text px-3 py-1.5 hover:opacity-80 transition">{{ __('ui.login') }}</a>
+                        <a href="{{ route('register.partner') }}" class="nav-link-text px-3 py-1.5 hover:opacity-80 transition">{{ __('ui.register_partner') }}</a>
+                        <!-- Tombol Register Solid Sky (Bukan Gradasi) -->
+                        <a href="{{ route('register') }}" class="px-4 py-2 text-center font-bold text-white bg-sky-500 hover:bg-sky-600 rounded-lg shadow-md shadow-sky-500/20 transition">{{ __('ui.register') }}</a>
                     @endauth
                 </div>
             </div>
@@ -56,53 +104,99 @@
 
     @include('partials.flash')
 
-    <main>
+    <main class="min-h-screen">
         @yield('content')
     </main>
 
-    {{-- FOOTER --}}
-    <footer class="bg-sagara-dark text-slate-400 text-xs border-t border-slate-800 mt-24">
+    {{-- FOOTER SLATE-900 SOLID (NO GRADIENT) --}}
+    <footer class="bg-slate-900 text-slate-300 text-xs border-t border-slate-800 mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-col md:flex-row justify-between gap-8">
                 <div class="max-w-sm space-y-3">
                     <a href="{{ route('home') }}" class="flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-lg bg-sagara-teal flex items-center justify-center text-sagara-dark">
-                            <i class="fa-solid fa-water"></i>
+                        <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center text-white font-bold shadow-md shadow-sky-500/20">
+                            <i class="fa-solid fa-car text-sm"></i>
                         </div>
-                        <span class="text-xl font-bold text-white">{{ config('app.name') }}</span>
+                        <span class="text-lg font-black text-white tracking-tight">{{ config('app.name') }}</span>
                     </a>
-                    <p class="leading-relaxed">Platform reservasi penginapan & wisata bahari terpadu Nusantara. Transparan, aman, dan berstandar internasional.</p>
-                    <div class="flex items-center gap-3 text-slate-300 text-base pt-2">
-                        <a href="#" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-sagara-teal hover:text-sagara-dark flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-sagara-teal hover:text-sagara-dark flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="#" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-sagara-teal hover:text-sagara-dark flex items-center justify-center transition"><i class="fa-brands fa-youtube"></i></a>
-                    </div>
+                    <p class="leading-relaxed text-slate-400">Platform reservasi hotel, villa, dan sewa kendaraan terpercaya Nusantara. Pilihan lengkap, aman, dan harga transparan.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-10">
                     <div>
-                        <h4 class="text-white font-bold text-sm mb-3">Destinasi</h4>
-                        <ul class="space-y-2">
-                            <li>Raja Ampat</li><li>Labuan Bajo</li><li>Nusa Penida</li><li>Karimunjawa</li>
+                        <h4 class="text-white font-bold text-xs mb-3">Layanan Kami</h4>
+                        <ul class="space-y-2 text-slate-400">
+                            <li class="hover:text-sky-400 transition cursor-pointer">Reservasi Hotel & Resort</li>
+                            <li class="hover:text-sky-400 transition cursor-pointer">Sewa Mobil Lepas Kunci</li>
+                            <li class="hover:text-sky-400 transition cursor-pointer">Rental Mobil + Sopir</li>
+                            <li class="hover:text-sky-400 transition cursor-pointer">Paket Combo Bundling</li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-white font-bold text-sm mb-3">Kemitraan</h4>
+                        <h4 class="text-white font-bold text-xs mb-3">Kemitraan</h4>
                         <ul class="space-y-2">
-                            <li><a href="{{ route('register.partner') }}" class="hover:text-sky-300 transition">{{ __('ui.register_partner') }}</a></li>
+                            <li><a href="{{ route('register.partner') }}" class="hover:text-sky-400 transition">{{ __('ui.register_partner') }}</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div class="mt-10 pt-6 border-t border-slate-800 text-slate-500">
-                © {{ date('Y') }} {{ config('app.name') }}. Hak Cipta Dilindungi Undang-Undang.
+            <div class="mt-10 pt-5 border-t border-slate-800 text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+                <div>
+                    © {{ date('Y') }} {{ config('app.name') }}. Hak Cipta Dilindungi Undang-Undang.
+                </div>
+                <div class="flex gap-4 text-xs">
+                    <span class="hover:text-slate-300 cursor-pointer">Syarat & Ketentuan</span>
+                    <span class="hover:text-slate-300 cursor-pointer">Kebijakan Privasi</span>
+                </div>
             </div>
         </div>
     </footer>
 
+    {{-- SCRIPT CONTROL SCROLL NAVBAR --}}
     <script>
-        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-            document.getElementById('nav-menu').classList.toggle('hidden');
-        });
+        (function () {
+            const nav = document.getElementById('main-navbar');
+            const brand = document.getElementById('nav-brand');
+            const btnLogout = document.getElementById('btn-logout');
+            const btnMobile = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('nav-menu');
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    nav.classList.add('is-scrolled');
+                    nav.classList.remove('bg-transparent', 'text-white', 'border-white/10');
+                    nav.classList.add('bg-white/95', 'backdrop-blur-md', 'text-slate-900', 'shadow-md', 'border-slate-200/80');
+                    brand.classList.remove('text-white');
+                    brand.classList.add('text-slate-900');
+
+                    if(btnLogout) {
+                        btnLogout.classList.remove('border-white/30');
+                        btnLogout.classList.add('border-slate-300', 'text-slate-700');
+                    }
+
+                    menu.classList.remove('bg-slate-900');
+                    menu.classList.add('bg-white');
+                } else {
+                    nav.classList.remove('is-scrolled');
+                    nav.classList.add('bg-transparent', 'text-white', 'border-white/10');
+                    nav.classList.remove('bg-white/95', 'backdrop-blur-md', 'text-slate-900', 'shadow-md', 'border-slate-200/80');
+                    brand.classList.add('text-white');
+                    brand.classList.remove('text-slate-900');
+
+                    if(btnLogout) {
+                        btnLogout.classList.add('border-white/30');
+                        btnLogout.classList.remove('border-slate-300', 'text-slate-700');
+                    }
+
+                    menu.classList.add('bg-slate-900');
+                    menu.classList.remove('bg-white');
+                }
+            });
+
+            btnMobile.addEventListener('click', () => {
+                const hidden = menu.classList.toggle('hidden');
+                btnMobile.setAttribute('aria-expanded', String(!hidden));
+            });
+        })();
     </script>
     @stack('scripts')
 </body>
