@@ -57,8 +57,6 @@
                         class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
                 </a>
 
-                
-
                 <!-- Mobile Hamburger Button -->
                 <button id="mobile-menu-btn" class="lg:hidden text-current p-2" aria-label="Menu" aria-controls="nav-menu" aria-expanded="false">
                     <i class="fa-solid fa-bars text-xl"></i>
@@ -116,10 +114,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-col md:flex-row justify-between gap-8">
                 <div class="max-w-sm space-y-3">
-                    <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                        <img src="{{ asset('images/logo_home.ico') }}" alt="SekalaGo" class="w-8 h-8 object-contain">
-                        <span class="text-lg font-black text-white tracking-tight">{{ config('app.name') }}</span>
-                    </a>
+                <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
+                    <img src="{{ asset('images/logo_home_white.png') }}" 
+                        alt="SekalaGo" 
+                        class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
+                </a>
                     <p class="leading-relaxed text-slate-400">Platform reservasi hotel, villa, dan sewa kendaraan terpercaya Nusantara. Pilihan lengkap, aman, dan harga transparan.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-10">
