@@ -4,6 +4,10 @@
     @include('partials.head', ['pageTitle' => config('app.name') . ' - ' . __('ui.dashboard')])
     @stack('head')
 
+    <!-- FAVICON LOGO SEKALA GO -->
+    <link rel="shortcut icon" href="{{ asset('images/logo_home.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/logo_home.png') }}" type="image/x-icon">
+
     {{-- Pulihkan status sidebar (ciut/lebar) sebelum halaman tergambar, agar tidak berkedip --}}
     <script>
         try {
@@ -14,6 +18,10 @@
     </script>
 
     <style>
+        /* Default: Icon disembunyikan, Logo Full ditampilkan */
+        .logo-icon { display: none; }
+        .logo-full { display: block; }
+
         /* Mode ciut hanya berlaku di desktop (lg ke atas). Di layar kecil sidebar berupa drawer. */
         @media (min-width: 1024px) {
             #sidebar { transition: width .2s ease; }
@@ -22,10 +30,43 @@
             html.sb-collapsed #sidebar .sb-hide-collapsed { display: none; }
             html.sb-collapsed #sidebar .sb-item { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
             html.sb-collapsed #sidebar .sb-brand { justify-content: center; padding-left: 0; padding-right: 0; }
+            
+            /* SAAT SIDEBAR CIUT: Sembunyikan Logo Full, Tampilkan Icon */
+            html.sb-collapsed .logo-full { display: none; }
+            html.sb-collapsed .logo-icon { display: block; }
+        }
+
+        /* ----------------------------------------------------
+           PERBAIKAN: Styling Dropdown Preferensi di Sidebar
+           ---------------------------------------------------- */
+        .pref-wrapper form {
+            display: flex;
+            flex-direction: column;
+        }
+        .pref-wrapper select {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #cbd5e1 !important;
+            border-radius: 0.5rem !important;
+            padding: 0.5rem 0.75rem !important;
+            width: 100%;
+            box-shadow: none !important;
+            margin-bottom: 0.75rem !important; /* Paksa jarak bawah (12px) agar tidak nempel */
+        }
+        .pref-wrapper select:last-of-type {
+            margin-bottom: 0 !important; /* Hapus jarak untuk kotak yang paling bawah */
+        }
+        .pref-wrapper select:focus {
+            border-color: #0ea5e9 !important;
+            outline: none;
+        }
+        .pref-wrapper option {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
         }
     </style>
 </head>
-<body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sagara-teal selection:text-white">
+<body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
 
 @php
     $authUser  = auth()->user();
@@ -37,7 +78,7 @@
         'corporate' => $authUser->companyUser?->company?->company_name,
         default     => null,
     };
-    // Warna border dipilih per item (aktif = aksen teal, lainnya transparan)
+    // Warna border aksen menggunakan sky-500 untuk SekalaGo
     $linkBase = 'sb-item flex items-center gap-3 px-3 py-2.5 rounded-xl border-l-2 transition';
 @endphp
 
@@ -46,22 +87,30 @@
     {{-- Latar gelap saat sidebar (drawer) terbuka di layar kecil --}}
     <div id="sidebar-overlay" class="fixed inset-0 z-30 bg-black/50 hidden lg:hidden"></div>
 
-    {{-- SIDEBAR --}}
+    {{-- SIDEBAR (Slate 900 Solid) --}}
     <aside id="sidebar"
            class="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-slate-900 text-slate-300 border-r border-white/5
                   transform -translate-x-full transition-transform duration-200
                   lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:overflow-hidden">
 
-        <div class="flex items-center justify-between h-20 border-b border-white/5 shrink-0 pr-3">
-            <a href="{{ route('home') }}" class="sb-brand flex items-center gap-2.5 px-5 group min-w-0">
-                <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-tr from-sagara-teal to-sky-400 flex items-center justify-center shadow-lg group-hover:scale-105 transition">
-                    <i class="fa-solid fa-water text-slate-900 text-xl"></i>
-                </div>
-                <span class="sb-label text-xl font-extrabold tracking-tight text-white truncate">{{ config('app.name') }}</span>
+        <div class="flex items-center justify-center h-20 border-b border-white/5 shrink-0 relative">
+            <!-- Brand Logo SekalaGo untuk Sidebar -->
+            <a href="{{ route('home') }}" class="sb-brand flex items-center justify-center group w-full px-5 lg:px-0">
+                
+                <!-- 1. Ikon Saja (Muncul saat sidebar menciut) -->
+                <img src="{{ asset('images/logo_sekalago.ico') }}" 
+                     alt="Icon" 
+                     class="logo-icon w-9 h-9 object-contain group-hover:scale-105 transition mx-auto">
+
+                <!-- 2. Logo Lengkap (Muncul saat sidebar lebar/mobile) -->
+                <img src="{{ asset('images/logo_home_white.png') }}" 
+                     alt="SekalaGo" 
+                     class="logo-full h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition mx-auto">
+                     
             </a>
 
-            {{-- Tombol tutup, hanya tampil di layar kecil --}}
-            <button id="sidebar-close" type="button" class="lg:hidden p-2 text-slate-400 hover:text-white" aria-label="{{ __('ui.close_menu') }}">
+            {{-- Tombol tutup, hanya tampil di layar kecil (posisi absolute agar tidak menggeser logo) --}}
+            <button id="sidebar-close" type="button" class="lg:hidden absolute right-3 p-2 text-slate-400 hover:text-white" aria-label="{{ __('ui.close_menu') }}">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
@@ -72,8 +121,8 @@
                     @php $active = request()->routeIs(...$item['active']); @endphp
                     <a href="{{ route($item['route']) }}"
                        title="{{ __($item['label']) }}"
-                       class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sagara-teal' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
-                        <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0 {{ $active ? 'text-sagara-teal' : '' }}"></i>
+                       class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
+                        <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
                         <span class="sb-label truncate">{{ __($item['label']) }}</span>
                     </a>
                 @endforeach
@@ -85,7 +134,7 @@
                         @php $active = request()->routeIs(...$item['active']); @endphp
                         <a href="{{ route($item['route']) }}"
                            title="{{ __($item['label']) }}"
-                           class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sagara-teal' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
+                           class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
                             <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0"></i>
                             <span class="sb-label truncate">{{ __($item['label']) }}</span>
                         </a>
@@ -95,7 +144,9 @@
         </nav>
 
         <div class="px-3 py-4 border-t border-white/5 space-y-3 shrink-0 text-xs">
-            <div class="sb-hide-collapsed px-1">
+            
+            <!-- Ditambahkan mb-4 agar berjarak dengan tombol di bawahnya -->
+            <div class="sb-hide-collapsed px-1 mb-4 pref-wrapper">
                 @include('partials.preferences')
             </div>
 
@@ -108,7 +159,7 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" title="{{ __('ui.logout') }}"
-                        class="w-full {{ $linkBase }} text-left border-transparent ring-1 ring-inset ring-white/15 hover:bg-white/10 hover:text-white">
+                        class="w-full {{ $linkBase }} text-left border-transparent ring-1 ring-inset ring-white/15 hover:bg-white/10 hover:text-white hover:border-rose-500 hover:text-rose-400 transition-colors">
                     <i class="fa-solid fa-right-from-bracket w-5 text-center shrink-0"></i>
                     <span class="sb-label truncate">{{ __('ui.logout') }}</span>
                 </button>
@@ -123,7 +174,7 @@
             <div class="flex items-center gap-3 min-w-0">
                 {{-- Tombol "=": drawer di layar kecil, ciut/lebar di desktop --}}
                 <button id="sidebar-toggle" type="button"
-                        class="p-2 -ml-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition"
+                        class="p-2 -ml-2 rounded-lg text-slate-600 hover:text-sky-600 hover:bg-sky-50 transition"
                         aria-label="{{ __('ui.open_menu') }}" aria-controls="sidebar" aria-expanded="false">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
@@ -134,7 +185,8 @@
 
             <div class="flex items-center gap-3 text-sm">
                 <span class="hidden sm:block font-semibold text-slate-600">{{ $authUser->email }}</span>
-                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-sagara-teal to-sky-400 text-slate-900 font-black flex items-center justify-center">
+                <!-- Avatar Profil: Solid Sky Blue -->
+                <div class="w-9 h-9 rounded-full bg-sky-500 text-white font-black flex items-center justify-center shadow-md shadow-sky-500/20">
                     {{ strtoupper(substr($authUser->email, 0, 1)) }}
                 </div>
             </div>
