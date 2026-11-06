@@ -29,6 +29,7 @@ use App\Http\Controllers\Partner\PhotoController;
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Partner\BlackoutController;
 use App\Http\Controllers\Partner\VehicleController;
+use App\Http\Controllers\CarBookingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarSearchController;
 
@@ -69,6 +70,9 @@ Route::middleware(['auth', 'role:customer,corporate'])->group(function () {
     Route::post('/bookings/{booking}/pay', [BookingController::class, 'processPayment'])->name('bookings.pay.process');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/{booking}/ticket', [BookingController::class, 'ticket'])->name('bookings.ticket');
+
+    Route::get('/car-bookings/create', [CarBookingController::class, 'create'])->name('car-bookings.create');
+    Route::post('/car-bookings', [CarBookingController::class, 'store'])->name('car-bookings.store');
 });
 
 // Admin internal

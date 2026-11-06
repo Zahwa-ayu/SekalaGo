@@ -18,7 +18,8 @@ class Booking extends Model
         'status', 'payment_status', 'payment_method', 'payment_reference', 'expires_at', 'paid_at',
         'free_cancel_days', 'cancelled_at', 'cancelled_by', 'cancellation_reason',
         'refund_amount', 'refunded_at', 'refund_reference',
-        'decided_by', 'decided_at', 'decision_note', 'approval_reason',
+        'decided_by', 'decided_at', 'decision_note', 'approval_reason', 'vehicle_id', 'with_driver', 
+        'driver_fee_per_day', 'pickup_location'
     ];
 
     protected function casts(): array
@@ -34,6 +35,7 @@ class Booking extends Model
             'exchange_rate'       => 'float',
             'total_price_display' => 'float',
             'free_cancel_days'    => 'integer',
+            'with_driver' => 'boolean',
         ];
     }
 
@@ -88,4 +90,19 @@ class Booking extends Model
     protected function logEvents(): array { return ['created', 'updated']; }
 
     public function logLabel(): string { return $this->booking_code; }
+
+    public function vehicle() { return $this->belongsTo(Vehicle::class); }
+
+    public function isCar(): bool
+    {
+        return $this->product_type === 'car';
+    }
+
+    /** "3 malam" untuk hotel, "3 hari" untuk rental mobil. */
+    public function durationLabel(): string
+    {
+        return $this->isCar()
+            ? __('ui.for_days', ['count' => $this->nights])
+            : __('ui.for_nights', ['count' => $this->nights]);
+    }
 }

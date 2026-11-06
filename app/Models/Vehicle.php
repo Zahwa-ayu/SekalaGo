@@ -102,4 +102,6 @@ class Vehicle extends Model
                 ->where('start_date', '<=', $lastDay)
                 ->where('end_date', '>=', $pickup->toDateString()));
     }
+
+    public function bookings() { return $this->hasMany(Booking::class); }
 }

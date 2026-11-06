@@ -7,6 +7,7 @@ use App\Models\Vehicle;
 use App\Services\TranslationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use App\Services\VehicleAvailability;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -99,6 +100,12 @@ class VehicleController extends Controller
     public function destroy(Request $request, Vehicle $vehicle)
     {
         $this->ownVehicle($request, $vehicle);
+
+        // Armada dengan pesanan yang masih berjalan tidak bisa dihapus
+        if (app(VehicleAvailability::class)->hasActiveBookings($vehicle)) {
+            return back()->with('error', __('ui.vehicle_has_bookings'));
+        }
+
         $vehicle->delete();   // foto ikut dihapus lewat event model
 
         return redirect()->route('partner.vehicles.index')->with('success', __('ui.deleted'));

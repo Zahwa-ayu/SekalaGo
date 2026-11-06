@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\Payment\PaymentGateway;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\Vehicle;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -22,6 +23,7 @@ class BookingService
         private CurrencyService $currencies,
         private PaymentGateway $gateway,
         private DepositService $deposits,
+        private VehicleAvailability $availability,
     ) {
     }
 
@@ -347,4 +349,79 @@ class BookingService
             ->where('booked', '>', 0)
             ->decrement('booked');
     }
+
+    /**
+ * Pesanan rental mobil. Tanpa $member: alur pelanggan (bayar lewat gateway).
+ * Dengan $member: alur corporate (limit jabatan, anggaran bulanan, persetujuan Finance, saldo kantor).
+ */
+public function createForVehicle(
+    User $user,
+    Vehicle $vehicle,
+    Carbon $pickup,
+    Carbon $return,
+    int $passengers,
+    string $renterName,
+    bool $withDriver,
+    ?CompanyUser $member = null,
+): Booking {
+    $vehicle->loadMissing('partner', 'translations');
+
+    $days = (int) $pickup->diffInDays($return);
+
+    return DB::transaction(function () use ($user, $vehicle, $pickup, $return, $passengers, $renterName, $withDriver, $member, $days) {
+        // Kunci baris armada: pemesanan untuk armada yang sama diproses bergantian
+        $locked = Vehicle::lockForUpdate()->findOrFail($vehicle->id);
+
+        $open = $locked->status === 'approved'
+            && $days >= $locked->min_days
+            && $passengers <= $locked->seats
+            && Vehicle::whereKey($locked->id)->availableFor($pickup, $return)->exists()
+            && $this->availability->freeUnits($locked, $pickup, $return) >= 1;
+
+        if (! $open) {
+            throw ValidationException::withMessages(['vehicle' => __('ui.car_unavailable_now')]);
+        }
+
+        $partner  = $vehicle->partner;
+        $currency = $this->currencies->current();
+        $total    = $locked->price_per_day * $days;      // harga dasar sewa; biaya supir dibayar langsung ke vendor
+        $fee      = (int) round($total * $partner->commissionRate());
+
+        $attributes = [
+            'booking_code'        => 'SG-' . strtoupper(Str::random(8)),
+            'user_id'             => $user->id,
+            'partner_id'          => $partner->id,
+            'product_type'        => 'car',
+            'vehicle_id'          => $locked->id,
+            'hotel_name'          => $vehicle->name,
+            'room_name'           => $withDriver ? __('ui.with_driver_label') : __('ui.self_drive_label'),
+            'check_in'            => $pickup->toDateString(),
+            'check_out'           => $return->toDateString(),
+            'nights'              => $days,
+            'guests'              => $passengers,
+            'guest_name'          => $renterName,
+            'price_per_night'     => $locked->price_per_day,
+            'total_price'         => $total,
+            'platform_fee'        => $fee,
+            'vendor_revenue'      => $total - $fee,
+            'currency_code'       => $currency->code,
+            'exchange_rate'       => $currency->rate_to_base,
+            'total_price_display' => round($total / $currency->rate_to_base, $currency->decimal_places),
+            'free_cancel_days'    => $partner->freeCancelDays(),
+            'with_driver'         => $withDriver,
+            'driver_fee_per_day'  => $withDriver ? $locked->driver_fee_per_day : null,
+            'pickup_location'     => collect([$locked->address, $locked->area, $locked->city])->filter()->join(', '),
+        ];
+
+        if ($member) {
+            return $this->createCorporateBooking($user, $member, $attributes, $total);
+        }
+
+        return Booking::create($attributes + [
+            'status'         => 'pending_payment',
+            'payment_status' => 'unpaid',
+            'expires_at'     => now()->addMinutes((int) config('sekalago.booking_hold_minutes')),
+        ]);
+    });
+}
 }

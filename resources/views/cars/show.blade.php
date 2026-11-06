@@ -130,21 +130,38 @@
                             <i class="fa-solid {{ $available ? 'fa-circle-check' : 'fa-circle-xmark' }}"></i>
                             {{ $available ? __('ui.car_available') : __('ui.car_unavailable') }}
                         </div>
+
+                        @if ($available && $freeUnits !== null && $freeUnits <= 2)
+                            <div class="text-xs font-bold text-amber-600">{{ __('ui.units_left', ['count' => $freeUnits]) }}</div>
+                        @endif
                     @else
                         <p class="text-sm text-slate-500">{{ __('ui.pick_car_dates_hint') }}</p>
                     @endif
 
-                    {{-- Ubah tanggal --}}
+                    {{-- Ubah tanggal, penumpang, dan opsi supir --}}
                     <form method="GET" action="{{ route('cars.show', $vehicle) }}" class="grid grid-cols-2 gap-2">
-                        @if ($params && filled($params['driver'] ?? null))
-                            <input type="hidden" name="driver" value="{{ $params['driver'] }}">
-                        @endif
                         <input type="date" name="pickup_date" required min="{{ today()->toDateString() }}"
                                value="{{ $params['pickup_date'] ?? today()->addDay()->toDateString() }}"
                                class="rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue">
                         <input type="date" name="return_date" required min="{{ today()->addDay()->toDateString() }}"
                                value="{{ $params['return_date'] ?? today()->addDays(3)->toDateString() }}"
                                class="rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+
+                        <input type="number" name="passengers" min="1" max="{{ $vehicle->seats }}" value="{{ $passengers }}"
+                               title="{{ __('ui.passengers_count') }}" placeholder="{{ __('ui.passengers_count') }}"
+                               class="rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+
+                        @if ($vehicle->offersDriver() && $vehicle->offersSelfDrive())
+                            <select name="driver" class="rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                                <option value="with_driver" @selected(($driver ?? 'with_driver') === 'with_driver')>{{ __('ui.driver_option_with') }}</option>
+                                <option value="self_drive" @selected(($driver ?? '') === 'self_drive')>{{ __('ui.driver_option_self') }}</option>
+                            </select>
+                        @else
+                            <div class="rounded-xl bg-slate-50 border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 flex items-center">
+                                {{ __('ui.driver_mode_' . $vehicle->driver_mode) }}
+                            </div>
+                        @endif
+
                         <button class="col-span-2 px-4 py-2 rounded-xl bg-sky-100 text-sagara-blue text-xs font-bold hover:bg-sky-200 transition">
                             {{ __('ui.check_availability') }}
                         </button>
@@ -156,11 +173,23 @@
                         </ul>
                     @endif
 
-                    {{-- Pemesanan dibuka di R3 --}}
-                    <button disabled title="{{ __('ui.book_soon') }}"
-                            class="w-full px-6 py-3 rounded-xl bg-slate-200 text-slate-400 text-sm font-bold cursor-not-allowed">
-                        {{ __('ui.book') }}
-                    </button>
+                    {{-- Tombol sewa --}}
+                    @if ($params && $available)
+                        <a href="{{ route('car-bookings.create', [
+                            'vehicle'     => $vehicle->id,
+                            'pickup_date' => $params['pickup_date'],
+                            'return_date' => $params['return_date'],
+                            'passengers'  => $passengers,
+                            'with_driver' => $driver === 'with_driver' ? 1 : 0,
+                        ]) }}"
+                           class="block w-full text-center px-6 py-3 rounded-xl bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue text-white text-sm font-bold shadow-lg transition">
+                            {{ __('ui.book_car') }}
+                        </a>
+                    @else
+                        <button disabled class="w-full px-6 py-3 rounded-xl bg-slate-200 text-slate-400 text-sm font-bold cursor-not-allowed">
+                            {{ __('ui.book_car') }}
+                        </button>
+                    @endif
                 </div>
 
                 <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6">

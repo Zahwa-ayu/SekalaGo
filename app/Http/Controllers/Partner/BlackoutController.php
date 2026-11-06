@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Partner;
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
 use App\Models\VehicleBlackout;
+use App\Services\VehicleAvailability;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Validation\ValidationException;
 
 class BlackoutController extends Controller
 {
@@ -23,7 +26,7 @@ class BlackoutController extends Controller
         ]);
     }
 
-    public function store(Request $request, Vehicle $vehicle)
+    public function store(Request $request, Vehicle $vehicle, VehicleAvailability $availability)
     {
         $this->ownVehicle($request, $vehicle);
 
@@ -32,6 +35,17 @@ class BlackoutController extends Controller
             'end_date'   => ['required', 'date', 'after_or_equal:start_date'],
             'note'       => ['nullable', 'string', 'max:255'],
         ]);
+
+        // Tanggal akhir ikut diblokir, jadi rentang yang diperiksa berakhir sehari sesudahnya
+        $conflict = $availability->overlapping(
+            [$vehicle->id],
+            Carbon::parse($data['start_date']),
+            Carbon::parse($data['end_date'])->addDay()
+        )->isNotEmpty();
+
+        if ($conflict) {
+            throw ValidationException::withMessages(['start_date' => __('ui.blackout_conflict')]);
+        }
 
         $vehicle->blackouts()->create($data);
 

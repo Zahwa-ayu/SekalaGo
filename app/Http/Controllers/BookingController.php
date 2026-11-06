@@ -166,7 +166,7 @@ class BookingController extends Controller
 
         $booking->loadMissing('hotel');
 
-        return Pdf::loadView('bookings.ticket', [
+        return Pdf::loadView($booking->isCar() ? 'bookings.ticket-car' : 'bookings.ticket', [
             'booking'  => $booking,
             'platform' => config('app.name'),
         ])->setPaper('a4')->download('E-Ticket-' . $booking->booking_code . '.pdf');

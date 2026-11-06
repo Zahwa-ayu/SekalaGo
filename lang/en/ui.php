@@ -675,4 +675,22 @@ return [
     'car_unavailable' => 'Not available on these dates',
     'pick_car_dates_hint' => 'Choose pick-up and return dates to see the total and availability.',
     'check_availability' => 'Check availability',
+
+    // car booking
+    'book_car' => 'Rent now',
+    'confirm_car_booking' => 'Confirm Car Rental',
+    'renter_name' => 'Renter name',
+    'passengers' => 'passengers',
+    'passengers_count' => 'Number of passengers',
+    'rental_period' => 'Rental period',
+    'with_driver_label' => 'With driver',
+    'self_drive_label' => 'Self-drive',
+    'units_left' => ':count unit(s) left',
+    'bring_id_notice' => 'Bring your ID at pick-up. For self-drive, also bring a valid driving licence.',
+    'driver_fee_estimate_notice' => 'Estimated driver fee :amount per day, paid directly to the vendor, not included in this total.',
+    'driver_option_unavailable' => 'The selected driver option is not available for this vehicle.',
+    'too_many_passengers' => 'A maximum of :max passengers is allowed for this vehicle.',
+    'car_unavailable_now' => 'Sorry, this car is no longer available on those dates.',
+    'blackout_conflict' => 'There is already an active booking in this date range, so it cannot be blocked.',
+    'vehicle_has_bookings' => 'This vehicle cannot be deleted because it still has ongoing bookings.',
 ];

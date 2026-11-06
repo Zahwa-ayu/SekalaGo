@@ -677,4 +677,22 @@ return [
     'car_unavailable' => 'Tidak tersedia pada tanggal ini',
     'pick_car_dates_hint' => 'Pilih tanggal ambil dan kembali untuk melihat total dan ketersediaan.',
     'check_availability' => 'Cek ketersediaan',
+
+    // booking cars
+        'book_car' => 'Sewa sekarang',
+    'confirm_car_booking' => 'Konfirmasi Sewa Mobil',
+    'renter_name' => 'Nama penyewa',
+    'passengers' => 'penumpang',
+    'passengers_count' => 'Jumlah penumpang',
+    'rental_period' => 'Periode sewa',
+    'with_driver_label' => 'Dengan supir',
+    'self_drive_label' => 'Lepas kunci',
+    'units_left' => 'Tersisa :count unit',
+    'bring_id_notice' => 'Bawa identitas diri saat pengambilan. Untuk lepas kunci, bawa juga SIM yang masih berlaku.',
+    'driver_fee_estimate_notice' => 'Estimasi biaya supir :amount per hari, dibayar langsung ke vendor, di luar total ini.',
+    'driver_option_unavailable' => 'Opsi supir yang dipilih tidak tersedia untuk armada ini.',
+    'too_many_passengers' => 'Maksimal :max penumpang untuk armada ini.',
+    'car_unavailable_now' => 'Maaf, mobil ini sudah tidak tersedia pada tanggal tersebut.',
+    'blackout_conflict' => 'Sudah ada pesanan aktif pada rentang tanggal ini, jadi tidak bisa diblokir.',
+    'vehicle_has_bookings' => 'Armada tidak bisa dihapus karena masih punya pesanan yang berjalan.',
 ];
