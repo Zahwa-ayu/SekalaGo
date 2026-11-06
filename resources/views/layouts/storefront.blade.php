@@ -84,6 +84,10 @@
                         @include('partials.preferences')
                     </div>
 
+                    <a href="{{ route('cars.home') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">
+                        <i class="fa-solid fa-car mr-1"></i> {{ __('ui.tab_cars') }}
+                    </a>
+
                     @auth
                         @if (in_array(auth()->user()->user_type, ['customer', 'corporate']))
                             <a href="{{ route('bookings.index') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">

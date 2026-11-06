@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\LogsActivity;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Vehicle extends Model
@@ -83,5 +85,21 @@ class Vehicle extends Model
     {
         // Berkas foto ikut dihapus (relasi polimorfik tidak terhapus oleh basis data)
         static::deleting(fn (Vehicle $vehicle) => $vehicle->photos->each->delete());
+    }
+
+        /**
+     * Armada yang bisa disewa pada rentang tanggal: sudah disetujui dan tidak terkena tanggal blokir.
+     * Hari yang ditempati: tanggal ambil sampai sehari sebelum tanggal kembali.
+     */
+    public function scopeAvailableFor(Builder $query, Carbon $pickup, Carbon $return): Builder
+    {
+        $lastDay = $return->copy()->subDay()->toDateString();
+
+        return $query
+            ->where('status', 'approved')
+            ->where('units', '>', 0)
+            ->whereDoesntHave('blackouts', fn ($q) => $q
+                ->where('start_date', '<=', $lastDay)
+                ->where('end_date', '>=', $pickup->toDateString()));
     }
 }

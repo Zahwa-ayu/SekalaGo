@@ -6,6 +6,8 @@
     $inputClass = 'w-full bg-transparent font-bold text-slate-800 text-sm focus:outline-none cursor-pointer';
 @endphp
 
+@include('partials.search-tabs')
+
 @if ($errors->any())
     <ul class="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs text-left list-disc list-inside">
         @foreach ($errors->all() as $error)
