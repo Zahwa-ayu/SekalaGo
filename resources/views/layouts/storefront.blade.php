@@ -1,3 +1,9 @@
+@php
+    // Halaman yang latarnya terang (tanpa hero) mendapat navbar putih sejak awal.
+    // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
+    $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
+        || request()->routeIs('cars.show');
+@endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" class="scroll-smooth">
 <head>
@@ -50,9 +56,12 @@
 </head>
 <body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
 
-    {{-- NAVBAR TRANSPARENT TO WHITE ON SCROLL --}}
+    {{-- NAVBAR: transparan lalu putih saat scroll. Halaman dengan @section('solid_nav') langsung putih. --}}
     <nav id="main-navbar" 
-         class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent text-white border-b border-white/10">
+         class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b
+                {{ $solidNav
+                    ? 'is-scrolled bg-white/95 backdrop-blur-md text-slate-900 shadow-md border-slate-200/80'
+                    : 'bg-transparent text-white border-white/10' }}">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Brand Logo: putih sebelum scroll, berwarna setelah scroll -->
@@ -76,7 +85,7 @@
                 <!-- Navigation Items -->
                 <div id="nav-menu"
                      class="hidden lg:flex flex-col lg:flex-row lg:items-center gap-3 text-xs font-semibold
-                            absolute lg:static top-16 left-0 right-0 bg-slate-900 lg:bg-transparent
+                            absolute lg:static top-16 left-0 right-0 {{ $solidNav ? 'bg-white' : 'bg-slate-900' }} lg:bg-transparent
                             px-4 pb-4 pt-2 lg:p-0 border-b border-white/10 lg:border-0">
 
                     {{-- PREFERENCES (BAHASA & MATA UANG) --}}
@@ -84,7 +93,7 @@
                         @include('partials.preferences')
                     </div>
 
-                    <a href="{{ route('cars.home') }}" class="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">
+                    <a href="{{ route('cars.home') }}" class="nav-link-text px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">
                         <i class="fa-solid fa-car mr-1"></i> {{ __('ui.tab_cars') }}
                     </a>
 
@@ -104,7 +113,7 @@
                         {{-- TOMBOL KELUAR / LOGOUT --}}
                         <form method="POST" action="{{ route('logout') }}" class="inline-block ml-1">
                             @csrf
-                            <button id="btn-logout" class="px-3.5 py-1.5 rounded-lg border border-white/30 hover:bg-rose-600 hover:border-rose-600 hover:text-white transition flex items-center gap-1.5 font-bold shadow-sm">
+                            <button id="btn-logout" class="px-3.5 py-1.5 rounded-lg border {{ $solidNav ? 'border-slate-300 text-slate-700' : 'border-white/30' }} hover:bg-rose-600 hover:border-rose-600 hover:text-white transition flex items-center gap-1.5 font-bold shadow-sm">
                                 <i class="fa-solid fa-right-from-bracket"></i> {{ __('ui.logout') }}
                             </button>
                         </form>
@@ -120,7 +129,8 @@
 
     @include('partials.flash')
 
-    <main class="min-h-screen">
+    {{-- Navbar bersifat fixed (h-16). Di halaman solid_nav tidak ada hero yang "mengisi" ruang itu, jadi beri jarak atas. --}}
+    <main class="min-h-screen {{ $solidNav ? 'pt-16' : '' }}">
         @yield('content')
     </main>
 
@@ -174,8 +184,13 @@
             const btnMobile = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('nav-menu');
 
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 20) {
+            // true = halaman meminta navbar putih permanen (tidak transparan)
+            const alwaysSolid = @json($solidNav);
+
+            function updateNavbar() {
+                const scrolled = alwaysSolid || window.scrollY > 20;
+
+                if (scrolled) {
                     nav.classList.add('is-scrolled');
                     nav.classList.remove('bg-transparent', 'text-white', 'border-white/10');
                     nav.classList.add('bg-white/95', 'backdrop-blur-md', 'text-slate-900', 'shadow-md', 'border-slate-200/80');
@@ -200,10 +215,12 @@
                     menu.classList.add('bg-slate-900');
                     menu.classList.remove('bg-white');
                 }
-            });
+            }
+
+            window.addEventListener('scroll', updateNavbar);
 
             // Sinkronkan state navbar saat halaman dimuat/refresh di posisi yang sudah ter-scroll
-            window.dispatchEvent(new Event('scroll'));
+            updateNavbar();
 
             btnMobile.addEventListener('click', () => {
                 const hidden = menu.classList.toggle('hidden');
