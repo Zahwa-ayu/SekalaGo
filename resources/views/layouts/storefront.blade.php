@@ -2,7 +2,7 @@
     // Halaman yang latarnya terang (tanpa hero) mendapat navbar putih sejak awal.
     // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
     $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
-        || request()->routeIs('cars.show');
+        || request()->routeIs('cars.show', 'hotels.show', 'auth.login');
 
     // Gaya link menu utama (Beranda / Hotel / Mobil)
     $navLink = 'nav-link-text px-3 py-2 rounded-lg transition';
