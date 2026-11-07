@@ -1,6 +1,6 @@
 <?php
-
 return [
+    'test' => 'test simple',
     'login' => 'Log in',
     'register' => 'Sign up',
     'logout' => 'Log out',
@@ -712,4 +712,18 @@ return [
 'featured_cars' => 'Featured vehicles',
 'no_hotels_yet' => 'No hotels available yet.',
 'no_cars_yet' => 'No vehicles available yet.',
+
+    // home footer
+    'footer_about'             => 'A trusted platform for booking hotels, villas, and vehicle rentals across the archipelago. Wide selection, secure, and transparent prices.',
+    'footer_social'            => 'Follow Us',
+    'footer_services'          => 'Our Services',
+    'footer_service_hotel'     => 'Hotel & Resort Reservations',
+    'footer_service_selfdrive' => 'Self-Drive Car Rental',
+    'footer_service_driver'    => 'Car Rental with Driver',
+    'footer_service_combo'     => 'Bundle Combo Packages',
+    'footer_partnership'       => 'Partnership',
+    'footer_rights'            => 'All rights reserved.',
+    'footer_terms'             => 'Terms & Conditions',
+    'footer_privacy'           => 'Privacy Policy',
+
 ];

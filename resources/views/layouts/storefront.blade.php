@@ -8,6 +8,9 @@
     $navLink = 'nav-link-text px-3 py-2 rounded-lg transition';
     $navOn   = 'nav-link-active';
     $navOff  = 'hover:bg-white/5 hover:text-sky-300';
+
+    // Sosmed aktif untuk footer (diatur admin di Admin\SocialMediaController)
+    $socialLinks = \App\Models\SocialMedia::where('status', 'aktif')->orderBy('order')->get();
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" class="scroll-smooth">
@@ -71,6 +74,17 @@
             background-color: #e0f2fe;
             color: #0284c7 !important;
         }
+
+        /* Ikon sosmed footer: warna brand platform sebagai default, balik putih solid saat hover */
+        .social-link {
+            background-color: var(--sm-color);
+            border: 1px solid var(--sm-color);
+            color: #ffffff;
+        }
+        .social-link:hover {
+            background-color: #ffffff;
+            color: var(--sm-color);
+        }
     </style>
 </head>
 <body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
@@ -109,7 +123,7 @@
 
                     {{-- MENU UTAMA --}}
                     <a href="{{ route('home') }}" class="{{ $navLink }} {{ request()->routeIs('home') ? $navOn : $navOff }}">
-                        <i class="fa-solid fa-house mr-1"></i> {{ __('ui.nav_home') }}
+                        <i class="fa-solid fa-house mr-1"></i> {{ __('ui.nav_home') }} 
                     </a>
                     <a href="{{ route('hotels.search') }}" class="{{ $navLink }} {{ request()->routeIs('hotels.*') ? $navOn : $navOff }}">
                         <i class="fa-solid fa-hotel mr-1"></i> {{ __('ui.tab_hotels') }}
@@ -170,20 +184,37 @@
                             alt="SekalaGo" 
                             class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
                     </a>
-                    <p class="leading-relaxed text-slate-400">Platform reservasi hotel, villa, dan sewa kendaraan terpercaya Nusantara. Pilihan lengkap, aman, dan harga transparan.</p>
+                    <p class="leading-relaxed text-slate-400">{{ __('ui.footer_about') }}</p>
+
+                    {{-- SOSIAL MEDIA (dari database, hanya yang berstatus aktif) --}}
+                    @if ($socialLinks->isNotEmpty())
+                        <div class="pt-2">
+                            <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_social') }}</h4>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach ($socialLinks as $social)
+                                    <a href="{{ $social->url }}" target="_blank" rel="noopener noreferrer"
+                                       title="{{ $social->platform }}" aria-label="{{ $social->platform }}"
+                                       style="--sm-color: {{ $social->color ?: '#0ea5e9' }}"
+                                       class="social-link w-9 h-9 rounded-xl flex items-center justify-center hover:-translate-y-0.5 transition">
+                                        <i class="{{ $social->icon_class }}"></i>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <div class="grid grid-cols-2 gap-10">
                     <div>
-                        <h4 class="text-white font-bold text-xs mb-3">Layanan Kami</h4>
+                        <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_services') }}</h4>
                         <ul class="space-y-2 text-slate-400">
-                            <li class="hover:text-sky-400 transition cursor-pointer">Reservasi Hotel & Resort</li>
-                            <li class="hover:text-sky-400 transition cursor-pointer">Sewa Mobil Lepas Kunci</li>
-                            <li class="hover:text-sky-400 transition cursor-pointer">Rental Mobil + Sopir</li>
-                            <li class="hover:text-sky-400 transition cursor-pointer">Paket Combo Bundling</li>
+                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_hotel') }}</li>
+                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_selfdrive') }}</li>
+                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_driver') }}</li>
+                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_combo') }}</li>
                         </ul>
                     </div>
                     <div>
-                        <h4 class="text-white font-bold text-xs mb-3">Kemitraan</h4>
+                        <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_partnership') }}</h4>
                         <ul class="space-y-2">
                             <li><a href="{{ route('register.partner') }}" class="hover:text-sky-400 transition">{{ __('ui.register_partner') }}</a></li>
                         </ul>
@@ -192,11 +223,11 @@
             </div>
             <div class="mt-10 pt-5 border-t border-slate-800 text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
                 <div>
-                    © {{ date('Y') }} {{ config('app.name') }}. Hak Cipta Dilindungi Undang-Undang.
+                    © {{ date('Y') }} {{ config('app.name') }}. {{ __('ui.footer_rights') }}
                 </div>
                 <div class="flex gap-4 text-xs">
-                    <span class="hover:text-slate-300 cursor-pointer">Syarat & Ketentuan</span>
-                    <span class="hover:text-slate-300 cursor-pointer">Kebijakan Privasi</span>
+                    <span class="hover:text-slate-300 cursor-pointer">{{ __('ui.footer_terms') }}</span>
+                    <span class="hover:text-slate-300 cursor-pointer">{{ __('ui.footer_privacy') }}</span>
                 </div>
             </div>
         </div>

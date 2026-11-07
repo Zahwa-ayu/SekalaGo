@@ -1,6 +1,6 @@
 <?php
-
 return [
+    'test' => 'test simple indo',
     'login' => 'Masuk',
     'register' => 'Daftar',
     'logout' => 'Keluar',
@@ -714,4 +714,18 @@ return [
 'featured_cars' => 'Armada pilihan',
 'no_hotels_yet' => 'Belum ada hotel yang tersedia.',
 'no_cars_yet' => 'Belum ada armada yang tersedia.',
+    
+    // home footer
+        'footer_about'             => 'Platform reservasi hotel, villa, dan sewa kendaraan terpercaya Nusantara. Pilihan lengkap, aman, dan harga transparan.',
+    'footer_social'            => 'Ikuti Kami',
+    'footer_services'          => 'Layanan Kami',
+    'footer_service_hotel'     => 'Reservasi Hotel & Resort',
+    'footer_service_selfdrive' => 'Sewa Mobil Lepas Kunci',
+    'footer_service_driver'    => 'Rental Mobil + Sopir',
+    'footer_service_combo'     => 'Paket Combo Bundling',
+    'footer_partnership'       => 'Kemitraan',
+    'footer_rights'            => 'Hak Cipta Dilindungi Undang-Undang.',
+    'footer_terms'             => 'Syarat & Ketentuan',
+    'footer_privacy'           => 'Kebijakan Privasi',
+
 ];
