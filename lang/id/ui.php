@@ -695,4 +695,14 @@ return [
     'car_unavailable_now' => 'Maaf, mobil ini sudah tidak tersedia pada tanggal tersebut.',
     'blackout_conflict' => 'Sudah ada pesanan aktif pada rentang tanggal ini, jadi tidak bisa diblokir.',
     'vehicle_has_bookings' => 'Armada tidak bisa dihapus karena masih punya pesanan yang berjalan.',
+
+    // booking cars status
+    'product' => 'Jenis',
+    'by_product' => 'Per jenis produk',
+    'item_name' => 'Hotel / Mobil',
+    'room_option' => 'Kamar / Opsi',
+    'period_start' => 'Check-in / Ambil',
+    'period_end' => 'Check-out / Kembali',
+    'nights_or_days' => 'Malam / Hari',
+    'units_below_bookings' => 'Jumlah unit tidak boleh di bawah :count karena ada pesanan yang berjalan bersamaan.',
 ];

@@ -8,6 +8,7 @@ use App\Services\TranslationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use App\Services\VehicleAvailability;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -74,6 +75,14 @@ class VehicleController extends Controller
     {
         $this->ownVehicle($request, $vehicle);
         $data = $this->validated($request);
+
+        $peak = app(VehicleAvailability::class)->peakUsage($vehicle);
+
+        if ($data['units'] < $peak) {
+            throw ValidationException::withMessages([
+                'units' => __('ui.units_below_bookings', ['count' => $peak]),
+            ]);
+        }
 
         DB::transaction(function () use ($vehicle, $data) {
             $changes = $this->vehicleAttributes($data);

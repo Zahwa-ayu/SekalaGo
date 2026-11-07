@@ -25,15 +25,21 @@ class BookingController extends Controller
         $status = $request->query('status', 'pending_approval');
         abort_unless(in_array($status, self::STATUSES, true), 404);
 
+        $product = $request->query('product');
+        abort_unless(in_array($product, [null, '', 'hotel', 'car'], true), 404);
+
         $this->bookings->expireOverdue();
 
-        $bookings = Booking::where('company_id', $company->id)
+        $base = Booking::where('company_id', $company->id)
+            ->when($product, fn ($q, $type) => $q->where('product_type', $type));
+
+        $bookings = (clone $base)
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->with('user.companyUser')
             ->latest()
             ->get();
 
-        $counts = Booking::where('company_id', $company->id)
+        $counts = (clone $base)
             ->selectRaw('status, count(*) as total')
             ->groupBy('status')
             ->pluck('total', 'status');

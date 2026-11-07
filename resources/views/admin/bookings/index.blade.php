@@ -39,6 +39,11 @@
             </a>
         </div>
 
+        {{-- FILTER PRODUK --}}
+        <div class="mb-6">
+            @include('partials.product-filter', ['route' => 'admin.bookings.index'])
+        </div>
+
         {{-- ERROR VALIDASI (misalnya alasan pembatalan kosong) --}}
         @if ($errors->any())
             <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 text-red-700 px-5 py-4 text-sm">
@@ -81,7 +86,7 @@
                                 <td class="px-6 py-4 font-mono text-xs font-bold text-sagara-blue whitespace-nowrap">{{ $booking->booking_code }}</td>
                                 <td class="px-6 py-4 text-slate-600">{{ $booking->partner?->company_name ?? '-' }}</td>
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-900">{{ $booking->hotel_name }}</div>
+                                    <div class="font-bold text-slate-900"><i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1" title="{{ $booking->productLabel() }}"></i>{{ $booking->hotel_name }}</div>
                                     <div class="text-[11px] text-slate-500">{{ $booking->room_name }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-700">{{ $booking->guest_name }}</td>

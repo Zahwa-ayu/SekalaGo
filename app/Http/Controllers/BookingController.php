@@ -25,7 +25,13 @@ class BookingController extends Controller
     {
         $this->bookings->expireOverdue();
 
-        $list = Booking::where('user_id', $request->user()->id)->latest()->get();
+        $product = $request->query('product');
+        abort_unless(in_array($product, [null, '', 'hotel', 'car'], true), 404);
+
+        $list = Booking::where('user_id', $request->user()->id)
+            ->when($product, fn ($q, $type) => $q->where('product_type', $type))
+            ->latest()
+            ->get();
 
         return view('bookings.index', ['bookings' => $list]);
     }

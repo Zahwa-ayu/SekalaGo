@@ -11,6 +11,12 @@
     {{-- KONTEN: -mt-12 membuat kartu sedikit menimpa banner --}}
     <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-12">
         <div class="bg-white rounded-3xl border border-slate-100 shadow-lg overflow-hidden">
+
+            {{-- FILTER PRODUK --}}
+            <div class="px-6 py-5 border-b border-slate-100">
+                @include('partials.product-filter', ['route' => 'bookings.index'])
+            </div>
+
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">
@@ -36,7 +42,7 @@
                             <tr class="hover:bg-sky-50/50 transition">
                                 <td class="px-6 py-4 font-mono text-xs font-bold text-sky-600 whitespace-nowrap">{{ $booking->booking_code }}</td>
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-900">{{ $booking->hotel_name }}</div>
+                                    <div class="font-bold text-slate-900"><i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1" title="{{ $booking->productLabel() }}"></i>{{ $booking->hotel_name }}</div>
                                     <div class="text-[11px] text-slate-500">{{ $booking->room_name }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-600 whitespace-nowrap">

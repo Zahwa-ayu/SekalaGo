@@ -19,6 +19,11 @@ class DashboardController extends Controller
             ->groupBy('status')
             ->pluck('total', 'status');
 
+        $vehicleStatus = $partner->vehicles()
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
         $monthly = Booking::where('partner_id', $partner->id)
             ->where('status', 'confirmed')
             ->where('created_at', '>=', now()->startOfMonth())
@@ -32,6 +37,6 @@ class DashboardController extends Controller
             ->limit(6)
             ->get();
 
-        return view('partner.dashboard', compact('partner', 'hotelStatus', 'monthly', 'upcoming'));
+        return view('partner.dashboard', compact('partner', 'hotelStatus', 'vehicleStatus', 'monthly', 'upcoming'));
     }
 }

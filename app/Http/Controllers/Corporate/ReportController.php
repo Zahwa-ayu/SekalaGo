@@ -40,15 +40,16 @@ class ReportController extends Controller
             fwrite($out, "\xEF\xBB\xBF");
 
             fputcsv($out, [
-                __('ui.booking_code'), __('ui.booked_on'), __('ui.employees'), __('ui.department'),
-                __('ui.hotel'), __('ui.room_name'), __('ui.check_in'), __('ui.check_out'),
-                __('ui.nights'), __('ui.total_price') . ' (IDR)', __('ui.limit_label') . ' (IDR)',
+                __('ui.booking_code'), __('ui.booked_on'), __('ui.product'), __('ui.employees'), __('ui.department'),
+                __('ui.item_name'), __('ui.room_option'), __('ui.period_start'), __('ui.period_end'),
+                __('ui.nights_or_days'), __('ui.total_price') . ' (IDR)', __('ui.limit_label') . ' (IDR)',
             ], ';', '"', '\\');
 
             foreach ($report['rows'] as $booking) {
                 fputcsv($out, [
                     $booking->booking_code,
                     $booking->created_at->format('Y-m-d'),
+                    $booking->productLabel(),
                     $booking->user->companyUser?->displayName() ?? $booking->user->email,
                     $booking->department ?? '-',
                     $booking->hotel_name,
@@ -61,7 +62,7 @@ class ReportController extends Controller
                 ], ';', '"', '\\');
             }
 
-            fputcsv($out, ['', '', '', '', '', '', '', '', 'TOTAL', $report['summary']['total'], ''], ';', '"', '\\');
+            fputcsv($out, ['', '', '', '', '', '', '', '', '', 'TOTAL', $report['summary']['total'], ''], ';', '"', '\\');
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);

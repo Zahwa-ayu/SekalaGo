@@ -34,6 +34,15 @@ class CompanyReport
             'pending'   => $bookings->where('status', 'pending_approval')->count(),
         ];
 
+        $byProduct = collect(['hotel', 'car'])
+            ->map(fn ($type) => [
+                'type'   => $type,
+                'orders' => $confirmed->where('product_type', $type)->count(),
+                'total'  => (int) $confirmed->where('product_type', $type)->sum('total_price'),
+            ])
+            ->filter(fn ($row) => $row['orders'] > 0)
+            ->values();
+
         $byDepartment = $confirmed
             ->groupBy(fn ($booking) => $booking->department ?: '-')
             ->map(fn ($group, $department) => [
@@ -69,6 +78,7 @@ class CompanyReport
             'company'      => $company,
             'month'        => $start,
             'summary'      => $summary,
+            'byProduct'    => $byProduct,
             'byDepartment' => $byDepartment,
             'byEmployee'   => $byEmployee,
             'rows'         => $confirmed,

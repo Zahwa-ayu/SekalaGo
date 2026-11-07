@@ -76,6 +76,25 @@
             <p class="text-[11px] text-slate-400"><i class="fa-solid fa-circle-info"></i> {{ __('ui.report_note') }}</p>
         </div>
 
+        {{-- PER PRODUK --}}
+        @if ($byProduct->isNotEmpty())
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                @foreach ($byProduct as $row)
+                    <div class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl bg-sky-100 text-sagara-blue flex items-center justify-center text-xl">
+                            <i class="fa-solid {{ $row['type'] === 'car' ? 'fa-car-side' : 'fa-hotel' }}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                {{ $row['type'] === 'car' ? __('ui.tab_cars') : __('ui.tab_hotels') }} &middot; {{ $row['orders'] }}
+                            </div>
+                            <div class="text-xl font-black text-slate-900">{{ format_price($row['total'], 'IDR') }}</div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
         @if ($summary['orders'] === 0)
             <div class="bg-white rounded-3xl border border-slate-100 shadow-md px-6 py-12 text-center text-slate-400">
                 <i class="fa-solid fa-chart-column text-3xl mb-2 block"></i>
@@ -162,7 +181,7 @@
                                 <th class="px-6 py-4 font-bold">{{ __('ui.booked_on') }}</th>
                                 <th class="px-6 py-4 font-bold">{{ __('ui.employees') }}</th>
                                 <th class="px-6 py-4 font-bold">{{ __('ui.hotel') }}</th>
-                                <th class="px-6 py-4 font-bold">{{ __('ui.check_in') }} - {{ __('ui.check_out') }}</th>
+                                <th class="px-6 py-4 font-bold">{{ __('ui.period_start') }} - {{ __('ui.period_end') }}</th>
                                 <th class="px-6 py-4 font-bold">{{ __('ui.total_price') }}</th>
                             </tr>
                         </thead>
@@ -172,7 +191,10 @@
                                     <td class="px-6 py-4 font-mono text-xs font-bold text-sky-600 whitespace-nowrap">{{ $booking->booking_code }}</td>
                                     <td class="px-6 py-4 text-slate-600 whitespace-nowrap">{{ $booking->created_at->format('d/m/Y') }}</td>
                                     <td class="px-6 py-4 text-slate-800">{{ $booking->user->companyUser?->displayName() ?? $booking->user->email }}</td>
-                                    <td class="px-6 py-4 text-slate-800">{{ $booking->hotel_name }} <span class="text-[11px] text-slate-500">/ {{ $booking->room_name }}</span></td>
+                                    <td class="px-6 py-3 text-slate-800">
+                                        <i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1"></i>{{ $booking->hotel_name }}
+                                        <span class="text-[11px] text-slate-500">/ {{ $booking->room_name }}</span>
+                                    </td>
                                     <td class="px-6 py-4 text-slate-600 whitespace-nowrap">{{ $booking->check_in->format('d/m/Y') }} - {{ $booking->check_out->format('d/m/Y') }}</td>
                                     <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">{{ format_price($booking->total_price, 'IDR') }}</td>
                                 </tr>

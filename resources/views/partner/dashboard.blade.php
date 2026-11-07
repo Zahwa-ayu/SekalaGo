@@ -30,6 +30,26 @@
             </div>
         </div>
 
+        {{-- ARMADA --}}
+        <div>
+            <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">{{ __('ui.my_vehicles') }}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                @foreach ([
+                    ['fa-circle-check', __('ui.status_approved'), $vehicleStatus->get('approved', 0), 'bg-emerald-100 text-emerald-600'],
+                    ['fa-hourglass-half', __('ui.status_pending'), $vehicleStatus->get('pending', 0), 'bg-amber-100 text-amber-600'],
+                    ['fa-circle-xmark', __('ui.status_rejected'), $vehicleStatus->get('rejected', 0), 'bg-red-100 text-red-600'],
+                ] as [$icon, $label, $count, $tone])
+                    <a href="{{ route('partner.vehicles.index') }}" class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl {{ $tone }}"><i class="fa-solid {{ $icon }}"></i></div>
+                        <div>
+                            <div class="text-2xl font-black text-slate-900">{{ $count }}</div>
+                            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $label }}</div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+
         {{-- BULAN INI --}}
         <div>
             <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">{{ __('ui.this_month') }}</h2>
@@ -63,7 +83,7 @@
                         <tr class="hover:bg-sky-50/50 transition">
                             <td class="px-6 py-3 font-mono text-xs font-bold text-sagara-blue whitespace-nowrap">{{ $booking->booking_code }}</td>
                             <td class="px-6 py-3">
-                                <div class="font-bold text-slate-900">{{ $booking->guest_name }}</div>
+                                <div class="font-bold text-slate-900"><i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1"></i>{{ $booking->guest_name }}</div>
                                 <div class="text-[11px] text-slate-500">{{ $booking->hotel_name }} / {{ $booking->room_name }}</div>
                             </td>
                             <td class="px-6 py-3 text-slate-600 whitespace-nowrap">{{ $booking->check_in->format('d/m/Y') }}</td>

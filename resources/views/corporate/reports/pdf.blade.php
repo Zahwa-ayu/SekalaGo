@@ -25,7 +25,7 @@
         <tr><td>{{ __('ui.orders_count') }}</td><td class="num">{{ $summary['orders'] }}</td></tr>
         <tr><td>{{ __('ui.total_spend') }}</td><td class="num">{{ format_price($summary['total'], 'IDR') }}</td></tr>
         <tr><td>{{ __('ui.average_per_order') }}</td><td class="num">{{ format_price($summary['average'], 'IDR') }}</td></tr>
-        <tr><td>{{ __('ui.nights_total') }}</td><td class="num">{{ $summary['nights'] }}</td></tr>
+        <tr><td>{{ __('ui.nights_or_days') }}</td><td class="num">{{ $summary['nights'] }}</td></tr>
         <tr><td>{{ __('ui.booking_status_cancelled') }} ({{ __('ui.refunds') }})</td>
             <td class="num">{{ $summary['cancelled'] }} ({{ format_price($summary['refunded'], 'IDR') }})</td></tr>
         <tr><td>{{ __('ui.booking_status_rejected') }}</td><td class="num">{{ $summary['rejected'] }}</td></tr>
@@ -34,6 +34,22 @@
     @if ($summary['orders'] === 0)
         <p>{{ __('ui.no_report_data') }}</p>
     @else
+        <h2>{{ __('ui.by_product') }}</h2>
+        <table>
+            <tr>
+                <th>{{ __('ui.product') }}</th>
+                <th class="num">{{ __('ui.orders_count') }}</th>
+                <th class="num">{{ __('ui.total_spend') }}</th>
+            </tr>
+            @foreach ($byProduct as $row)
+                <tr>
+                    <td>{{ $row['type'] === 'car' ? __('ui.tab_cars') : __('ui.tab_hotels') }}</td>
+                    <td class="num">{{ $row['orders'] }}</td>
+                    <td class="num">{{ format_price($row['total'], 'IDR') }}</td>
+                </tr>
+            @endforeach
+        </table>
+
         <h2>{{ __('ui.by_department') }}</h2>
         <table>
             <tr>
@@ -79,16 +95,18 @@
             <tr>
                 <th>{{ __('ui.booking_code') }}</th>
                 <th>{{ __('ui.booked_on') }}</th>
+                <th>{{ __('ui.product') }}</th>
                 <th>{{ __('ui.employees') }}</th>
-                <th>{{ __('ui.hotel') }}</th>
-                <th>{{ __('ui.check_in') }}</th>
-                <th>{{ __('ui.check_out') }}</th>
+                <th>{{ __('ui.item_name') }}</th>
+                <th>{{ __('ui.period_start') }}</th>
+                <th>{{ __('ui.period_end') }}</th>
                 <th class="num">{{ __('ui.total_price') }}</th>
             </tr>
             @foreach ($rows as $booking)
                 <tr>
                     <td>{{ $booking->booking_code }}</td>
                     <td>{{ $booking->created_at->format('d/m/Y') }}</td>
+                    <td>{{ $booking->productLabel() }}</td>
                     <td>{{ $booking->user->companyUser?->displayName() ?? $booking->user->email }}</td>
                     <td>{{ $booking->hotel_name }} / {{ $booking->room_name }}</td>
                     <td>{{ $booking->check_in->format('d/m/Y') }}</td>

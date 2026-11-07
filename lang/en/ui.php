@@ -693,4 +693,14 @@ return [
     'car_unavailable_now' => 'Sorry, this car is no longer available on those dates.',
     'blackout_conflict' => 'There is already an active booking in this date range, so it cannot be blocked.',
     'vehicle_has_bookings' => 'This vehicle cannot be deleted because it still has ongoing bookings.',
+
+    // car booking status
+    'product' => 'Type',
+    'by_product' => 'By product',
+    'item_name' => 'Hotel / Car',
+    'room_option' => 'Room / Option',
+    'period_start' => 'Check-in / Pick-up',
+    'period_end' => 'Check-out / Return',
+    'nights_or_days' => 'Nights / Days',
+    'units_below_bookings' => 'The number of units cannot be below :count because of bookings running at the same time.',
 ];

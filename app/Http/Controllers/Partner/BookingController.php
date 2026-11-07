@@ -19,13 +19,19 @@ class BookingController extends Controller
         $status = $request->query('status', 'confirmed');
         abort_unless(in_array($status, self::STATUSES, true), 404);
 
-        // Ringkasan hanya menghitung pesanan terkonfirmasi
-        $summary = Booking::where('partner_id', $partner->id)
+        $product = $request->query('product');
+        abort_unless(in_array($product, [null, '', 'hotel', 'car'], true), 404);
+
+        $base = Booking::where('partner_id', $partner->id)
+            ->when($product, fn ($q, $type) => $q->where('product_type', $type));
+
+        // Ringkasan hanya menghitung pesanan terkonfirmasi, mengikuti filter jenis produk
+        $summary = (clone $base)
             ->where('status', 'confirmed')
             ->selectRaw('count(*) as orders, coalesce(sum(total_price), 0) as gross, coalesce(sum(platform_fee), 0) as fee, coalesce(sum(vendor_revenue), 0) as net')
             ->first();
 
-        $bookings = Booking::where('partner_id', $partner->id)
+        $bookings = (clone $base)
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->latest()
             ->get();

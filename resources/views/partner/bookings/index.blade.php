@@ -39,6 +39,11 @@
             </a>
         </div>
 
+        {{-- FILTER PRODUK --}}
+        <div class="mb-6">
+            @include('partials.product-filter', ['route' => 'partner.bookings.index'])
+        </div>
+
         {{-- TABEL --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">
@@ -68,7 +73,7 @@
                             <tr class="hover:bg-sky-50/50 transition">
                                 <td class="px-6 py-4 font-mono text-xs font-bold text-sagara-blue whitespace-nowrap">{{ $booking->booking_code }}</td>
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-900">{{ $booking->hotel_name }}</div>
+                                    <div class="font-bold text-slate-900"><i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1" title="{{ $booking->productLabel() }}"></i>{{ $booking->hotel_name }}</div>
                                     <div class="text-[11px] text-slate-500">{{ $booking->room_name }}</div>
                                 </td>
                                 <td class="px-6 py-4 text-slate-700 whitespace-nowrap">

@@ -105,4 +105,14 @@ class Booking extends Model
             ? __('ui.for_days', ['count' => $this->nights])
             : __('ui.for_nights', ['count' => $this->nights]);
     }
+
+    public function productIcon(): string
+    {
+        return $this->isCar() ? 'fa-car-side' : 'fa-hotel';
+    }
+
+    public function productLabel(): string
+    {
+        return $this->isCar() ? __('ui.tab_cars') : __('ui.tab_hotels');
+    }
 }
