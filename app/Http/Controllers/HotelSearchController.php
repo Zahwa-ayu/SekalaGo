@@ -15,10 +15,58 @@ class HotelSearchController extends Controller
 
     public function home()
     {
+        // Jumlah hotel & armada per kota (hanya yang sudah disetujui)
+        $hotelCounts = Hotel::where('status', 'approved')
+            ->whereHas('roomTypes')
+            ->selectRaw('city, count(*) as total')
+            ->groupBy('city')
+            ->pluck('total', 'city');
+
+        $vehicleCounts = Vehicle::where('status', 'approved')
+            ->selectRaw('city, count(*) as total')
+            ->groupBy('city')
+            ->pluck('total', 'city');
+
+        // 4 kota dengan pilihan paling banyak (hotel + mobil)
+        $cityStats = $hotelCounts->keys()
+            ->merge($vehicleCounts->keys())
+            ->unique()
+            ->filter()
+            ->map(fn ($city) => [
+                'city'     => $city,
+                'hotels'   => (int) ($hotelCounts[$city] ?? 0),
+                'vehicles' => (int) ($vehicleCounts[$city] ?? 0),
+            ])
+            ->sortByDesc(fn ($stat) => $stat['hotels'] + $stat['vehicles'])
+            ->take(4)
+            ->values();
+
+        // 6 hotel pilihan: bintang tertinggi, lalu yang terbaru
+        $featuredHotels = Hotel::query()
+            ->where('status', 'approved')
+            ->whereHas('roomTypes')
+            ->with(['translations', 'photos', 'facilities'])
+            ->withMin('roomTypes as min_price', 'base_price')
+            ->orderByDesc('star_rating')
+            ->latest('id')
+            ->take(6)
+            ->get();
+
+        // 3 mobil dengan harga paling hemat
+        $featuredVehicles = Vehicle::query()
+            ->where('status', 'approved')
+            ->with('translations', 'photos')
+            ->orderBy('price_per_day')
+            ->take(3)
+            ->get();
+
         return view('home', [
-            'cities'    => $this->cities(),
-            'params'    => [],
-            'carCities' => Vehicle::where('status', 'approved')->distinct()->orderBy('city')->pluck('city'),
+            'cities'           => $this->cities(),
+            'params'           => [],
+            'carCities'        => Vehicle::where('status', 'approved')->distinct()->orderBy('city')->pluck('city'),
+            'cityStats'        => $cityStats,
+            'featuredHotels'   => $featuredHotels,
+            'featuredVehicles' => $featuredVehicles,
         ]);
     }
 

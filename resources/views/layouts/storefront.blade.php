@@ -3,6 +3,11 @@
     // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
     $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
         || request()->routeIs('cars.show');
+
+    // Gaya link menu utama (Beranda / Hotel / Mobil)
+    $navLink = 'nav-link-text px-3 py-2 rounded-lg transition';
+    $navOn   = 'nav-link-active';
+    $navOff  = 'hover:bg-white/5 hover:text-sky-300';
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" class="scroll-smooth">
@@ -46,17 +51,31 @@
             border-color: rgba(15, 23, 42, 0.15) !important;
         }
 
+        /* Link menu saat navbar putih */
         .is-scrolled .nav-link-text {
             color: #334155 !important;
         }
         .is-scrolled .nav-link-text:hover {
             color: #0284c7 !important;
         }
+        .is-scrolled .nav-link-text:not(.nav-link-active):hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Menu aktif: terang di navbar transparan, biru muda di navbar putih (urutan harus setelah aturan di atas) */
+        .nav-link-active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+        .is-scrolled .nav-link-active {
+            background-color: #e0f2fe;
+            color: #0284c7 !important;
+        }
     </style>
 </head>
 <body class="font-sans bg-slate-50 text-slate-800 antialiased selection:bg-sky-500 selection:text-white">
 
-    {{-- NAVBAR: transparan lalu putih saat scroll. Halaman dengan @section('solid_nav') langsung putih. --}}
+    {{-- NAVBAR: transparan lalu putih saat scroll. Halaman solid_nav (lihat atas file) langsung putih. --}}
     <nav id="main-navbar" 
          class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b
                 {{ $solidNav
@@ -88,30 +107,21 @@
                             absolute lg:static top-16 left-0 right-0 {{ $solidNav ? 'bg-white' : 'bg-slate-900' }} lg:bg-transparent
                             px-4 pb-4 pt-2 lg:p-0 border-b border-white/10 lg:border-0">
 
-                    @php
-    $navLink = 'px-3 py-2 rounded-lg transition';
-    $navOn   = 'bg-white/10 text-white';
-    $navOff  = 'hover:bg-white/5 hover:text-sky-300';
-@endphp
-
-<a href="{{ route('home') }}" class="{{ $navLink }} {{ request()->routeIs('home') ? $navOn : $navOff }}">
-    {{ __('ui.nav_home') }}
-</a>
-<a href="{{ route('hotels.search') }}" class="{{ $navLink }} {{ request()->routeIs('hotels.*') ? $navOn : $navOff }}">
-    <i class="fa-solid fa-hotel mr-1"></i> {{ __('ui.tab_hotels') }}
-</a>
-<a href="{{ route('cars.home') }}" class="{{ $navLink }} {{ request()->routeIs('cars.*') ? $navOn : $navOff }}">
-    <i class="fa-solid fa-car mr-1"></i> {{ __('ui.tab_cars') }}
-</a>
+                    {{-- MENU UTAMA --}}
+                    <a href="{{ route('home') }}" class="{{ $navLink }} {{ request()->routeIs('home') ? $navOn : $navOff }}">
+                        <i class="fa-solid fa-house mr-1"></i> {{ __('ui.nav_home') }}
+                    </a>
+                    <a href="{{ route('hotels.search') }}" class="{{ $navLink }} {{ request()->routeIs('hotels.*') ? $navOn : $navOff }}">
+                        <i class="fa-solid fa-hotel mr-1"></i> {{ __('ui.tab_hotels') }}
+                    </a>
+                    <a href="{{ route('cars.home') }}" class="{{ $navLink }} {{ request()->routeIs('cars.*') ? $navOn : $navOff }}">
+                        <i class="fa-solid fa-car mr-1"></i> {{ __('ui.tab_cars') }}
+                    </a>
 
                     {{-- PREFERENCES (BAHASA & MATA UANG) --}}
                     <div class="pref-wrapper flex items-center gap-1.5">
                         @include('partials.preferences')
                     </div>
-
-                    <a href="{{ route('cars.home') }}" class="nav-link-text px-3 py-2 rounded-lg hover:bg-white/5 hover:text-sky-300 transition">
-                        <i class="fa-solid fa-car mr-1"></i> {{ __('ui.tab_cars') }}
-                    </a>
 
                     @auth
                         @if (in_array(auth()->user()->user_type, ['customer', 'corporate']))
