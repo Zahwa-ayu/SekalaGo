@@ -88,6 +88,22 @@
                             absolute lg:static top-16 left-0 right-0 {{ $solidNav ? 'bg-white' : 'bg-slate-900' }} lg:bg-transparent
                             px-4 pb-4 pt-2 lg:p-0 border-b border-white/10 lg:border-0">
 
+                    @php
+    $navLink = 'px-3 py-2 rounded-lg transition';
+    $navOn   = 'bg-white/10 text-white';
+    $navOff  = 'hover:bg-white/5 hover:text-sky-300';
+@endphp
+
+<a href="{{ route('home') }}" class="{{ $navLink }} {{ request()->routeIs('home') ? $navOn : $navOff }}">
+    {{ __('ui.nav_home') }}
+</a>
+<a href="{{ route('hotels.search') }}" class="{{ $navLink }} {{ request()->routeIs('hotels.*') ? $navOn : $navOff }}">
+    <i class="fa-solid fa-hotel mr-1"></i> {{ __('ui.tab_hotels') }}
+</a>
+<a href="{{ route('cars.home') }}" class="{{ $navLink }} {{ request()->routeIs('cars.*') ? $navOn : $navOff }}">
+    <i class="fa-solid fa-car mr-1"></i> {{ __('ui.tab_cars') }}
+</a>
+
                     {{-- PREFERENCES (BAHASA & MATA UANG) --}}
                     <div class="pref-wrapper flex items-center gap-1.5">
                         @include('partials.preferences')

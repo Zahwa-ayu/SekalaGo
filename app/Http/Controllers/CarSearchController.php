@@ -23,9 +23,19 @@ class CarSearchController extends Controller
 
     public function home()
     {
-        return view('cars.home', ['cities' => $this->cities(), 'params' => []]);
-    }
+        $vehicles = Vehicle::query()
+            ->where('status', 'approved')
+            ->with('translations', 'photos')
+            ->orderBy('price_per_day')
+            ->paginate(12)
+            ->withQueryString();
 
+        return view('cars.home', [
+            'cities'   => $this->cities(),
+            'params'   => [],
+            'vehicles' => $vehicles,
+        ]);
+    }
     public function search(Request $request)
     {
         $data = $request->validate([

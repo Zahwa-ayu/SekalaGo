@@ -6,6 +6,7 @@ use App\Models\Hotel;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\Vehicle;
 use Illuminate\Validation\ValidationException;
 
 class HotelSearchController extends Controller
@@ -14,11 +15,19 @@ class HotelSearchController extends Controller
 
     public function home()
     {
-        return view('home', ['cities' => $this->cities(), 'params' => []]);
+        return view('home', [
+            'cities'    => $this->cities(),
+            'params'    => [],
+            'carCities' => Vehicle::where('status', 'approved')->distinct()->orderBy('city')->pluck('city'),
+        ]);
     }
 
     public function search(Request $request)
     {
+        // Tanpa kata kunci pencarian: tampilkan halaman Hotel (daftar hotel pilihan)
+        if (! $request->filled('city')) {
+            return $this->browse();
+        }
         $data = $request->validate([
             'city'      => ['required', 'string', 'max:100'],
             'check_in'  => ['required', 'date', 'after_or_equal:today'],
@@ -114,5 +123,25 @@ class HotelSearchController extends Controller
             ->distinct()
             ->orderBy('city')
             ->pluck('city');
+    }
+
+    /** Halaman Hotel tanpa pencarian: hotel pilihan beserta harga mulai dari. */
+    private function browse()
+    {
+        $hotels = Hotel::query()
+            ->where('status', 'approved')
+            ->whereHas('roomTypes')
+            ->with(['translations', 'photos', 'facilities'])
+            ->withMin('roomTypes as min_price', 'base_price')
+            ->orderByDesc('star_rating')
+            ->latest('id')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('hotels.index', [
+            'hotels' => $hotels,
+            'cities' => $this->cities(),
+            'params' => [],
+        ]);
     }
 }

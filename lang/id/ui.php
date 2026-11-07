@@ -705,4 +705,13 @@ return [
     'period_end' => 'Check-out / Kembali',
     'nights_or_days' => 'Malam / Hari',
     'units_below_bookings' => 'Jumlah unit tidak boleh di bawah :count karena ada pesanan yang berjalan bersamaan.',
+
+    // revisi pencarian
+    'nav_home' => 'Beranda',
+'hotel_page_title' => 'Temukan hotel terbaik untuk perjalanan Anda',
+'featured_hotels' => 'Hotel pilihan',
+'popular_cities' => 'Kota populer',
+'featured_cars' => 'Armada pilihan',
+'no_hotels_yet' => 'Belum ada hotel yang tersedia.',
+'no_cars_yet' => 'Belum ada armada yang tersedia.',
 ];

@@ -703,4 +703,13 @@ return [
     'period_end' => 'Check-out / Return',
     'nights_or_days' => 'Nights / Days',
     'units_below_bookings' => 'The number of units cannot be below :count because of bookings running at the same time.',
+
+    // revisi bahasa
+    'nav_home' => 'Home',
+'hotel_page_title' => 'Find the best hotel for your trip',
+'featured_hotels' => 'Featured hotels',
+'popular_cities' => 'Popular cities',
+'featured_cars' => 'Featured vehicles',
+'no_hotels_yet' => 'No hotels available yet.',
+'no_cars_yet' => 'No vehicles available yet.',
 ];

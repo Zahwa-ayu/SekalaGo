@@ -34,7 +34,7 @@
         <!-- Form Pencarian (Sepenuhnya Berada di Dalam Foto Background) -->
         <div class="max-w-6xl mx-auto w-full relative z-20 pb-4">
             <div id="booking" class="bg-white rounded-3xl p-5 sm:p-7 text-slate-800 shadow-2xl border border-slate-100/90 ring-1 ring-slate-900/5">
-                @include('partials.search-form')
+                @include('partials.search-widget')
             </div>
         </div>
     </section>
