@@ -30,15 +30,16 @@ use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Partner\BlackoutController;
 use App\Http\Controllers\Partner\VehicleController;
 use App\Http\Controllers\CarBookingController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarSearchController;
 
 // Halaman publik: pencarian & detail hotel
-Route::get('/', [HotelSearchController::class, 'home'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hotels', [HotelSearchController::class, 'search'])->name('hotels.search');
 Route::get('/hotels/{hotel}', [HotelSearchController::class, 'show'])->name('hotels.show');
 Route::get('/cars', [CarSearchController::class, 'home'])->name('cars.home');
-Route::get('/cars/search', [CarSearchController::class, 'search'])->name('cars.search');
+Route::get('/cars/search', [CarSearchController::class, 'legacySearch'])->name('cars.search');;
 Route::get('/cars/{vehicle}', [CarSearchController::class, 'show'])->name('cars.show');
 
 // Pilihan bahasa & mata uang (tamu dan user login)

@@ -15,12 +15,17 @@
 
     {{-- Form hotel memakai $cities dan $params dari halaman --}}
     <div data-panel="hotels">
-        @include('partials.search-form')
+        @include('partials.search-form', ['action' => route('home') . '#results', 'tab' => 'hotels'])
     </div>
 
-    {{-- Form mobil memakai daftar kota armada sendiri --}}
+    {{-- Form mobil memakai daftar kota dan parameter armada sendiri --}}
     <div data-panel="cars" class="hidden">
-        @include('partials.car-search-form', ['cities' => $carCities ?? collect(), 'params' => $carParams ?? []])
+        @include('partials.car-search-form', [
+            'cities' => $carCities ?? collect(),
+            'params' => $carParams ?? [],
+            'action' => route('home') . '#results',
+            'tab'    => 'cars',
+        ])
     </div>
 </div>
 
@@ -30,8 +35,9 @@
         const widget = document.getElementById('search-widget');
         if (!widget) return;
 
-        const tabs   = widget.querySelectorAll('[data-tab]');
-        const panels = widget.querySelectorAll('[data-panel]');
+        const tabs    = widget.querySelectorAll('[data-tab]');
+        const panels  = widget.querySelectorAll('[data-panel]');
+        const results = document.querySelectorAll('[data-results-for]');
         const onClasses  = ['bg-sagara-navy', 'text-white', 'shadow-md'];
         const offClasses = ['bg-slate-100', 'text-slate-600', 'hover:bg-slate-200'];
 
@@ -45,18 +51,26 @@
 
             panels.forEach(panel => panel.classList.toggle('hidden', panel.dataset.panel !== name));
 
+            // Hasil pencarian hanya tampil untuk tab yang sedang aktif
+            results.forEach(block => block.classList.toggle('hidden', block.dataset.resultsFor !== name));
+
             // Simpan pilihan tab di alamat (#cars) tanpa memuat ulang halaman
             if (updateUrl) {
                 history.replaceState(null, '', name === 'cars'
-                    ? '#cars'
+                    ? window.location.pathname + window.location.search + '#cars'
                     : window.location.pathname + window.location.search);
             }
         }
 
         tabs.forEach(tab => tab.addEventListener('click', () => show(tab.dataset.tab, true)));
 
-        // Saat dimuat: ikuti #cars di alamat, kalau tidak ikuti tab bawaan
+        // Saat dimuat: ikuti #cars di alamat, kalau tidak ikuti tab dari server
         show(window.location.hash === '#cars' ? 'cars' : widget.dataset.active, false);
+
+        // Setelah mencari, gulung ke hasil
+        if (new URLSearchParams(window.location.search).has('city')) {
+            document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     })();
 </script>
 @endpush

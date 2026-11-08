@@ -5,6 +5,9 @@
 
     $selectedFacilities = old('facilities', $roomType->exists ? $roomType->facilities->pluck('id')->all() : []);
     $smoking = (string) old('smoking_allowed', $roomType->exists ? (int) $roomType->smoking_allowed : 0);
+
+    // Harga mentah (angka biasa) dari old() atau database
+    $priceRaw = old('base_price', $roomType->base_price);
 @endphp
 
 @if ($errors->any())
@@ -18,8 +21,14 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="{{ $box }} md:col-span-3">
         <label class="{{ $label }}"><i class="fa-solid fa-tag text-sagara-blue"></i> {{ __('ui.price_per_night') }} (IDR)</label>
-        <input type="number" name="base_price" min="0" required class="{{ $input }}"
-               value="{{ old('base_price', $roomType->base_price) }}">
+
+        {{-- Input tampilan: ada titiknya, tanpa name (tidak ikut terkirim) --}}
+        <input type="text" id="base_price_display" inputmode="numeric" autocomplete="off" required
+               class="{{ $input }}"
+               value="{{ $priceRaw !== null && $priceRaw !== '' ? number_format((float) $priceRaw, 0, ',', '.') : '' }}">
+
+        {{-- Input asli yang dikirim ke server: angka mentah tanpa titik --}}
+        <input type="hidden" name="base_price" id="base_price" value="{{ $priceRaw }}">
     </div>
 
     <div class="{{ $box }}">
@@ -83,3 +92,18 @@
         @endforeach
     </div>
 </div>
+
+{{-- Format titik ribuan untuk input harga (hanya tampilan; nilai asli di input hidden) --}}
+<script>
+    (function () {
+        const display = document.getElementById('base_price_display');
+        const hidden  = document.getElementById('base_price');
+        if (!display || !hidden) return;
+
+        display.addEventListener('input', function () {
+            const digits = display.value.replace(/\D/g, '');   // buang semua selain angka
+            hidden.value = digits;
+            display.value = digits ? new Intl.NumberFormat('id-ID').format(digits) : '';
+        });
+    })();
+</script>

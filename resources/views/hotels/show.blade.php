@@ -11,6 +11,12 @@
         $card  = 'bg-white rounded-3xl border border-slate-100 shadow-md p-6';
         $input = 'w-full min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue';
 
+        $previous = url()->previous();
+        $samePage = strtok($previous, '?') === strtok(url()->current(), '?');
+        $backUrl  = (! $samePage && str_starts_with($previous, url('/')))
+            ? $previous
+            : ($params ? route('hotels.search', $params + ['city' => $params['city'] ?? $hotel->city]) : route('hotels.search'));
+
         $minPrice  = $roomTypes->min('base_price');
         $openCount = $params ? $roomTypes->where('is_open', true)->count() : null;
         $backUrl   = $params

@@ -32,7 +32,10 @@
     </div>
 
     {{-- FORM SEARCH HOTEL --}}
-    <form method="GET" action="{{ route('hotels.search') }}" x-show="activeTab === 'hotel'">
+    <form method="GET" action="{{ $action ?? route('hotels.search') }}" x-show="activeTab === 'hotel'">
+        @if (! empty($tab))
+            <input type="hidden" name="tab" value="{{ $tab }}">
+        @endif
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3.5">
             <div class="{{ $boxClass }}">
                 <label class="{{ $labelClass }}"><i class="fa-solid fa-location-dot text-sky-500"></i> {{ __('ui.city') }}</label>

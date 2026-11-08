@@ -15,7 +15,11 @@
     </ul>
 @endif
 
-<form method="GET" action="{{ route('cars.search') }}" class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+<form method="GET" action="{{ $action ?? route('cars.home') }}" class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+    @if (! empty($tab))
+        <input type="hidden" name="tab" value="{{ $tab }}">
+    @endif
+
     <div class="{{ $box }}">
         <label class="{{ $label }}"><i class="fa-solid fa-location-dot text-sagara-blue"></i> {{ __('ui.city') }}</label>
         <input name="city" list="car-city-list" required class="{{ $input }}"

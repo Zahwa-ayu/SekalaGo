@@ -10,6 +10,14 @@
         $backUrl  = $params
             ? route('cars.search', array_merge($params, ['city' => $params['city'] ?? $vehicle->city]))
             : route('cars.home');
+
+    $previous = url()->previous();
+    $samePage = strtok($previous, '?') === strtok(url()->current(), '?');
+    $backUrl  = (! $samePage && str_starts_with($previous, url('/')))
+        ? $previous
+        : ($params
+            ? route('cars.home', array_merge($params, ['city' => $params['city'] ?? $vehicle->city]))
+            : route('cars.home'));
     @endphp
 
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">

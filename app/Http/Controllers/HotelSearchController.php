@@ -3,114 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hotel;
-use App\Models\RoomType;
+use App\Services\Search\HotelSearchService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
-use App\Models\Vehicle;
-use Illuminate\Validation\ValidationException;
 
 class HotelSearchController extends Controller
 {
-    private const MAX_NIGHTS = 30;
-
-    public function home()
+    public function __construct(private HotelSearchService $service)
     {
-        // Jumlah hotel & armada per kota (hanya yang sudah disetujui)
-        $hotelCounts = Hotel::where('status', 'approved')
-            ->whereHas('roomTypes')
-            ->selectRaw('city, count(*) as total')
-            ->groupBy('city')
-            ->pluck('total', 'city');
-
-        $vehicleCounts = Vehicle::where('status', 'approved')
-            ->selectRaw('city, count(*) as total')
-            ->groupBy('city')
-            ->pluck('total', 'city');
-
-        // 4 kota dengan pilihan paling banyak (hotel + mobil)
-        $cityStats = $hotelCounts->keys()
-            ->merge($vehicleCounts->keys())
-            ->unique()
-            ->filter()
-            ->map(fn ($city) => [
-                'city'     => $city,
-                'hotels'   => (int) ($hotelCounts[$city] ?? 0),
-                'vehicles' => (int) ($vehicleCounts[$city] ?? 0),
-            ])
-            ->sortByDesc(fn ($stat) => $stat['hotels'] + $stat['vehicles'])
-            ->take(4)
-            ->values();
-
-        // 6 hotel pilihan: bintang tertinggi, lalu yang terbaru
-        $featuredHotels = Hotel::query()
-            ->where('status', 'approved')
-            ->whereHas('roomTypes')
-            ->with(['translations', 'photos', 'facilities'])
-            ->withMin('roomTypes as min_price', 'base_price')
-            ->orderByDesc('star_rating')
-            ->latest('id')
-            ->take(6)
-            ->get();
-
-        // 3 mobil dengan harga paling hemat
-        $featuredVehicles = Vehicle::query()
-            ->where('status', 'approved')
-            ->with('translations', 'photos')
-            ->orderBy('price_per_day')
-            ->take(3)
-            ->get();
-
-        return view('home', [
-            'cities'           => $this->cities(),
-            'params'           => [],
-            'carCities'        => Vehicle::where('status', 'approved')->distinct()->orderBy('city')->pluck('city'),
-            'cityStats'        => $cityStats,
-            'featuredHotels'   => $featuredHotels,
-            'featuredVehicles' => $featuredVehicles,
-        ]);
     }
 
+    /** Halaman Hotel: hasil pencarian jika ada kata kunci, kalau tidak daftar hotel pilihan. */
     public function search(Request $request)
     {
-        // Tanpa kata kunci pencarian: tampilkan halaman Hotel (daftar hotel pilihan)
         if (! $request->filled('city')) {
             return $this->browse();
         }
-        $data = $request->validate([
-            'city'      => ['required', 'string', 'max:100'],
-            'check_in'  => ['required', 'date', 'after_or_equal:today'],
-            'check_out' => ['required', 'date', 'after:check_in'],
-            'guests'    => ['required', 'integer', 'between:1,20'],
-        ]);
 
-        [$checkIn, $checkOut, $nights] = $this->stay($data);
+        $search = $this->service->search($request);
 
-        $city = addcslashes($data['city'], '%_\\');
-
-        $roomTypes = RoomType::query()
-            ->withOpenNights($checkIn, $checkOut)
-            ->where('capacity', '>=', $data['guests'])
-            ->having('open_nights', '=', $nights)
-            ->whereHas('hotel', fn ($q) => $q
-                ->where('status', 'approved')
-                ->where('city', 'like', "%{$city}%"))
-            ->with(['translations', 'hotel.translations', 'hotel.facilities', 'hotel.photos'])
-            ->get();
-
-        $results = $roomTypes
-            ->groupBy('hotel_id')
-            ->map(fn ($types) => [
-                'hotel'     => $types->first()->hotel,
-                'min_price' => $types->min('base_price'),
-            ])
-            ->sortBy('min_price')
-            ->values();
-
-        return view('hotels.search', [
-            'results' => $results,
-            'nights'  => $nights,
-            'params'  => $data,
-            'cities'  => $this->cities(),
+        return view('hotels.index', [
+            'search' => $search,
+            'params' => $search['params'],
+            'cities' => $this->cities(),
         ]);
     }
 
@@ -133,7 +47,7 @@ class HotelSearchController extends Controller
             ]);
             $params['guests'] = $params['guests'] ?? 2;
 
-            [$checkIn, $checkOut, $nights] = $this->stay($params);
+            [$checkIn, $checkOut, $nights] = $this->service->stay($params);
 
             $query->withOpenNights($checkIn, $checkOut);
         }
@@ -147,33 +61,7 @@ class HotelSearchController extends Controller
         return view('hotels.show', compact('hotel', 'roomTypes', 'params', 'nights'));
     }
 
-    /** @return array{0: Carbon, 1: Carbon, 2: int} */
-    private function stay(array $data): array
-    {
-        $checkIn  = Carbon::parse($data['check_in'])->startOfDay();
-        $checkOut = Carbon::parse($data['check_out'])->startOfDay();
-        $nights   = (int) $checkIn->diffInDays($checkOut);
-
-        if ($nights > self::MAX_NIGHTS) {
-            throw ValidationException::withMessages([
-                'check_out' => __('ui.max_nights', ['count' => self::MAX_NIGHTS]),
-            ]);
-        }
-
-        return [$checkIn, $checkOut, $nights];
-    }
-
-    /** Daftar kota hotel yang sudah disetujui (untuk saran di kolom kota). */
-    private function cities()
-    {
-        return Hotel::where('status', 'approved')
-            ->whereHas('roomTypes')
-            ->distinct()
-            ->orderBy('city')
-            ->pluck('city');
-    }
-
-    /** Halaman Hotel tanpa pencarian: hotel pilihan beserta harga mulai dari. */
+    /** Hotel pilihan beserta harga mulai dari (tanpa pencarian). */
     private function browse()
     {
         $hotels = Hotel::query()
@@ -191,5 +79,15 @@ class HotelSearchController extends Controller
             'cities' => $this->cities(),
             'params' => [],
         ]);
+    }
+
+    /** Daftar kota hotel yang sudah disetujui (untuk saran di kolom kota). */
+    private function cities()
+    {
+        return Hotel::where('status', 'approved')
+            ->whereHas('roomTypes')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
     }
 }
