@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+    use Notifiable; 
     protected $fillable = [
         'email', 'password', 'phone_number', 'user_type',
-        'is_active', 'preferred_locale', 'preferred_currency',
+        'is_active', 'preferred_locale', 'preferred_currency', 'must_change_password',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -20,6 +22,7 @@ class User extends Authenticatable
         return [
             'password'  => 'hashed',
             'is_active' => 'boolean',
+            'must_change_password' => 'boolean',
         ];
     }
 

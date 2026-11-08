@@ -36,10 +36,16 @@
                                class="w-full bg-transparent font-semibold text-slate-800 text-sm focus:outline-none">
                     </div>
 
-                    <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
-                        <input type="checkbox" name="remember" class="rounded text-sagara-blue focus:ring-sagara-blue">
-                        {{ __('ui.remember_me') }}
-                    </label>
+                    <div class="flex items-center justify-between gap-3">
+                        <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+                            <input type="checkbox" name="remember" class="rounded text-sagara-blue focus:ring-sagara-blue">
+                            {{ __('ui.remember_me') }}
+                        </label>
+
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('password.request') }}" class="text-xs font-bold text-sagara-blue hover:underline">{{ __('ui.forgot_password') }}</a>
+                        @endif
+                    </div>
 
                     <button class="w-full py-3.5 bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue text-white font-bold rounded-xl shadow-lg transition duration-300 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-right-to-bracket"></i> {{ __('ui.login') }}

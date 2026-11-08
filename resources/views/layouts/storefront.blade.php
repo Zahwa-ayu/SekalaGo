@@ -2,7 +2,7 @@
     // Halaman yang latarnya terang (tanpa hero) mendapat navbar putih sejak awal.
     // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
     $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
-        || request()->routeIs('cars.show', 'hotels.show', 'auth.login');
+        || request()->routeIs('cars.show', 'hotels.show', 'auth.login', 'account.*');
 
     // Gaya link menu utama (Beranda / Hotel / Mobil)
     $navLink = 'nav-link-text px-3 py-2 rounded-lg transition';
@@ -147,6 +147,13 @@
                         @if (auth()->user()->user_type !== 'customer')
                             <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
                                 <i class="fa-solid fa-gauge text-sky-400"></i> {{ __('ui.dashboard') }}
+                            </a>
+                        @endif
+
+                        {{-- GANTI PASSWORD --}}
+                        @if (Route::has('account.password.edit'))
+                            <a href="{{ route('account.password.edit') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-key text-sky-400"></i> {{ __('ui.change_password') }}
                             </a>
                         @endif
 

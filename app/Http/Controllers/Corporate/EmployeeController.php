@@ -50,6 +50,8 @@ class EmployeeController extends Controller
                 'email'     => $data['email'],
                 'password'  => $data['password'],
                 'user_type' => 'corporate',
+                // Password dibuat oleh Finance (sementara): karyawan wajib menggantinya saat login pertama
+                'must_change_password' => true,
             ]);
 
             $company->companyUsers()->create([
@@ -107,6 +109,12 @@ class EmployeeController extends Controller
 
             if (! empty($data['password'])) {
                 $userChanges['password'] = $data['password'];
+
+                // Reset password karyawan oleh Finance = password sementara.
+                // Kalau Finance mengganti password miliknya sendiri, tidak perlu dipaksa ganti lagi.
+                if (! $isSelf) {
+                    $userChanges['must_change_password'] = true;
+                }
             }
 
             if (! $isSelf) {

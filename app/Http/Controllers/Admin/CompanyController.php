@@ -51,6 +51,8 @@ class CompanyController extends Controller
                 'email'     => $data['finance_email'],
                 'password'  => $data['finance_password'],
                 'user_type' => 'corporate',
+                // Password dibuat oleh admin (sementara): Finance wajib menggantinya saat login pertama
+                'must_change_password' => true,
             ]);
 
             $company->companyUsers()->create([

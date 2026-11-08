@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 
 class DashboardMenu
 {
+    /** Item "Ganti password": dipakai admin, mitra, dan Finance. */
+    private const CHANGE_PASSWORD = ['fa-key', 'ui.change_password', 'account.password.edit', ['account.password.*']];
+
     /** Menu utama sidebar. Tiap item: icon, label (kunci bahasa), route, dan pola route untuk status aktif. */
     public static function for(User $user): array
     {
@@ -21,6 +24,7 @@ class DashboardMenu
                 ['fa-users', 'ui.users', 'admin.users.index', ['admin.users.*']],
                 ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
                 ['fa-car-side', 'ui.review_vehicles', 'admin.vehicles.index', ['admin.vehicles.*']],
+                self::CHANGE_PASSWORD,
             ],
 
             'partner' => $user->partner?->hasSignedAgreement()
@@ -31,10 +35,12 @@ class DashboardMenu
                     ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
                     ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
                     ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']],
+                    self::CHANGE_PASSWORD,
                 ]
                 : [
                     ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
                     ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
+                    self::CHANGE_PASSWORD,
                 ],
 
             'corporate' => $user->companyUser?->isFinance()
@@ -44,6 +50,7 @@ class DashboardMenu
                     ['fa-sliders', 'ui.positions_limits', 'corporate.positions.index', ['corporate.positions.*', 'corporate.policy.*']],
                     ['fa-clipboard-check', 'ui.company_bookings', 'corporate.bookings.index', ['corporate.bookings.*']],
                     ['fa-chart-column', 'ui.reports', 'corporate.reports.index', ['corporate.reports.*']],
+                    self::CHANGE_PASSWORD,
                 ]
                 : [],
 

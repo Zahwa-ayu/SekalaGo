@@ -6,6 +6,8 @@ return [
     'commission_rate'      => 0.15,
     'booking_hold_minutes' => 30,
     'approval_hold_hours' => 24,
+    // Tampilkan tautan reset password di layar (hanya untuk demo tanpa server email)
+    'show_reset_link' => env('SHOW_RESET_LINK', false),
 
     'locales' => [
         'id' => 'Bahasa Indonesia',

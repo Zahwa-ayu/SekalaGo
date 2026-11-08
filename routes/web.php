@@ -29,6 +29,9 @@ use App\Http\Controllers\Partner\PhotoController;
 use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Partner\BlackoutController;
 use App\Http\Controllers\Partner\VehicleController;
+use App\Http\Controllers\Account\PasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CarBookingController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -41,14 +44,21 @@ Route::get('/hotels/{hotel}', [HotelSearchController::class, 'show'])->name('hot
 Route::get('/cars', [CarSearchController::class, 'home'])->name('cars.home');
 Route::get('/cars/search', [CarSearchController::class, 'legacySearch'])->name('cars.search');;
 Route::get('/cars/{vehicle}', [CarSearchController::class, 'show'])->name('cars.show');
-
 // Pilihan bahasa & mata uang (tamu dan user login)
 Route::post('/preferences', [PreferenceController::class, 'update'])->name('preferences.update');
+
+// Lupa dan reset password (tamu)
+Route::middleware('guest')->group(function () {
+    Route::get('/forgot-password', [ForgotPasswordController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->middleware('throttle:5,1')->name('password.email');
+    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset');
+    Route::post('/reset-password', [ResetPasswordController::class, 'store'])->middleware('throttle:5,1')->name('password.store');
+});
 
 // Hanya untuk tamu (belum login)
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 
@@ -60,6 +70,12 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+// Ganti password (semua peran yang sudah login)
+Route::middleware('auth')->group(function () {
+    Route::get('/account/password', [PasswordController::class, 'edit'])->name('account.password.edit');
+    Route::put('/account/password', [PasswordController::class, 'update'])->name('account.password.update');
+});
 
 // Pemesanan: pelanggan B2C (bayar lewat gateway) dan karyawan corporate (saldo kantor)
 Route::middleware(['auth', 'role:customer,corporate'])->group(function () {
