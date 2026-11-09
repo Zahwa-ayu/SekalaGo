@@ -17,6 +17,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use App\Models\Company;
 use App\Models\CompanyUser;
+use App\Models\CompanyPosition;
 use App\Services\DepositService;
 use App\Services\Payment\PaymentGateway;
 use Tests\Support\FakePaymentGateway;
@@ -278,6 +279,25 @@ protected function bookCorporate(User $user, CompanyUser $member, RoomType $room
 {
     return app(BookingService::class)->create(
         $user, $room, $this->day($from), $this->day($from + $nights), 2, 'Karyawan Tes', $member
+    );
+}
+
+/** Jabatan dengan batas per pemesanan dan anggaran bulanan (opsional). */
+protected function makePosition(Company $company, int $limit, ?int $budget = null): CompanyPosition
+{
+    return CompanyPosition::forceCreate([
+        'company_id'     => $company->id,
+        'name'           => 'Jabatan ' . (++self::$sequence),
+        'booking_limit'  => $limit,
+        'monthly_budget' => $budget,
+    ]);
+}
+
+/** Sewa mobil sebagai karyawan corporate (dibayar dari saldo kantor). */
+protected function bookCorporateCar(User $user, CompanyUser $member, Vehicle $vehicle, int $from = 2, int $days = 2): Booking
+{
+    return app(BookingService::class)->createForVehicle(
+        $user, $vehicle, $this->day($from), $this->day($from + $days), 2, 'Karyawan Tes', false, $member
     );
 }
 }
