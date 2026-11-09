@@ -15,6 +15,11 @@ use App\Services\BookingService;
 use Database\Seeders\CurrencySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use App\Models\Company;
+use App\Models\CompanyUser;
+use App\Services\DepositService;
+use App\Services\Payment\PaymentGateway;
+use Tests\Support\FakePaymentGateway;
 use Illuminate\Support\Carbon;
 
 abstract class TestCase extends BaseTestCase
@@ -217,4 +222,62 @@ abstract class TestCase extends BaseTestCase
 
         return $booking->refresh();
     }
+
+    // ------------------------------------------------------------ gateway
+
+/** Ganti gateway pembayaran dengan versi tiruan yang bisa dihitung dan dikendalikan. */
+protected function fakeGateway(): FakePaymentGateway
+{
+    $fake = new FakePaymentGateway();
+    $this->app->instance(PaymentGateway::class, $fake);
+
+    return $fake;
+}
+
+// ---------------------------------------------------------- corporate
+
+/** Perusahaan dengan saldo awal $deposit (dicatat lewat buku besar). */
+protected function makeCompany(int $deposit = 0, array $attributes = []): Company
+{
+    $company = Company::create(array_merge([
+        'company_name'        => 'PT Tes ' . (++self::$sequence),
+        'corporate_code'      => 'TES' . self::$sequence,
+        'travel_policy_limit' => 2000000,
+        'deposit_balance'     => 0,
+    ], $attributes));
+
+    if ($deposit > 0) {
+        app(DepositService::class)->credit($company, $deposit, 'topup', 'Saldo awal tes');
+    }
+
+    return $company->refresh();
+}
+
+/**
+ * Karyawan (atau Finance) pada sebuah perusahaan.
+ *
+ * @return array{0: User, 1: CompanyUser}
+ */
+protected function makeEmployee(Company $company, string $role = 'employee', array $attributes = []): array
+{
+    $user = $this->makeUser('corporate');
+
+    $member = CompanyUser::create(array_merge([
+        'company_id'      => $company->id,
+        'user_id'         => $user->id,
+        'full_name'       => 'Karyawan Tes',
+        'role_in_company' => $role,
+        'department'      => 'Marketing',
+    ], $attributes));
+
+    return [$user, $member];
+}
+
+/** Pesan kamar sebagai karyawan corporate (dibayar dari saldo kantor). */
+protected function bookCorporate(User $user, CompanyUser $member, RoomType $room, int $from = 2, int $nights = 2): Booking
+{
+    return app(BookingService::class)->create(
+        $user, $room, $this->day($from), $this->day($from + $nights), 2, 'Karyawan Tes', $member
+    );
+}
 }
