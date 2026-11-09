@@ -300,4 +300,15 @@ protected function bookCorporateCar(User $user, CompanyUser $member, Vehicle $ve
         $user, $vehicle, $this->day($from), $this->day($from + $days), 2, 'Karyawan Tes', false, $member
     );
 }
+
+/** Pengguna siap pakai untuk tiap peran (mitra: terverifikasi dan sudah menandatangani MOU). */
+protected function userOfType(string $type): User
+{
+    return match ($type) {
+        'customer'  => $this->makeCustomer(),
+        'admin'     => $this->makeUser('admin'),
+        'partner'   => $this->makePartner()->user,
+        'corporate' => $this->makeEmployee($this->makeCompany())[0],
+    };
+}
 }
