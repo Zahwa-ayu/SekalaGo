@@ -69,6 +69,7 @@ abstract class TestCase extends BaseTestCase
             'email'     => 'tes' . (++self::$sequence) . '@sekalago.test',
             'password'  => 'password',
             'user_type' => $type,
+            'is_active' => true,
         ]);
     }
 
