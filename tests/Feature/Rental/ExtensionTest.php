@@ -230,16 +230,29 @@ class ExtensionTest extends TestCase
         $this->assertRefused(fn () => $this->service()->extend($booking, 1, $booking->user), 'extension');
     }
 
-    public function test_the_booking_itself_never_counts_as_a_conflict(): void
+    // public function test_the_booking_itself_never_counts_as_a_conflict(): void
+    // {
+    //     $this->fakeGateway();
+    //     [, $booking] = $this->ongoing(['units' => 1], days: 1);   // kembali besok 12.00
+
+    //     $this->travelTo($this->day(1)->setTime(9, 0));            // hari kembali, sebelum jam 12.00
+
+    //     $extension = $this->service()->extend($booking->fresh(), 1, $booking->user);
+
+    //     $this->assertSame($this->day(2)->toDateString(), $extension->new_check_out->toDateString());
+    // }
+
+        public function test_the_booking_itself_never_counts_as_a_conflict(): void
     {
         $this->fakeGateway();
         [, $booking] = $this->ongoing(['units' => 1], days: 1);   // kembali besok 12.00
 
+        $expectedReturn = $this->day(2)->toDateString();          // dihitung sebelum waktu dimajukan
         $this->travelTo($this->day(1)->setTime(9, 0));            // hari kembali, sebelum jam 12.00
 
         $extension = $this->service()->extend($booking->fresh(), 1, $booking->user);
 
-        $this->assertSame($this->day(2)->toDateString(), $extension->new_check_out->toDateString());
+        $this->assertSame($expectedReturn, $extension->new_check_out->toDateString());
     }
 
     // ------------------------------------------------------------ corporate
