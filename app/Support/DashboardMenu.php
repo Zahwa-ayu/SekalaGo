@@ -35,6 +35,7 @@ class DashboardMenu
                     ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
                     ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
                     ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']],
+                    ['fa-car-on', 'ui.rentals', 'partner.rentals.index', ['partner.rentals.*']],
                     self::CHANGE_PASSWORD,
                 ]
                 : [

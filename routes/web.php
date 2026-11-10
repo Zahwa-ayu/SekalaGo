@@ -32,6 +32,7 @@ use App\Http\Controllers\Partner\VehicleController;
 use App\Http\Controllers\Account\PasswordController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Partner\RentalController;
 use App\Http\Controllers\CarBookingController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -173,6 +174,10 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
                 ->name('room-types.stocks.update');
 
             Route::get('bookings', [PartnerBookingController::class, 'index'])->name('bookings.index');
+            Route::get('rentals', [RentalController::class, 'index'])->name('rentals.index');
+            Route::post('rentals/{booking}/pickup', [RentalController::class, 'markPickedUp'])->name('rentals.pickup');
+            Route::post('rentals/{booking}/return', [RentalController::class, 'markReturned'])->name('rentals.return');
+            Route::post('rentals/{booking}/cancel', [RentalController::class, 'cancelAtRisk'])->name('rentals.cancel');
 
             // Foto hotel dan tipe kamar
             Route::get('hotels/{hotel}/photos', [PhotoController::class, 'hotelIndex'])->name('hotels.photos.index');

@@ -19,7 +19,8 @@ class Booking extends Model
         'free_cancel_days', 'cancelled_at', 'cancelled_by', 'cancellation_reason',
         'refund_amount', 'refunded_at', 'refund_reference',
         'decided_by', 'decided_at', 'decision_note', 'approval_reason', 'vehicle_id', 'with_driver', 
-        'driver_fee_per_day', 'pickup_location'
+        'driver_fee_per_day', 'pickup_location', 'due_at', 'late_grace_minutes', 'late_fee_percent',
+        'picked_up_at', 'returned_at', 'late_minutes', 'late_fee_computed', 'late_fee',
     ];
 
     protected function casts(): array
@@ -36,6 +37,9 @@ class Booking extends Model
             'total_price_display' => 'float',
             'free_cancel_days'    => 'integer',
             'with_driver' => 'boolean',
+            'due_at'       => 'datetime',
+            'picked_up_at' => 'datetime',
+            'returned_at'  => 'datetime',
         ];
     }
 
@@ -78,7 +82,7 @@ class Booking extends Model
 
     public function canBeCancelledByAdmin(): bool
     {
-        return $this->status === 'confirmed' && today()->lte($this->check_in);
+        return $this->status === 'confirmed' && today()->lte($this->check_in) && $this->picked_up_at === null;
     }
 
     protected function logAttributes(): array
@@ -115,4 +119,44 @@ class Booking extends Model
     {
         return $this->isCar() ? __('ui.tab_cars') : __('ui.tab_hotels');
     }
+
+    /**
+ * Tahap sewa mobil: upcoming, ongoing, overdue, atau returned.
+ * Null untuk hotel atau pesanan yang belum terkonfirmasi.
+ */
+public function rentalStage(): ?string
+{
+    if (! $this->isCar() || $this->status !== 'confirmed') {
+        return null;
+    }
+
+    if ($this->returned_at) {
+        return 'returned';
+    }
+
+    if (! $this->picked_up_at) {
+        return 'upcoming';
+    }
+
+    return $this->due_at && $this->due_at->isPast() ? 'overdue' : 'ongoing';
+}
+
+/**
+ * Hari pertama unit ini kembali bebas (batas akhir eksklusif).
+ * Mobil yang sudah diambil tapi belum kembali setelah tanggal kembali tetap memakai unit sampai hari ini.
+ */
+public function occupiedUntil(): Carbon
+{
+    if ($this->vehicle_id && $this->picked_up_at && ! $this->returned_at && $this->check_out->lte(today())) {
+        return today()->addDay();
+    }
+
+    return $this->check_out->copy();
+}
+
+/** Pesanan mobil yang belum diambil tapi unitnya sedang tertahan oleh mobil yang terlambat. */
+public function isAtRisk(): bool
+{
+    return app(\App\Services\RentalService::class)->isAtRisk($this);
+}
 }

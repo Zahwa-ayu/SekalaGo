@@ -122,6 +122,28 @@
     </div>
 </div>
 
+{{-- JAM PENGEMBALIAN DAN KETERLAMBATAN --}}
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.return_time') }}</label>
+        <input type="time" name="return_time" required
+               value="{{ old('return_time', substr((string) ($vehicle->return_time ?? '12:00'), 0, 5)) }}"
+               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+    </div>
+    <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.late_grace_minutes') }}</label>
+        <input type="number" name="late_grace_minutes" min="0" max="240" required
+               value="{{ old('late_grace_minutes', $vehicle->late_grace_minutes ?? 60) }}"
+               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+    </div>
+    <div>
+        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.late_fee_percent') }}</label>
+        <input type="number" name="late_fee_percent" min="0" max="100" required
+               value="{{ old('late_fee_percent', $vehicle->late_fee_percent ?? 10) }}"
+               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+    </div>
+</div>
+
 {{-- FITUR --}}
 <div>
     <div class="{{ $label }}"><i class="fa-solid fa-star text-sagara-blue"></i> {{ __('ui.vehicle_features') }}</div>

@@ -411,6 +411,9 @@ public function createForVehicle(
             'with_driver'         => $withDriver,
             'driver_fee_per_day'  => $withDriver ? $locked->driver_fee_per_day : null,
             'pickup_location'     => collect([$locked->address, $locked->area, $locked->city])->filter()->join(', '),
+            'due_at'             => $return->copy()->setTimeFromTimeString((string) $locked->return_time),
+            'late_grace_minutes' => $locked->late_grace_minutes,
+            'late_fee_percent'   => $locked->late_fee_percent,
         ];
 
         if ($member) {
