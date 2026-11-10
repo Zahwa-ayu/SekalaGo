@@ -95,6 +95,15 @@
             </div>
         @endif
 
+        {{-- DENDA KETERLAMBATAN --}}
+        @if ($summary['late_fees'] > 0)
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800">
+                <i class="fa-solid fa-clock"></i> {{ __('ui.late_fee') }}:
+                <strong>{{ format_price($summary['late_fees'], 'IDR') }}</strong>
+                &middot; {{ __('ui.extras_paid_to_vendor') }}
+            </div>
+        @endif
+
         @if ($summary['orders'] === 0)
             <div class="bg-white rounded-3xl border border-slate-100 shadow-md px-6 py-12 text-center text-slate-400">
                 <i class="fa-solid fa-chart-column text-3xl mb-2 block"></i>

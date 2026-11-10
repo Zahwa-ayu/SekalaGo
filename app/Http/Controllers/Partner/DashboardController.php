@@ -37,6 +37,8 @@ class DashboardController extends Controller
             ->limit(6)
             ->get();
 
-        return view('partner.dashboard', compact('partner', 'hotelStatus', 'vehicleStatus', 'monthly', 'upcoming'));
+        $overdueRentals = app(\App\Services\RentalService::class)->overdueFor($partner)->count();
+
+        return view('partner.dashboard', compact('partner', 'hotelStatus', 'vehicleStatus', 'monthly', 'upcoming', 'overdueRentals'));
     }
 }

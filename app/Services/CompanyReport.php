@@ -32,6 +32,7 @@ class CompanyReport
             'refunded'  => (int) $bookings->where('status', 'cancelled')->sum('refund_amount'),
             'rejected'  => $bookings->where('status', 'rejected')->count(),
             'pending'   => $bookings->where('status', 'pending_approval')->count(),
+            'late_fees' => (int) $confirmed->sum('late_fee'),   // dibayar langsung ke vendor, tidak masuk total belanja
         ];
 
         $byProduct = collect(['hotel', 'car'])

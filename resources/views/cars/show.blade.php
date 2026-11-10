@@ -116,6 +116,16 @@
                         </div>
                     @endif
 
+                    {{-- KEBIJAKAN PENGEMBALIAN DAN KETERLAMBATAN --}}
+                    <div class="flex items-start gap-3">
+                        <i class="fa-solid fa-clock text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                        <span>{{ __('ui.return_policy_note', [
+                            'time'    => substr((string) $vehicle->return_time, 0, 5),
+                            'grace'   => $vehicle->late_grace_minutes,
+                            'percent' => $vehicle->late_fee_percent,
+                        ]) }}</span>
+                    </div>
+
                     <p class="text-[11px] text-slate-400"><i class="fa-solid fa-circle-info"></i> {{ __('ui.extras_paid_to_vendor') }}</p>
                 </div>
             </div>

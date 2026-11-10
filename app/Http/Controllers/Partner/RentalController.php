@@ -22,7 +22,7 @@ class RentalController extends Controller
         $stages = Booking::where('partner_id', $partner->id)
             ->where('product_type', 'car')
             ->where('status', 'confirmed')
-            ->with('vehicle.translations')
+            ->with('vehicle.translations', 'extensions')
             ->orderBy('check_in')
             ->get()
             ->groupBy(fn (Booking $b) => $b->rentalStage());

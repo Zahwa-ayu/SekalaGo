@@ -35,6 +35,11 @@
             </div>
         @elseif ($stage === 'returned' && $booking->late_minutes > 0)
             <div class="text-xs text-slate-500">
+                @if ($booking->extensions->isNotEmpty())
+                    <div class="text-[11px] font-bold text-sky-600">
+                        <i class="fa-solid fa-calendar-plus"></i> {{ __('ui.extended_times', ['count' => $booking->extensions->count()]) }}
+                    </div>
+                @endif
                 {{ __('ui.late_by', ['hours' => intdiv($booking->late_minutes, 60), 'minutes' => $booking->late_minutes % 60]) }}
                 &middot; {{ __('ui.late_fee') }}: <strong>{{ format_price($booking->late_fee, 'IDR') }}</strong>
                 @if ($booking->late_fee !== $booking->late_fee_computed)

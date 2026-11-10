@@ -35,6 +35,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Partner\RentalController;
 use App\Http\Controllers\CarBookingController;
+use App\Http\Controllers\BookingExtensionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Route;
@@ -91,6 +92,8 @@ Route::middleware(['auth', 'role:customer,corporate'])->group(function () {
     Route::post('/bookings/{booking}/pay', [BookingController::class, 'processPayment'])->name('bookings.pay.process');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/{booking}/ticket', [BookingController::class, 'ticket'])->name('bookings.ticket');
+    Route::get('/bookings/{booking}/extend', [BookingExtensionController::class, 'create'])->name('bookings.extend');
+Route::post('/bookings/{booking}/extend', [BookingExtensionController::class, 'store'])->name('bookings.extend.store');
 
     Route::get('/car-bookings/create', [CarBookingController::class, 'create'])->name('car-bookings.create');
     Route::post('/car-bookings', [CarBookingController::class, 'store'])->name('car-bookings.store');

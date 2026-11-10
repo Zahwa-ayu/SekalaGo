@@ -159,4 +159,14 @@ public function isAtRisk(): bool
 {
     return app(\App\Services\RentalService::class)->isAtRisk($this);
 }
+
+public function extensions()
+{
+    return $this->hasMany(BookingExtension::class)->orderBy('id');
+}
+
+public function canBeExtended(): bool
+{
+    return app(\App\Services\ExtensionService::class)->canExtend($this);
+}
 }

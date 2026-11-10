@@ -36,11 +36,26 @@
     <h2>Sewa / Rental</h2>
     <table class="info">
         <tr><td class="label">Tanggal ambil / Pick-up date</td><td>{{ $booking->check_in->format('d/m/Y') }}</td></tr>
-        <tr><td class="label">Tanggal kembali / Return date</td><td>{{ $booking->check_out->format('d/m/Y') }}</td></tr>
+        <tr><td class="label">Batas kembali / Return by</td><td>{{ $booking->due_at ? $booking->due_at->format('d/m/Y H:i') : $booking->check_out->format('d/m/Y') }}</td></tr>
         <tr><td class="label">Hari / Days</td><td>{{ $booking->nights }}</td></tr>
         <tr><td class="label">Penumpang / Passengers</td><td>{{ $booking->guests }}</td></tr>
         <tr><td class="label">Nama penyewa / Renter</td><td>{{ $booking->guest_name }}</td></tr>
     </table>
+
+    @if ($booking->extensions->isNotEmpty())
+        <h2>Perpanjangan / Extensions</h2>
+        <table class="info">
+            @foreach ($booking->extensions as $extension)
+                <tr>
+                    <td class="label">{{ $extension->created_at->format('d/m/Y') }}</td>
+                    <td>
+                        +{{ $extension->days }} hari / day(s), sampai / until {{ $extension->new_check_out->format('d/m/Y') }}
+                        ({{ format_price($extension->amount, 'IDR') }})
+                    </td>
+                </tr>
+            @endforeach
+        </table>
+    @endif
 
     <h2>Pembayaran / Payment</h2>
     <table class="info">
@@ -59,6 +74,22 @@
                     Biaya supir sekitar {{ format_price($booking->driver_fee_per_day, 'IDR') }} per hari / Driver fee about {{ format_price($booking->driver_fee_per_day, 'IDR') }} per day.<br>
                 @endif
                 BBM, tol, dan parkir tidak termasuk total sewa. / Fuel, tolls and parking are not included in the rental total.
+            </td>
+        </tr>
+        <tr>
+            <td class="label">Keterlambatan / Late return</td>
+            <td>
+                @if ($booking->late_fee_percent > 0)
+                    Terlambat lebih dari {{ $booking->late_grace_minutes }} menit dikenai denda {{ $booking->late_fee_percent }}% dari harga harian per jam (maksimal satu hari penuh per 24 jam), dibayar langsung ke vendor.<br>
+                    Returns more than {{ $booking->late_grace_minutes }} minutes late are charged {{ $booking->late_fee_percent }}% of the daily price per hour (up to one full day per 24 hours), paid directly to the vendor.
+                @else
+                    Tidak ada denda keterlambatan. / No late fee applies.
+                @endif
+
+                @if ($booking->returned_at && $booking->late_fee > 0)
+                    <br><strong>Denda tercatat / Late fee recorded: {{ format_price($booking->late_fee, 'IDR') }}</strong>
+                    (dibayar langsung ke vendor / paid directly to the vendor)
+                @endif
             </td>
         </tr>
     </table>

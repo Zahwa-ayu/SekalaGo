@@ -2,6 +2,12 @@
 
 @section('content')
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        @if ($overdueRentals > 0)
+            <a href="{{ route('partner.rentals.index') }}" class="block rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-bold text-red-700 hover:bg-red-100 transition">
+                <i class="fa-solid fa-triangle-exclamation"></i> {{ __('ui.overdue_rentals_alert', ['count' => $overdueRentals]) }}
+            </a>
+        @endif
+
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.dashboard') }}</h1>
             <a href="{{ route('partner.hotels.create') }}"

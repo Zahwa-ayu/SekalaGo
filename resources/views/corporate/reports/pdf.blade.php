@@ -25,6 +25,7 @@
         <tr><td>{{ __('ui.orders_count') }}</td><td class="num">{{ $summary['orders'] }}</td></tr>
         <tr><td>{{ __('ui.total_spend') }}</td><td class="num">{{ format_price($summary['total'], 'IDR') }}</td></tr>
         <tr><td>{{ __('ui.average_per_order') }}</td><td class="num">{{ format_price($summary['average'], 'IDR') }}</td></tr>
+        <tr><td>{{ __('ui.late_fee') }} ({{ __('ui.extras_paid_to_vendor') }})</td><td class="num">{{ format_price($summary['late_fees'], 'IDR') }}</td></tr>
         <tr><td>{{ __('ui.nights_or_days') }}</td><td class="num">{{ $summary['nights'] }}</td></tr>
         <tr><td>{{ __('ui.booking_status_cancelled') }} ({{ __('ui.refunds') }})</td>
             <td class="num">{{ $summary['cancelled'] }} ({{ format_price($summary['refunded'], 'IDR') }})</td></tr>
@@ -101,6 +102,7 @@
                 <th>{{ __('ui.period_start') }}</th>
                 <th>{{ __('ui.period_end') }}</th>
                 <th class="num">{{ __('ui.total_price') }}</th>
+                <th class="num">{{ __('ui.late_fee') }}</th>
             </tr>
             @foreach ($rows as $booking)
                 <tr>
@@ -112,6 +114,7 @@
                     <td>{{ $booking->check_in->format('d/m/Y') }}</td>
                     <td>{{ $booking->check_out->format('d/m/Y') }}</td>
                     <td class="num">{{ format_price($booking->total_price, 'IDR') }}</td>
+                    <td class="num">{{ format_price($booking->late_fee, 'IDR') }}</td>
                 </tr>
             @endforeach
         </table>

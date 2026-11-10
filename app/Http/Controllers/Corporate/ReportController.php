@@ -43,6 +43,7 @@ class ReportController extends Controller
                 __('ui.booking_code'), __('ui.booked_on'), __('ui.product'), __('ui.employees'), __('ui.department'),
                 __('ui.item_name'), __('ui.room_option'), __('ui.period_start'), __('ui.period_end'),
                 __('ui.nights_or_days'), __('ui.total_price') . ' (IDR)', __('ui.limit_label') . ' (IDR)',
+                __('ui.late_fee') . ' (IDR)',
             ], ';', '"', '\\');
 
             foreach ($report['rows'] as $booking) {
@@ -58,11 +59,12 @@ class ReportController extends Controller
                     $booking->check_out->format('Y-m-d'),
                     $booking->nights,
                     $booking->total_price,
+                    $booking->late_fee,
                     $booking->policy_limit ?? '',
                 ], ';', '"', '\\');
             }
 
-            fputcsv($out, ['', '', '', '', '', '', '', '', '', 'TOTAL', $report['summary']['total'], ''], ';', '"', '\\');
+            fputcsv($out, ['', '', '', '', '', '', '', '', '', 'TOTAL', $report['summary']['total'], $report['summary']['late_fees'], ''], ';', '"', '\\');
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);

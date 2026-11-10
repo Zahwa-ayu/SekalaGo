@@ -33,7 +33,7 @@
             </div>
         @endif
 
-        {{-- DETAIL MENGINAP --}}
+        {{-- DETAIL PESANAN (hotel atau rental mobil) --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-lg p-6 sm:p-8 space-y-5">
             <div>
                 <h2 class="text-lg font-extrabold text-slate-900">{{ $booking->hotel_name }}</h2>
@@ -44,15 +44,17 @@
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-500 flex items-center justify-center shrink-0"><i class="fa-solid fa-calendar-days"></i></div>
                     <div>
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.check_in') }} - {{ __('ui.check_out') }}</div>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                            {{ $booking->isCar() ? __('ui.pickup_date') . ' - ' . __('ui.return_date') : __('ui.check_in') . ' - ' . __('ui.check_out') }}
+                        </div>
                         <div class="font-bold text-slate-900">{{ $booking->check_in->format('d/m/Y') }} - {{ $booking->check_out->format('d/m/Y') }}</div>
-                        <div class="text-xs text-slate-500">{{ __('ui.for_nights', ['count' => $booking->nights]) }}, {{ $booking->guests }} {{ __('ui.guests') }}</div>
+                        <div class="text-xs text-slate-500">{{ $booking->durationLabel() }}, {{ $booking->guests }} {{ $booking->isCar() ? __('ui.passengers') : __('ui.guests') }}</div>
                     </div>
                 </div>
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-lg bg-sky-50 text-sky-500 flex items-center justify-center shrink-0"><i class="fa-solid fa-user"></i></div>
                     <div>
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.guest_name') }}</div>
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $booking->isCar() ? __('ui.renter_name') : __('ui.guest_name') }}</div>
                         <div class="font-bold text-slate-900">{{ $booking->guest_name }}</div>
                     </div>
                 </div>
@@ -76,13 +78,60 @@
                     </div>
                 </div>
             </div>
+
+            @if ($booking->isCar())
+                <div class="pt-5 border-t border-slate-100 text-sm text-slate-600 space-y-2">
+                    <div><i class="fa-solid fa-location-dot text-sky-500 w-5"></i> {{ $booking->pickup_location }}</div>
+
+                    @if ($booking->with_driver && $booking->driver_fee_per_day !== null)
+                        <div>
+                            <i class="fa-solid fa-user-tie text-sky-500 w-5"></i>
+                            {{ __('ui.driver_fee_estimate_notice', ['amount' => format_price($booking->driver_fee_per_day, 'IDR')]) }}
+                        </div>
+                    @endif
+
+                    <div><i class="fa-solid fa-id-card text-sky-500 w-5"></i> {{ __('ui.bring_id_notice') }}</div>
+
+                    @foreach ($booking->extensions as $extension)
+                        <div class="text-xs text-slate-500">
+                            <i class="fa-solid fa-calendar-plus text-sky-500 w-5"></i>
+                            {{ __('ui.extension_history', [
+                                'days'   => $extension->days,
+                                'date'   => $extension->new_check_out->format('d/m/Y'),
+                                'amount' => format_price($extension->amount, 'IDR'),
+                            ]) }}
+                        </div>
+                    @endforeach
+
+                    @if ($stage = $booking->rentalStage())
+                        <div class="pt-1">
+                            <i class="fa-solid fa-flag-checkered text-sky-500 w-5"></i>
+                            <strong class="text-slate-900">{{ __('ui.rental_stage_' . $stage) }}</strong>
+                            @if ($stage === 'returned' && $booking->late_fee > 0)
+                                &middot; {{ __('ui.late_fee') }}: {{ format_price($booking->late_fee, 'IDR') }}
+                                ({{ __('ui.extras_paid_to_vendor') }})
+                            @endif
+                        </div>
+
+                        @if ($stage === 'upcoming' && $booking->isAtRisk())
+                            <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-4 py-3">
+                                {{ __('ui.rental_at_risk_notice') }}
+                            </div>
+                        @endif
+                    @endif
+                </div>
+            @endif
         </div>
 
         {{-- DIBATALKAN --}}
         @if ($booking->status === 'cancelled')
             <div class="bg-white rounded-3xl border border-red-100 shadow-md p-6 text-sm space-y-1">
                 <div class="font-extrabold text-red-600">
-                    {{ $booking->cancelled_by === 'admin' ? __('ui.cancelled_by_admin') : __('ui.cancelled_by_customer') }}
+                    {{ match ($booking->cancelled_by) {
+                        'admin'   => __('ui.cancelled_by_admin'),
+                        'partner' => __('ui.cancelled_by_partner'),
+                        default   => __('ui.cancelled_by_customer'),
+                    } }}
                     <span class="font-semibold text-slate-400">({{ $booking->cancelled_at->format('d/m/Y H:i') }})</span>
                 </div>
                 @if ($booking->cancellation_reason)
@@ -143,10 +192,19 @@
         {{-- TERKONFIRMASI --}}
         @elseif ($booking->status === 'confirmed')
             <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8 space-y-6">
-                <a href="{{ route('bookings.ticket', $booking) }}"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md transition">
-                    <i class="fa-solid fa-download"></i> {{ __('ui.download_ticket') }}
-                </a>
+                <div class="flex flex-wrap items-center gap-3">
+                    <a href="{{ route('bookings.ticket', $booking) }}"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md transition">
+                        <i class="fa-solid fa-download"></i> {{ __('ui.download_ticket') }}
+                    </a>
+
+                    @if ($booking->canBeExtended())
+                        <a href="{{ route('bookings.extend', $booking) }}"
+                           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold shadow-md transition">
+                            <i class="fa-solid fa-calendar-plus"></i> {{ __('ui.extend_rental') }}
+                        </a>
+                    @endif
+                </div>
 
                 <div class="pt-6 border-t border-slate-100 space-y-3">
                     <h2 class="text-base font-extrabold text-slate-900">{{ __('ui.cancel_booking') }}</h2>

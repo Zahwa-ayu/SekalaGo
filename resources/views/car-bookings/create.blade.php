@@ -83,6 +83,12 @@
                 @if ($vehicle->extras_note)
                     <p><i class="fa-solid fa-gas-pump text-sagara-blue"></i> {{ $vehicle->extras_note }}</p>
                 @endif
+                <p><i class="fa-solid fa-clock text-sagara-blue"></i>
+                    {{ __('ui.return_policy_note', [
+                        'time'    => substr((string) $vehicle->return_time, 0, 5),
+                        'grace'   => $vehicle->late_grace_minutes,
+                        'percent' => $vehicle->late_fee_percent,
+                    ]) }}</p>
                 <p><i class="fa-solid fa-id-card text-sagara-blue"></i> {{ __('ui.bring_id_notice') }}</p>
 
                 @if ($isCorporate)
