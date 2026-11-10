@@ -751,4 +751,6 @@ return [
 'reset_mail_expire' => 'This link is valid for :count minutes.',
 'reset_mail_ignore' => 'If you did not request a password reset, ignore this email.',
 
+// FAQ
+'faq_management' => 'Manage FAQ',
 ];

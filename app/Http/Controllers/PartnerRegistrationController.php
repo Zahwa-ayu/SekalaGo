@@ -5,13 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Partner;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Faq;
 use Illuminate\Support\Facades\DB;
 
 class PartnerRegistrationController extends Controller
 {
     public function create()
     {
-        return view('auth.register-partner');
+        $faqs = Faq::where('category', 'partner')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->with('translations')
+            ->get();
+
+        return view('auth.register-partner', compact('faqs'));
     }
 
     public function store(Request $request)

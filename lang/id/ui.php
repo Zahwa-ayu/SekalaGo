@@ -753,4 +753,6 @@ return [
 'reset_mail_expire' => 'Tautan ini berlaku :count menit.',
 'reset_mail_ignore' => 'Jika Anda tidak meminta reset password, abaikan email ini.',
 
+// FAQ
+'faq_management' => 'Kelola FAQ',
 ];

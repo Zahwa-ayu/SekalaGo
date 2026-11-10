@@ -131,6 +131,11 @@
                     <a href="{{ route('cars.home') }}" class="{{ $navLink }} {{ request()->routeIs('cars.*') ? $navOn : $navOff }}">
                         <i class="fa-solid fa-car mr-1"></i> {{ __('ui.tab_cars') }}
                     </a>
+                    @if (Route::has('faq'))
+                        <a href="{{ route('faq') }}" class="{{ $navLink }} {{ request()->routeIs('faq') ? $navOn : $navOff }}">
+                            <i class="fa-solid fa-circle-question mr-1"></i> FAQ
+                        </a>
+                    @endif
 
                     {{-- PREFERENCES (BAHASA & MATA UANG) --}}
                     <div class="pref-wrapper flex items-center gap-1.5">
@@ -224,6 +229,10 @@
                         <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_partnership') }}</h4>
                         <ul class="space-y-2">
                             <li><a href="{{ route('register.partner') }}" class="hover:text-sky-400 transition">{{ __('ui.register_partner') }}</a></li>
+                            {{-- Link FAQ baru muncul jika route 'faq' sudah terdaftar --}}
+                            @if (Route::has('faq'))
+                                <li><a href="{{ route('faq') }}" class="hover:text-sky-400 transition">FAQ</a></li>
+                            @endif
                         </ul>
                     </div>
                 </div>

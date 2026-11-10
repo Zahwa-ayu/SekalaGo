@@ -18,6 +18,7 @@ use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\ProfileController;
 use App\Http\Controllers\Partner\RoomStockController;
+use App\Http\Controllers\Admin\FaqAdminController;
 use App\Http\Controllers\Partner\RoomTypeController;
 use App\Http\Controllers\PartnerRegistrationController;
 use App\Http\Controllers\PreferenceController;
@@ -35,6 +36,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Partner\RentalController;
 use App\Http\Controllers\CarBookingController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarSearchController;
 
@@ -45,6 +47,7 @@ Route::get('/hotels/{hotel}', [HotelSearchController::class, 'show'])->name('hot
 Route::get('/cars', [CarSearchController::class, 'home'])->name('cars.home');
 Route::get('/cars/search', [CarSearchController::class, 'legacySearch'])->name('cars.search');;
 Route::get('/cars/{vehicle}', [CarSearchController::class, 'show'])->name('cars.show');
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 // Pilihan bahasa & mata uang (tamu dan user login)
 Route::post('/preferences', [PreferenceController::class, 'update'])->name('preferences.update');
 
@@ -144,6 +147,9 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('vehicles/{vehicle}', [AdminVehicleController::class, 'show'])->name('vehicles.show');
         Route::post('vehicles/{vehicle}/approve', [AdminVehicleController::class, 'approve'])->name('vehicles.approve');
         Route::post('vehicles/{vehicle}/reject', [AdminVehicleController::class, 'reject'])->name('vehicles.reject');
+
+        // Manajemen FAQ (dinamis, tampil di halaman publik)
+        Route::resource('faqs', FaqAdminController::class)->except(['show']);
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)

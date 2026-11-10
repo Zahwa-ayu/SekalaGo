@@ -21,6 +21,7 @@ class DashboardMenu
                 ['fa-receipt', 'ui.all_bookings', 'admin.bookings.index', ['admin.bookings.*']],
                 ['fa-building', 'ui.companies', 'admin.companies.index', ['admin.companies.*']],
                 ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
+                ['fa-circle-question', 'ui.faq_management', 'admin.faqs.index', ['admin.faqs.*']],
                 ['fa-users', 'ui.users', 'admin.users.index', ['admin.users.*']],
                 ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
                 ['fa-car-side', 'ui.review_vehicles', 'admin.vehicles.index', ['admin.vehicles.*']],
