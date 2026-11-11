@@ -2,9 +2,11 @@
     // Halaman yang latarnya terang (tanpa hero) mendapat navbar putih sejak awal.
     // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
     $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
-        || request()->routeIs('cars.show', 'hotels.show', 'auth.login', 'account.*');
+        || request()->routeIs('cars.show', 'hotels.show', 'auth.login', 'corporate.dashboard',
+        'bookings.*',
+         'account.*');
 
-    // Gaya link menu utama (Beranda / Hotel / Mobil)
+    // Gaya link menu utama (Hotel / Mobil / FAQ / Daftar Mitra)
     $navLink = 'nav-link-text px-3 py-2 rounded-lg transition';
     $navOn   = 'nav-link-active';
     $navOff  = 'hover:bg-white/5 hover:text-sky-300';
@@ -28,31 +30,10 @@
         .is-scrolled .nav-logo-light { display: none; }
         .is-scrolled .nav-logo-dark { display: block; }
 
-        /* Hilangkan box background & border bawaan dari partial preferences */
-        .pref-wrapper, 
-        .pref-wrapper *, 
-        .pref-wrapper form, 
-        .pref-wrapper div, 
-        .pref-wrapper select, 
-        .pref-wrapper button {
-            background-color: transparent !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important;
-            box-shadow: none !important;
-        }
-
-        .pref-wrapper option {
-            color: #0f172a !important;
-            background-color: #ffffff !important;
-        }
-
-        .is-scrolled .pref-wrapper, 
-        .is-scrolled .pref-wrapper *, 
-        .is-scrolled .pref-wrapper select, 
-        .is-scrolled .pref-wrapper button {
-            color: #0f172a !important;
-            border-color: rgba(15, 23, 42, 0.15) !important;
-        }
+        /* Tombol bahasa/mata uang (ikon bola): garis tepi mengikuti state navbar */
+        .pref-btn { border: 1px solid rgba(255, 255, 255, 0.25); }
+        .is-scrolled .pref-btn { border-color: rgba(15, 23, 42, 0.15); }
+        .pref-dd summary::-webkit-details-marker { display: none; }
 
         /* Link menu saat navbar putih */
         .is-scrolled .nav-link-text {
@@ -97,7 +78,7 @@
                     : 'bg-transparent text-white border-white/10' }}">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <!-- Brand Logo: putih sebelum scroll, berwarna setelah scroll -->
+                <!-- Brand Logo (kiri, sekaligus link ke Beranda): putih sebelum scroll, berwarna setelah scroll -->
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group shrink-0">
                     {{-- Sebelum scroll (navbar transparan) --}}
                     <img src="{{ asset('images/logo_home_white.png') }}"
@@ -121,10 +102,7 @@
                             absolute lg:static top-16 left-0 right-0 {{ $solidNav ? 'bg-white' : 'bg-slate-900' }} lg:bg-transparent
                             px-4 pb-4 pt-2 lg:p-0 border-b border-white/10 lg:border-0">
 
-                    {{-- MENU UTAMA --}}
-                    <a href="{{ route('home') }}" class="{{ $navLink }} {{ request()->routeIs('home') ? $navOn : $navOff }}">
-                        <i class="fa-solid fa-house mr-1"></i> {{ __('ui.nav_home') }} 
-                    </a>
+                    {{-- MENU UTAMA (Beranda dihapus, sudah diwakili logo) --}}
                     <a href="{{ route('hotels.search') }}" class="{{ $navLink }} {{ request()->routeIs('hotels.*') ? $navOn : $navOff }}">
                         <i class="fa-solid fa-hotel mr-1"></i> {{ __('ui.tab_hotels') }}
                     </a>
@@ -137,10 +115,15 @@
                         </a>
                     @endif
 
-                    {{-- PREFERENCES (BAHASA & MATA UANG) --}}
-                    <div class="pref-wrapper flex items-center gap-1.5">
-                        @include('partials.preferences')
-                    </div>
+                    {{-- DAFTAR MITRA (hanya tamu; hapus @guest kalau mau tampil untuk semua) --}}
+                    @guest
+                        <a href="{{ route('register.partner') }}" class="{{ $navLink }} {{ request()->routeIs('register.partner') ? $navOn : $navOff }}">
+                            <i class="fa-solid fa-handshake mr-1"></i> {{ __('ui.register_partner') }}
+                        </a>
+                    @endguest
+
+                    {{-- BAHASA & MATA UANG (satu tombol ikon bola) --}}
+                    @include('partials.preferences')
 
                     @auth
                         @if (in_array(auth()->user()->user_type, ['customer', 'corporate']))
@@ -171,7 +154,6 @@
                         </form>
                     @else
                         <a href="{{ route('login') }}" class="nav-link-text px-3 py-1.5 hover:opacity-80 transition">{{ __('ui.login') }}</a>
-                        <a href="{{ route('register.partner') }}" class="nav-link-text px-3 py-1.5 hover:opacity-80 transition">{{ __('ui.register_partner') }}</a>
                         <a href="{{ route('register') }}" class="px-4 py-2 text-center font-bold text-white bg-sky-500 hover:bg-sky-600 rounded-lg shadow-md shadow-sky-500/20 transition">{{ __('ui.register') }}</a>
                     @endauth
                 </div>
