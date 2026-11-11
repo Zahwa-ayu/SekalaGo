@@ -278,8 +278,11 @@
             updateNavbar();
 
             btnMobile.addEventListener('click', () => {
-                const hidden = menu.classList.toggle('hidden');
-                btnMobile.setAttribute('aria-expanded', String(!hidden));
+                // Saat terbuka, 'flex' wajib ditambahkan agar flex-col berlaku di mobile.
+                // Tanpa display:flex, isi menu tampil inline dan saling bersebelahan.
+                const open = menu.classList.toggle('flex');
+                menu.classList.toggle('hidden', !open);
+                btnMobile.setAttribute('aria-expanded', String(open));
             });
         })();
     </script>
