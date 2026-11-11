@@ -35,6 +35,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Partner\RentalController;
 use App\Http\Controllers\CarBookingController;
+use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\BookingExtensionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FaqController;
@@ -78,6 +79,17 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 // Ganti password (semua peran yang sudah login)
 Route::middleware('auth')->group(function () {
+    Route::get('/account/password', [PasswordController::class, 'edit'])->name('account.password.edit');
+    Route::put('/account/password', [PasswordController::class, 'update'])->name('account.password.update');
+});
+
+// Pengaturan akun (semua peran yang sudah login)
+Route::middleware('auth')->group(function () {
+    Route::get('/account', [AccountController::class, 'show'])->name('account.settings');
+    Route::get('/account/edit', [AccountController::class, 'edit'])->name('account.edit');
+    Route::put('/account/edit', [AccountController::class, 'update'])->name('account.update');
+    Route::get('/account/preferences', [AccountController::class, 'preferences'])->name('account.preferences');
+
     Route::get('/account/password', [PasswordController::class, 'edit'])->name('account.password.edit');
     Route::put('/account/password', [PasswordController::class, 'update'])->name('account.password.update');
 });

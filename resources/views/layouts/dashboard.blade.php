@@ -30,7 +30,10 @@
             html.sb-collapsed #sidebar .sb-hide-collapsed { display: none; }
             html.sb-collapsed #sidebar .sb-item { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
             html.sb-collapsed #sidebar .sb-brand { justify-content: center; padding-left: 0; padding-right: 0; }
-            
+
+            /* Saat ciut, grup tidak bisa dibuka-tutup: semua sub-menu tampil sebagai ikon */
+            html.sb-collapsed #sidebar .sb-group-list { display: block !important; margin-top: .25rem; }
+
             /* SAAT SIDEBAR CIUT: Sembunyikan Logo Full, Tampilkan Icon */
             html.sb-collapsed .logo-full { display: none; }
             html.sb-collapsed .logo-icon { display: block; }
@@ -96,17 +99,17 @@
         <div class="flex items-center justify-center h-20 border-b border-white/5 shrink-0 relative">
             <!-- Brand Logo SekalaGo untuk Sidebar -->
             <a href="{{ route('home') }}" class="sb-brand flex items-center justify-center group w-full px-5 lg:px-0">
-                
+
                 <!-- 1. Ikon Saja (Muncul saat sidebar menciut) -->
-                <img src="{{ asset('images/logo_sekalago.ico') }}" 
-                     alt="Icon" 
+                <img src="{{ asset('images/logo_sekalago.ico') }}"
+                     alt="Icon"
                      class="logo-icon w-9 h-9 object-contain group-hover:scale-105 transition mx-auto">
 
                 <!-- 2. Logo Lengkap (Muncul saat sidebar lebar/mobile) -->
-                <img src="{{ asset('images/logo_home_white.png') }}" 
-                     alt="SekalaGo" 
+                <img src="{{ asset('images/logo_home_white.png') }}"
+                     alt="SekalaGo"
                      class="logo-full h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition mx-auto">
-                     
+
             </a>
 
             {{-- Tombol tutup, hanya tampil di layar kecil (posisi absolute agar tidak menggeser logo) --}}
@@ -118,13 +121,40 @@
         <nav class="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 text-sm font-medium">
             <div class="space-y-1">
                 @foreach ($menu as $item)
-                    @php $active = request()->routeIs(...$item['active']); @endphp
-                    <a href="{{ route($item['route']) }}"
-                       title="{{ __($item['label']) }}"
-                       class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
-                        <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
-                        <span class="sb-label truncate">{{ __($item['label']) }}</span>
-                    </a>
+                    @if ($item['type'] === 'group')
+                        {{-- GRUP: bisa dibuka-tutup; otomatis terbuka jika salah satu halamannya aktif --}}
+                        @php $open = request()->routeIs(...$item['active']); @endphp
+
+                        <div data-sb-group @if ($open) data-sb-open="1" @endif>
+                            <button type="button" data-sb-toggle aria-expanded="{{ $open ? 'true' : 'false' }}"
+                                    title="{{ __($item['label']) }}"
+                                    class="w-full {{ $linkBase }} text-left border-transparent hover:bg-white/5 hover:text-white {{ $open ? 'text-white' : '' }}">
+                                <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0"></i>
+                                <span class="sb-label truncate flex-1">{{ __($item['label']) }}</span>
+                                <i data-sb-chevron class="sb-hide-collapsed fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform duration-200 {{ $open ? 'rotate-180' : '' }}"></i>
+                            </button>
+
+                            <div class="sb-group-list mt-1 space-y-1 {{ $open ? '' : 'hidden' }}">
+                                @foreach ($item['children'] as $child)
+                                    @php $active = request()->routeIs(...$child['active']); @endphp
+                                    <a href="{{ route($child['route']) }}"
+                                       title="{{ __($child['label']) }}"
+                                       class="{{ $linkBase }} pl-9 text-[13px] {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
+                                        <i class="fa-solid {{ $child['icon'] }} w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
+                                        <span class="sb-label truncate">{{ __($child['label']) }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        @php $active = request()->routeIs(...$item['active']); @endphp
+                        <a href="{{ route($item['route']) }}"
+                           title="{{ __($item['label']) }}"
+                           class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
+                            <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
+                            <span class="sb-label truncate">{{ __($item['label']) }}</span>
+                        </a>
+                    @endif
                 @endforeach
             </div>
 
@@ -144,7 +174,7 @@
         </nav>
 
         <div class="px-3 py-4 border-t border-white/5 space-y-3 shrink-0 text-xs">
-            
+
             <!-- Ditambahkan mb-4 agar berjarak dengan tombol di bawahnya -->
             <div class="sb-hide-collapsed px-1 mb-4 pref-wrapper">
                 @include('partials.preferences')
@@ -241,6 +271,17 @@
             toggle.setAttribute('aria-expanded', String(e.matches ? !root.classList.contains('sb-collapsed') : false));
         });
         toggle.setAttribute('aria-expanded', String(desktop.matches ? !root.classList.contains('sb-collapsed') : false));
+
+        // Grup menu: buka/tutup sub-menu dan putar panahnya
+        document.querySelectorAll('[data-sb-toggle]').forEach((button) => {
+            button.addEventListener('click', () => {
+                const list = button.parentElement.querySelector('.sb-group-list');
+                const open = list.classList.toggle('hidden') === false;
+
+                button.setAttribute('aria-expanded', String(open));
+                button.querySelector('[data-sb-chevron]')?.classList.toggle('rotate-180', open);
+            });
+        });
     })();
 </script>
 @stack('scripts')

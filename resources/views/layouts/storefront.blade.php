@@ -155,10 +155,10 @@
                             </a>
                         @endif
 
-                        {{-- GANTI PASSWORD --}}
-                        @if (Route::has('account.password.edit'))
-                            <a href="{{ route('account.password.edit') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-key text-sky-400"></i> {{ __('ui.change_password') }}
+                        {{-- PENGATURAN AKUN --}}
+                        @if (Route::has('account.settings'))
+                            <a href="{{ route('account.settings') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-gear text-sky-400"></i> {{ __('ui.account_settings') }}
                             </a>
                         @endif
 
