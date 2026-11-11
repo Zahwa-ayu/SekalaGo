@@ -24,8 +24,9 @@
     {{-- HERO: foto latar penuh + form pencarian di dalamnya (sama seperti beranda) --}}
     <section class="relative bg-slate-900 text-white min-h-[520px] pt-24 pb-14 px-4 sm:px-6 lg:px-8 flex flex-col justify-between overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <img src="{{ $unsplash('photo-1540555700478-4be289fbecef', 1920) }}"
-                 alt="" class="w-full h-full object-cover object-center scale-105">
+        <img src="{{ \App\Models\SiteBanner::urlFor('hotels') }}"
+            onerror="this.onerror=null;this.src='{{ \App\Models\SiteBanner::defaultUrl('hotels') }}'"
+            alt="" class="w-full h-full object-cover object-center scale-105">
             <div class="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/40 to-slate-950/75"></div>
         </div>
 

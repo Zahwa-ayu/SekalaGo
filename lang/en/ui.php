@@ -859,4 +859,21 @@ return [
 'role_customer' => 'Customer',
 'role_corporate' => 'Corporate Employee',
 'role_finance' => 'Corporate Finance',
+
+// banners
+'banners' => 'Page Banners',
+'banners_hint' => 'Change the hero background photo on public pages. Without a custom image, the page uses its default photo.',
+'banner_home' => 'Home',
+'banner_hotels' => 'Hotels page',
+'banner_cars' => 'Car Rental page',
+'banner_used_on' => 'Shown on',
+'banner_custom' => 'Custom image',
+'banner_default' => 'Default image',
+'banner_last_updated' => 'Last changed :date',
+'banner_size_hint' => 'Landscape 1920 x 800 pixels recommended. JPG, PNG or WEBP, up to 4 MB, at least 1200 x 500 pixels.',
+'banner_save' => 'Save image',
+'banner_reset' => 'Restore default image',
+'banner_reset_confirm' => 'Restore the default image? The custom image will be deleted.',
+'banner_saved' => 'Banner updated.',
+'banner_reset_done' => 'Banner restored to the default image.',
 ];

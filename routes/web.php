@@ -37,6 +37,7 @@ use App\Http\Controllers\Partner\RentalController;
 use App\Http\Controllers\CarBookingController;
 use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\BookingExtensionController;
+use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Route;
@@ -146,6 +147,11 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('social-media', AdminSocialMediaController::class)
             ->parameters(['social-media' => 'socialMedia'])   // PENTING, lihat catatan
             ->except(['create', 'edit', 'show']);
+
+        // Banner halaman (foto hero Beranda, Hotel, Rental Mobil)
+        Route::get('banners', [AdminBannerController::class, 'index'])->name('banners.index');
+        Route::post('banners/{key}', [AdminBannerController::class, 'update'])->name('banners.update')->where('key', 'home|hotels|cars');
+        Route::delete('banners/{key}', [AdminBannerController::class, 'reset'])->name('banners.reset')->where('key', 'home|hotels|cars');
 
         // Manajemen user admin internal (role: admin)
         Route::resource('users', AdminUserController::class)

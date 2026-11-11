@@ -861,4 +861,21 @@ return [
 'role_customer' => 'Pelanggan',
 'role_corporate' => 'Karyawan Corporate',
 'role_finance' => 'Finance Corporate',
+
+// banners
+'banners' => 'Banner Halaman',
+'banners_hint' => 'Ganti foto latar (hero) di halaman publik. Tanpa gambar kustom, halaman memakai foto bawaan.',
+'banner_home' => 'Beranda',
+'banner_hotels' => 'Halaman Hotel',
+'banner_cars' => 'Halaman Rental Mobil',
+'banner_used_on' => 'Tampil di',
+'banner_custom' => 'Gambar kustom',
+'banner_default' => 'Gambar bawaan',
+'banner_last_updated' => 'Terakhir diubah :date',
+'banner_size_hint' => 'Disarankan lanskap 1920 x 800 piksel. JPG, PNG, atau WEBP, maksimal 4 MB, minimal 1200 x 500 piksel.',
+'banner_save' => 'Simpan gambar',
+'banner_reset' => 'Kembalikan ke gambar bawaan',
+'banner_reset_confirm' => 'Kembalikan ke gambar bawaan? Gambar kustom akan dihapus.',
+'banner_saved' => 'Banner diperbarui.',
+'banner_reset_done' => 'Banner dikembalikan ke gambar bawaan.',
 ];

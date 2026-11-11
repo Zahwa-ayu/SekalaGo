@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'dimensions' => 'Ukuran :attribute terlalu kecil. Gunakan gambar minimal 1200 x 500 piksel.',
     'accepted' => ':attribute harus diterima.',
     'array' => ':attribute harus berupa daftar.',
     'after' => ':attribute harus berupa tanggal setelah :date.',

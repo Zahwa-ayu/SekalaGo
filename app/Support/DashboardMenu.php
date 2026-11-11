@@ -38,6 +38,7 @@ class DashboardMenu
                     'children' => [
                         ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
                         ['fa-circle-question', 'ui.faq_management', 'admin.faqs.index', ['admin.faqs.*']],
+                        ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],   // baris baru
                     ],
                 ],
                 ['fa-users', 'ui.admin_users', 'admin.users.index', ['admin.users.*']],

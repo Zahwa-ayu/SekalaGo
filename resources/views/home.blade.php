@@ -14,9 +14,10 @@
     <section class="relative bg-slate-900 text-white min-h-[640px] pt-24 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-between overflow-hidden">
         <!-- Background Gambar Alam (Full Mencakup Layar Atas & Form Search) -->
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80" 
-                 alt="Background Alam Travel" 
-                 class="w-full h-full object-cover object-center scale-105">
+            <img src="{{ \App\Models\SiteBanner::urlFor('home') }}"
+                onerror="this.onerror=null;this.src='{{ \App\Models\SiteBanner::defaultUrl('home') }}'"
+                alt="Background Alam Travel"
+                class="w-full h-full object-cover object-center scale-105">
             <!-- Overlay Gradien Lembut -->
             <div class="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/40 to-slate-950/75"></div>
         </div>
