@@ -22,6 +22,36 @@
         .logo-icon { display: none; }
         .logo-full { display: block; }
 
+        /* ----------------------------------------------------
+           SUB-MENU GAYA POHON: garis vertikal + siku melengkung
+           Setiap anak menggambar siku (::before) dan lanjutan garis (::after).
+           Anak terakhir tidak punya lanjutan, jadi garis berhenti di siku.
+           ---------------------------------------------------- */
+        .sb-tree { margin-left: 1.375rem; padding-left: .75rem; }
+        .sb-tree-item { position: relative; padding-top: .125rem; padding-bottom: .125rem; }
+        .sb-tree-item::before {
+            content: '';
+            position: absolute;
+            left: -.75rem;
+            top: 0;
+            width: .75rem;
+            height: 50%;
+            border-left: 1px solid rgba(255, 255, 255, .14);
+            border-bottom: 1px solid rgba(255, 255, 255, .14);
+            border-bottom-left-radius: .5rem;
+        }
+        .sb-tree-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: -.75rem;
+            top: 50%;
+            bottom: 0;
+            border-left: 1px solid rgba(255, 255, 255, .14);
+        }
+
+        /* Ikon anak hanya dipakai saat sidebar ciut (di mode lebar hanya teks) */
+        .sb-child-icon { display: none; }
+
         /* Mode ciut hanya berlaku di desktop (lg ke atas). Di layar kecil sidebar berupa drawer. */
         @media (min-width: 1024px) {
             #sidebar { transition: width .2s ease; }
@@ -34,38 +64,15 @@
             /* Saat ciut, grup tidak bisa dibuka-tutup: semua sub-menu tampil sebagai ikon */
             html.sb-collapsed #sidebar .sb-group-list { display: block !important; margin-top: .25rem; }
 
+            /* Saat ciut: garis pohon dibuang, ikon anak ditampilkan */
+            html.sb-collapsed #sidebar .sb-tree { margin-left: 0; padding-left: 0; }
+            html.sb-collapsed #sidebar .sb-tree-item::before,
+            html.sb-collapsed #sidebar .sb-tree-item::after { display: none; }
+            html.sb-collapsed #sidebar .sb-child-icon { display: inline-block; }
+
             /* SAAT SIDEBAR CIUT: Sembunyikan Logo Full, Tampilkan Icon */
             html.sb-collapsed .logo-full { display: none; }
             html.sb-collapsed .logo-icon { display: block; }
-        }
-
-        /* ----------------------------------------------------
-           PERBAIKAN: Styling Dropdown Preferensi di Sidebar
-           ---------------------------------------------------- */
-        .pref-wrapper form {
-            display: flex;
-            flex-direction: column;
-        }
-        .pref-wrapper select {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: #cbd5e1 !important;
-            border-radius: 0.5rem !important;
-            padding: 0.5rem 0.75rem !important;
-            width: 100%;
-            box-shadow: none !important;
-            margin-bottom: 0.75rem !important; /* Paksa jarak bawah (12px) agar tidak nempel */
-        }
-        .pref-wrapper select:last-of-type {
-            margin-bottom: 0 !important; /* Hapus jarak untuk kotak yang paling bawah */
-        }
-        .pref-wrapper select:focus {
-            border-color: #0ea5e9 !important;
-            outline: none;
-        }
-        .pref-wrapper option {
-            background-color: #0f172a !important;
-            color: #f8fafc !important;
         }
     </style>
 </head>
@@ -134,15 +141,18 @@
                                 <i data-sb-chevron class="sb-hide-collapsed fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform duration-200 {{ $open ? 'rotate-180' : '' }}"></i>
                             </button>
 
-                            <div class="sb-group-list mt-1 space-y-1 {{ $open ? '' : 'hidden' }}">
+                            {{-- Sub-menu bergaya pohon: hanya teks, dengan garis penghubung di kiri --}}
+                            <div class="sb-group-list sb-tree mt-1 {{ $open ? '' : 'hidden' }}">
                                 @foreach ($item['children'] as $child)
                                     @php $active = request()->routeIs(...$child['active']); @endphp
-                                    <a href="{{ route($child['route']) }}"
-                                       title="{{ __($child['label']) }}"
-                                       class="{{ $linkBase }} pl-9 text-[13px] {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
-                                        <i class="fa-solid {{ $child['icon'] }} w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
-                                        <span class="sb-label truncate">{{ __($child['label']) }}</span>
-                                    </a>
+                                    <div class="sb-tree-item">
+                                        <a href="{{ route($child['route']) }}"
+                                           title="{{ __($child['label']) }}"
+                                           class="{{ $linkBase }} py-2 text-[13px] {{ $active ? 'bg-white/10 text-white font-semibold border-sky-500' : 'border-transparent text-slate-400 hover:bg-white/5 hover:text-white' }}">
+                                            <i class="fa-solid {{ $child['icon'] }} sb-child-icon w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
+                                            <span class="sb-label truncate">{{ __($child['label']) }}</span>
+                                        </a>
+                                    </div>
                                 @endforeach
                             </div>
                         </div>
@@ -174,12 +184,6 @@
         </nav>
 
         <div class="px-3 py-4 border-t border-white/5 space-y-3 shrink-0 text-xs">
-
-            <!-- Ditambahkan mb-4 agar berjarak dengan tombol di bawahnya -->
-            <div class="sb-hide-collapsed px-1 mb-4 pref-wrapper">
-                @include('partials.preferences')
-            </div>
-
             <a href="{{ route('home') }}" title="{{ __('ui.view_site') }}"
                class="{{ $linkBase }} border-transparent hover:bg-white/5 hover:text-white">
                 <i class="fa-solid fa-arrow-up-right-from-square w-5 text-center shrink-0"></i>
