@@ -32,7 +32,7 @@ class Vehicle extends Model
         'partner_id', 'city', 'area', 'address',
         'type', 'transmission', 'fuel_type', 'seats', 'luggage_capacity', 'model_year', 'features',
         'units', 'price_per_day', 'min_days', 'driver_mode', 'driver_fee_per_day', 'extras_note',
-        'status', 'rejection_reason', 'source_locale', 'return_time', 'late_grace_minutes', 'late_fee_percent',
+        'status', 'rejection_reason', 'source_locale', 'return_time', 'late_grace_minutes', 'late_fee_percent', 'city_id'
     ];
 
     protected function casts(): array

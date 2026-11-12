@@ -94,5 +94,9 @@ return [
         'cancellation_reason' => 'alasan pembatalan',
         'decision_note' => 'catatan keputusan',
         'month' => 'bulan',
+        'city_id' => 'kota',
+        'province' => 'provinsi',
+        'aliases' => 'nama lain',
+        'sort_order' => 'urutan',
     ],
 ];

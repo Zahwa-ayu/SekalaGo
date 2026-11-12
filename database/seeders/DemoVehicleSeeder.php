@@ -46,6 +46,7 @@ class DemoVehicleSeeder extends Seeder
                 'extras_note'        => 'BBM, tol, dan parkir ditanggung penyewa.',
                 'status'             => $row['status'],
                 'source_locale'      => 'id',
+                'city_id' => \App\Models\City::firstOrCreate(['name' => $row['city']])->id,
             ]);
 
             $vehicle->translations()->createMany([

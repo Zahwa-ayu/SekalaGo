@@ -26,7 +26,15 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <div class="{{ $box }}">
         <label class="{{ $label }}"><i class="fa-solid fa-location-dot text-sagara-blue"></i> {{ __('ui.city') }}</label>
-        <input name="city" required class="{{ $input }}" value="{{ old('city', $hotel->city) }}">
+        <select name="city_id" required
+                class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+            <option value="">{{ __('ui.choose_city') }}</option>
+            @foreach (\App\Models\City::optionsFor($hotel->city_id ?? null) as $city)
+                <option value="{{ $city->id }}" @selected((int) old('city_id', $hotel->city_id ?? 0) === $city->id)>
+                    {{ $city->name }}@if ($city->province), {{ $city->province }}@endif
+                </option>
+            @endforeach
+        </select>
     </div>
 
     <div class="{{ $box }}">

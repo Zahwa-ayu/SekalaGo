@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\VehicleController as AdminVehicleController;
 use App\Http\Controllers\Partner\BlackoutController;
 use App\Http\Controllers\Partner\VehicleController;
 use App\Http\Controllers\Account\PasswordController;
+use App\Http\Controllers\Admin\CityController as AdminCityController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Partner\RentalController;
@@ -159,6 +160,9 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::patch('users/{user}/status', [AdminUserController::class, 'updateStatus'])
             ->name('users.status');
+        // Master data: kota
+        
+        Route::resource('cities', AdminCityController::class)->except(['create', 'show']);
 
         // Log aktivitas
         Route::get('activity', [ActivityLogController::class, 'index'])->name('activity.index');

@@ -119,7 +119,7 @@ class HotelController extends Controller
     private function validated(Request $request): array
     {
         return $request->validate([
-            'city'                    => ['required', 'string', 'max:100'],
+            'city_id' => ['required', 'integer', 'exists:cities,id'],
             'area'                    => ['nullable', 'string', 'max:100'],
             'address'                 => ['nullable', 'string', 'max:255'],
             'latitude'                => ['nullable', 'numeric', 'between:-90,90', 'required_with:longitude'],
@@ -145,7 +145,8 @@ class HotelController extends Controller
     private function hotelAttributes(array $data): array
     {
         return [
-            'city'           => $data['city'],
+            'city_id' => $data['city_id'],
+            'city'    => \App\Models\City::findOrFail($data['city_id'])->name,
             'area'           => $data['area'] ?? null,
             'address'        => $data['address'] ?? null,
             'latitude'       => $data['latitude'] ?? null,

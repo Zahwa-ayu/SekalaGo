@@ -33,6 +33,14 @@ class DashboardMenu
                 ['fa-receipt', 'ui.all_bookings', 'admin.bookings.index', ['admin.bookings.*']],
                 ['fa-building', 'ui.corporate_management', 'admin.companies.index', ['admin.companies.*']],
                 [
+                    'icon'     => 'fa-database',
+                    'label'    => 'ui.master_data',
+                    'children' => [
+                        ['fa-location-dot', 'ui.cities', 'admin.cities.index', ['admin.cities.*']],
+                        // Tambahkan di sini begitu halamannya ada: Fasilitas, Mata Uang & Kurs
+                    ],
+                ],
+                [
                     'icon'     => 'fa-newspaper',
                     'label'    => 'ui.cms',
                     'children' => [

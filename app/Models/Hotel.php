@@ -12,7 +12,7 @@ class Hotel extends Model
     
     protected $fillable = [
         'partner_id', 'city', 'area', 'address', 'latitude', 'longitude', 'star_rating',
-        'check_in_time', 'check_out_time', 'status', 'rejection_reason', 'source_locale',
+        'check_in_time', 'check_out_time', 'status', 'rejection_reason', 'source_locale', 'city_id'
     ];
 
     protected function casts(): array
