@@ -36,6 +36,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Partner\RentalController;
 use App\Http\Controllers\CarBookingController;
+use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
 use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\BookingExtensionController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
@@ -119,6 +120,10 @@ Route::middleware(['auth', 'role:admin'])
     ->name('admin.')
     ->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+                // Analytics & Revenue
+        Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
+        Route::get('analytics/csv', [AdminAnalyticsController::class, 'csv'])->name('analytics.csv');
 
         Route::get('partners', [AdminPartnerController::class, 'index'])->name('partners.index');
         Route::get('partners/{partner}', [AdminPartnerController::class, 'show'])->name('partners.show');

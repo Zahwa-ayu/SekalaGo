@@ -21,6 +21,7 @@ class DashboardMenu
         return self::filter(match ($user->user_type) {
             'admin' => [
                 ['fa-gauge', 'ui.dashboard', 'admin.dashboard', ['admin.dashboard']],
+                ['fa-chart-line', 'ui.analytics', 'admin.analytics.index', ['admin.analytics.*']],
                 ['fa-handshake', 'ui.verify_partners', 'admin.partners.index', ['admin.partners.*']],
                 [
                     'icon'     => 'fa-clipboard-check',
@@ -53,7 +54,6 @@ class DashboardMenu
                 ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
                 self::ACCOUNT_SETTINGS,
                 // Tambahkan di sini begitu halamannya ada, misalnya:
-                // ['fa-chart-line', 'ui.analytics', 'admin.analytics.index', ['admin.analytics.*']],
                 // ['fa-money-bill-transfer', 'ui.payouts', 'admin.payouts.index', ['admin.payouts.*']],
             ],
 
