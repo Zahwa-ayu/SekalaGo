@@ -82,46 +82,79 @@
         </section>
     @endif
 
-    {{-- KOTA FAVORIT (dari database: hotel & armada yang sudah disetujui) --}}
-    @if ($cityStats->isNotEmpty())
+    {{-- KOTA FAVORIT (data asli dari Master Data → Kota) --}}
+    @if ($favoriteCities->isNotEmpty())
+        @php
+            $hotelDates = ['check_in' => today()->addDay()->toDateString(), 'check_out' => today()->addDays(2)->toDateString(), 'guests' => 2];
+            $carDates   = ['pickup_date' => today()->addDay()->toDateString(), 'return_date' => today()->addDays(3)->toDateString()];
+        @endphp
+
         <section id="radar" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 mb-20">
             <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100">
-                <div class="mb-6">
-                    <span class="text-xs font-black text-sky-600 uppercase tracking-widest block mb-1">Kota Tujuan</span>
-                    <h2 class="text-xl sm:text-2xl font-black text-slate-900">Kota Favorit Wisatawan</h2>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-sky-600 font-extrabold text-xs uppercase tracking-widest mb-1">
+                            <span class="relative flex h-2.5 w-2.5">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                            </span>
+                            {{ __('ui.live_availability') }}
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900">{{ __('ui.favorite_cities_title') }}</h2>
+                    </div>
+                    <p class="text-slate-500 text-xs sm:text-sm max-w-md">{{ __('ui.favorite_cities_hint') }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    @foreach ($cityStats as $c)
-                        <a href="{{ route('home', ['tab' => 'hotels', 'city' => $c->city, 'check_in' => today()->addDay()->toDateString(), 'check_out' => today()->addDays(2)->toDateString(), 'guests' => 2]) }}#results"
-                           class="bg-slate-50 hover:bg-sky-50/60 p-5 rounded-2xl border border-slate-200/80 hover:border-sky-300 transition duration-300 flex flex-col justify-between group">
-                            <div>
-                                <div class="flex justify-between items-center mb-3">
-                                    <h3 class="font-extrabold text-slate-900 text-sm group-hover:text-sky-600 transition flex items-center gap-1.5">
-                                        <i class="fa-solid fa-location-dot text-sky-500 text-xs"></i> {{ $c->city }}
-                                    </h3>
-                                    <i class="fa-solid fa-arrow-right text-[10px] text-slate-300 group-hover:text-sky-500 group-hover:translate-x-0.5 transition"></i>
-                                </div>
-                                <div class="my-3">
-                                    <span class="text-2xl font-black text-slate-900 tracking-tight">{{ $c->hotels }} Hotel</span>
-                                </div>
-                                @if ($c->vehicles > 0)
-                                    <p class="text-xs font-semibold text-sky-600 flex items-center gap-1 mb-2">
-                                        <i class="fa-solid fa-car-side"></i> {{ $c->vehicles }} Armada Rental
-                                    </p>
+                    @foreach ($favoriteCities as $city)
+                        <div class="group rounded-2xl overflow-hidden border border-slate-200/80 hover:border-sky-300 hover:shadow-lg transition duration-300 flex flex-col bg-white">
+                            <div class="relative h-36 bg-gradient-to-br from-slate-800 to-sky-700 overflow-hidden">
+                                @if ($city->imageUrl())
+                                    <img src="{{ $city->imageUrl() }}" alt="{{ $city->name }}" loading="lazy"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
                                 @endif
-                            </div>
-                            <div class="flex justify-between items-end pt-3 border-t border-slate-200/60">
-                                <div>
-                                    <span class="text-[10px] uppercase tracking-wider text-slate-400 block font-bold">Mulai Dari</span>
-                                    <span class="text-sm font-black text-slate-900">{{ format_price($c->min_price, 'IDR') }}</span>
-                                    <span class="text-[11px] text-slate-500">/malam</span>
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
+                                <div class="absolute bottom-3 left-4 right-4">
+                                    <h3 class="font-extrabold text-white text-lg leading-tight drop-shadow">{{ $city->name }}</h3>
+                                    @if ($city->province)
+                                        <p class="text-[11px] text-slate-200 font-medium">{{ $city->province }}</p>
+                                    @endif
                                 </div>
-                                @if ($c->avg_star > 0)
-                                    <span class="flex items-center gap-1 text-[11px] font-bold text-slate-600"><i class="fa-solid fa-star text-amber-400"></i> {{ $c->avg_star }}</span>
-                                @endif
                             </div>
-                        </a>
+
+                            <div class="p-4 flex-1 flex flex-col justify-between gap-4">
+                                <div class="space-y-2 text-xs">
+                                    @if ($city->hotels_count > 0)
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="font-bold text-slate-700"><i class="fa-solid fa-hotel text-sky-500 w-4"></i> {{ __('ui.hotels_available', ['count' => $city->hotels_count]) }}</span>
+                                            <span class="text-slate-500">{{ __('ui.from_price') }} <strong class="text-slate-900">{{ format_price($city->min_room_price) }}</strong>{{ __('ui.per_night') }}</span>
+                                        </div>
+                                    @endif
+
+                                    @if ($city->vehicles_count > 0)
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="font-bold text-slate-700"><i class="fa-solid fa-car-side text-sky-500 w-4"></i> {{ __('ui.vehicles_available', ['count' => $city->vehicles_count]) }}</span>
+                                            <span class="text-slate-500">{{ __('ui.from_price') }} <strong class="text-slate-900">{{ format_price($city->min_vehicle_price) }}</strong>{{ __('ui.per_day') }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="flex gap-2">
+                                    @if ($city->hotels_count > 0)
+                                        <a href="{{ route('home', ['tab' => 'hotels', 'city' => $city->name] + $hotelDates) }}#results"
+                                           class="flex-1 text-center px-3 py-2 text-xs font-bold rounded-xl bg-sky-500 hover:bg-sky-600 text-white transition">
+                                            {{ __('ui.find_hotels_in_city') }}
+                                        </a>
+                                    @endif
+                                    @if ($city->vehicles_count > 0)
+                                        <a href="{{ route('home', ['tab' => 'cars', 'city' => $city->name] + $carDates) }}#results"
+                                           class="flex-1 text-center px-3 py-2 text-xs font-bold rounded-xl border border-slate-300 text-slate-700 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-700 transition">
+                                            {{ __('ui.find_cars_in_city') }}
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
                     @endforeach
                 </div>
             </div>

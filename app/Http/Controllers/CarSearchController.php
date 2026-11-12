@@ -94,8 +94,10 @@ class CarSearchController extends Controller
     }
 
     /** Daftar kota yang punya armada disetujui (untuk saran di kolom kota). */
+    /** Daftar kota armada yang sudah disetujui (untuk saran dan kota populer). */
     private function cities()
     {
-        return Vehicle::where('status', 'approved')->distinct()->orderBy('city')->pluck('city');
+        return \App\Services\CityDirectory::names('cars');
     }
+
 }

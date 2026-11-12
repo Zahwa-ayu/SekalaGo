@@ -903,4 +903,13 @@ return [
 'hotels_count' => 'Hotel',
 'vehicles_count' => 'Armada',
 'choose_city' => 'Pilih kota',
+
+// pencarian by city
+'live_availability' => 'Ketersediaan Nyata',
+'favorite_cities_title' => 'Kota Favorit & Ketersediaan Hari Ini',
+'favorite_cities_hint' => 'Jumlah hotel dan armada yang tersedia, langsung dari mitra kami.',
+'hotels_available' => ':count hotel',
+'vehicles_available' => ':count armada',
+'find_hotels_in_city' => 'Cari Hotel',
+'find_cars_in_city' => 'Cari Mobil',
 ];

@@ -28,15 +28,13 @@ class HotelSearchService
 
         [$checkIn, $checkOut, $nights] = $this->stay($data);
 
-        $city = addcslashes($data['city'], '%_\\');
-
         $roomTypes = RoomType::query()
             ->withOpenNights($checkIn, $checkOut)
             ->where('capacity', '>=', $data['guests'])
             ->having('open_nights', '=', $nights)
             ->whereHas('hotel', fn ($q) => $q
                 ->where('status', 'approved')
-                ->where('city', 'like', "%{$city}%"))
+                ->inCity($data['city']))
             ->with(['translations', 'hotel.translations', 'hotel.facilities', 'hotel.photos'])
             ->get();
 

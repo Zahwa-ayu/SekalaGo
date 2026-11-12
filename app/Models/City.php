@@ -58,4 +58,9 @@ class City extends Model
             ->orderBy('name')
             ->get();
     }
+
+    public function roomTypes()
+    {
+        return $this->hasManyThrough(RoomType::class, Hotel::class);
+    }
 }

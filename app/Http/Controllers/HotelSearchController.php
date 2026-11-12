@@ -82,12 +82,9 @@ class HotelSearchController extends Controller
     }
 
     /** Daftar kota hotel yang sudah disetujui (untuk saran di kolom kota). */
+/** Daftar kota hotel yang sudah disetujui (untuk saran dan kota populer). */
     private function cities()
     {
-        return Hotel::where('status', 'approved')
-            ->whereHas('roomTypes')
-            ->distinct()
-            ->orderBy('city')
-            ->pluck('city');
+        return \App\Services\CityDirectory::names('hotels');
     }
 }

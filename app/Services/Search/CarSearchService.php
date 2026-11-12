@@ -40,11 +40,9 @@ class CarSearchService
 
         [$pickup, $return, $days] = $this->period($data);
 
-        $city = addcslashes($data['city'], '%_\\');
-
         $query = Vehicle::query()
             ->availableFor($pickup, $return)
-            ->where('city', 'like', "%{$city}%")
+            ->inCity($data['city'])
             ->where('min_days', '<=', $days)
             ->when($data['driver'] ?? null, fn ($q, $mode) => $q->whereIn('driver_mode', ['both', $mode]))
             ->when($data['type'] ?? null, fn ($q, $type) => $q->where('type', $type))

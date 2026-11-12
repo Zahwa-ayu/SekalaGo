@@ -901,4 +901,13 @@ return [
 'hotels_count' => 'Hotels',
 'vehicles_count' => 'Vehicles',
 'choose_city' => 'Choose a city',
+
+// searching by city
+'live_availability' => 'Live Availability',
+'favorite_cities_title' => 'Favorite Cities & Availability Today',
+'favorite_cities_hint' => 'The number of hotels and vehicles available, straight from our partners.',
+'hotels_available' => ':count hotel(s)',
+'vehicles_available' => ':count vehicle(s)',
+'find_hotels_in_city' => 'Find Hotels',
+'find_cars_in_city' => 'Find Cars',
 ];

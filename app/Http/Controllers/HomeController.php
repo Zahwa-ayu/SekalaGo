@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Hotel;
 use App\Models\Vehicle;
+use App\Services\CityDirectory;
 use App\Services\Search\CarSearchService;
 use App\Services\Search\HotelSearchService;
 use Illuminate\Http\Request;
@@ -16,12 +17,13 @@ class HomeController extends Controller
         $tab = $request->query('tab');
 
         $data = [
-            'cities'    => Hotel::where('status', 'approved')->whereHas('roomTypes')->distinct()->orderBy('city')->pluck('city'),
-            'carCities' => Vehicle::where('status', 'approved')->distinct()->orderBy('city')->pluck('city'),
-            'params'    => [],
-            'carParams' => [],
+            'cities'         => CityDirectory::names('hotels'),
+            'carCities'      => CityDirectory::names('cars'),
+            'favoriteCities' => CityDirectory::featured(),
+            'params'         => [],
+            'carParams'      => [],
             // Tab mobil aktif jika diminta lewat alamat, atau jika form mobil baru saja gagal validasi
-            'activeTab' => ($tab === 'cars' || $request->old('pickup_date')) ? 'cars' : 'hotels',
+            'activeTab'      => ($tab === 'cars' || $request->old('pickup_date')) ? 'cars' : 'hotels',
 
             // Etalase Beranda (hanya data berstatus approved)
             'cityStats'        => $this->cityStats(),
@@ -30,7 +32,7 @@ class HomeController extends Controller
         ];
 
         if ($tab === 'hotels' && $request->filled('city')) {
-            $search            = $hotels->search($request);
+            $search              = $hotels->search($request);
             $data['hotelSearch'] = $search;
             $data['params']      = $search['params'];
         }

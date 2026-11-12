@@ -24,11 +24,7 @@
         <label class="{{ $label }}"><i class="fa-solid fa-location-dot text-sagara-blue"></i> {{ __('ui.city') }}</label>
         <input name="city" list="car-city-list" required class="{{ $input }}"
                value="{{ old('city', $params['city'] ?? '') }}" placeholder="{{ __('ui.city') }}">
-        <datalist id="car-city-list">
-            @foreach ($cities as $cityName)
-                <option value="{{ $cityName }}">
-            @endforeach
-        </datalist>
+        @include('partials.city-datalist', ['id' => 'car-city-list', 'for' => 'cars'])
     </div>
 
     <div class="{{ $box }}">

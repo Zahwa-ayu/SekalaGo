@@ -42,11 +42,7 @@
                 <input name="city" list="city-list" class="{{ $inputClass }}"
                        value="{{ old('city', $params['city'] ?? '') }}"
                        placeholder="Mau menginap di mana?" required>
-                <datalist id="city-list">
-                    @foreach ($cities as $cityName)
-                        <option value="{{ $cityName }}">
-                    @endforeach
-                </datalist>
+                @include('partials.city-datalist', ['id' => 'city-list', 'for' => 'hotels'])
             </div>
 
             <div class="{{ $boxClass }}">
