@@ -16,9 +16,6 @@
 
             {{-- KIRI: teks sambutan --}}
             <div class="text-center lg:text-left">
-                <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] uppercase tracking-widest font-black px-3.5 py-1.5 rounded-full inline-block mb-4">
-                    SekalaGo
-                </span>
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight drop-shadow-md">
                     Welcome<br class="hidden lg:block"> back!
                 </h1>

@@ -17,13 +17,10 @@
             <div class="absolute inset-0 bg-gradient-to-r from-slate-950/60 via-transparent to-transparent"></div>
         </div>
 
-        <div class="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div class="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 items-center">
 
             {{-- KIRI: teks sambutan --}}
-            <div class="text-center lg:text-left">
-                <span class="bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] uppercase tracking-widest font-black px-3.5 py-1.5 rounded-full inline-block mb-4">
-                    SekalaGo
-                </span>
+            <div class="text-center lg:text-left lg:col-span-2">w
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight drop-shadow-md">
                     Join<br class="hidden lg:block"> with us!
                 </h1>
@@ -33,7 +30,7 @@
             </div>
 
             {{-- KANAN: kartu register --}}
-            <div class="w-full max-w-md mx-auto lg:mr-0 lg:ml-auto">
+            <div class="w-full max-w-md sm:max-w-xl mx-auto lg:mr-0 lg:ml-auto lg:col-span-3">
                 <div class="bg-white rounded-3xl p-6 sm:p-8 text-slate-800 shadow-2xl border border-slate-100/90 ring-1 ring-slate-900/5">
                     <div class="text-center mb-6">
                         <h2 class="text-2xl sm:text-3xl font-black text-slate-900">{{ __('ui.register') }}</h2>
@@ -51,63 +48,67 @@
                             </ul>
                         @endif
 
-                        {{-- Nama lengkap --}}
-                        <div>
-                            <label for="full_name" class="{{ $label }}">
-                                <i class="fa-solid fa-user text-sky-500 mr-1"></i> {{ __('ui.full_name') }}
-                            </label>
-                            <input id="full_name" name="full_name" value="{{ old('full_name') }}"
-                                   placeholder="{{ __('ui.full_name') }}" required autofocus class="{{ $input }}">
-                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                        {{-- Email --}}
-                        <div>
-                            <label for="email" class="{{ $label }}">
-                                <i class="fa-solid fa-envelope text-sky-500 mr-1"></i> {{ __('ui.email') }}
-                            </label>
-                            <input id="email" type="email" name="email" value="{{ old('email') }}"
-                                   placeholder="{{ __('ui.email') }}" required class="{{ $input }}">
-                        </div>
-
-                        {{-- Telepon --}}
-                        <div>
-                            <label for="phone_number" class="{{ $label }}">
-                                <i class="fa-solid fa-phone text-sky-500 mr-1"></i> {{ __('ui.phone') }}
-                            </label>
-                            <input id="phone_number" name="phone_number" value="{{ old('phone_number') }}"
-                                   placeholder="{{ __('ui.phone') }}" class="{{ $input }}">
-                        </div>
-
-                        {{-- Password --}}
-                        <div>
-                            <label for="password" class="{{ $label }}">
-                                <i class="fa-solid fa-lock text-sky-500 mr-1"></i> {{ __('ui.password') }}
-                            </label>
-                            <div class="relative">
-                                <input id="password" type="password" name="password"
-                                       placeholder="{{ __('ui.password') }}" required class="{{ $input }} pr-12">
-                                <button type="button" data-toggle-password="password"
-                                        class="absolute inset-y-0 right-0 px-4 text-slate-400 hover:text-sky-600 transition"
-                                        aria-label="Tampilkan password">
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
+                            {{-- Nama lengkap --}}
+                            <div>
+                                <label for="full_name" class="{{ $label }}">
+                                    <i class="fa-solid fa-user text-sky-500 mr-1"></i> {{ __('ui.full_name') }}
+                                </label>
+                                <input id="full_name" name="full_name" value="{{ old('full_name') }}"
+                                       placeholder="{{ __('ui.full_name') }}" required autofocus class="{{ $input }}">
                             </div>
-                        </div>
 
-                        {{-- Konfirmasi password --}}
-                        <div>
-                            <label for="password_confirmation" class="{{ $label }}">
-                                <i class="fa-solid fa-lock text-sky-500 mr-1"></i> {{ __('ui.password_confirm') }}
-                            </label>
-                            <div class="relative">
-                                <input id="password_confirmation" type="password" name="password_confirmation"
-                                       placeholder="{{ __('ui.password_confirm') }}" required class="{{ $input }} pr-12">
-                                <button type="button" data-toggle-password="password_confirmation"
-                                        class="absolute inset-y-0 right-0 px-4 text-slate-400 hover:text-sky-600 transition"
-                                        aria-label="Tampilkan password">
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
+                            {{-- Telepon --}}
+                            <div>
+                                <label for="phone_number" class="{{ $label }}">
+                                    <i class="fa-solid fa-phone text-sky-500 mr-1"></i> {{ __('ui.phone') }}
+                                </label>
+                                <input id="phone_number" name="phone_number" value="{{ old('phone_number') }}"
+                                       placeholder="{{ __('ui.phone') }}" class="{{ $input }}">
                             </div>
+
+                            {{-- Email (selebar penuh) --}}
+                            <div class="sm:col-span-2">
+                                <label for="email" class="{{ $label }}">
+                                    <i class="fa-solid fa-envelope text-sky-500 mr-1"></i> {{ __('ui.email') }}
+                                </label>
+                                <input id="email" type="email" name="email" value="{{ old('email') }}"
+                                       placeholder="{{ __('ui.email') }}" required class="{{ $input }}">
+                            </div>
+
+                            {{-- Password --}}
+                            <div>
+                                <label for="password" class="{{ $label }}">
+                                    <i class="fa-solid fa-lock text-sky-500 mr-1"></i> {{ __('ui.password') }}
+                                </label>
+                                <div class="relative">
+                                    <input id="password" type="password" name="password"
+                                           placeholder="{{ __('ui.password') }}" required class="{{ $input }} pr-12">
+                                    <button type="button" data-toggle-password="password"
+                                            class="absolute inset-y-0 right-0 px-4 text-slate-400 hover:text-sky-600 transition"
+                                            aria-label="Tampilkan password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {{-- Konfirmasi password --}}
+                            <div>
+                                <label for="password_confirmation" class="{{ $label }}">
+                                    <i class="fa-solid fa-lock text-sky-500 mr-1"></i> {{ __('ui.password_confirm') }}
+                                </label>
+                                <div class="relative">
+                                    <input id="password_confirmation" type="password" name="password_confirmation"
+                                           placeholder="{{ __('ui.password_confirm') }}" required class="{{ $input }} pr-12">
+                                    <button type="button" data-toggle-password="password_confirmation"
+                                            class="absolute inset-y-0 right-0 px-4 text-slate-400 hover:text-sky-600 transition"
+                                            aria-label="Tampilkan password">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
 
                         <button type="submit"

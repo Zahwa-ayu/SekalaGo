@@ -2,62 +2,37 @@
 
 @section('content')
     <div class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
-        
+
         {{-- 1. HERO BANNER --}}
-        <section class="relative pt-28 sm:pt-36 pb-20 bg-slate-950 text-white border-b border-slate-800/80 overflow-hidden">
-            
-            {{-- Background Image + Gradient Overlay --}}
+        <section class="relative min-h-screen flex items-center pt-28 sm:pt-32 pb-20 bg-neutral-800 text-white overflow-hidden">
+
+            {{-- Background Image + Overlay (lebih terang, netral) --}}
             <div class="absolute inset-0 z-0 select-none">
-                <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
-                     alt="Background SekalaGo"
-                     class="w-full h-full object-cover object-center scale-105 filter brightness-75">
-                <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-950"></div>
-                <div class="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-transparent"></div>
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80"
+                     alt="Kemitraan bisnis SekalaGo"
+                     class="w-full h-full object-cover object-center">
+                <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/5"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
             </div>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-                    
-                    {{-- Sisi Kiri: Teks & Action Buttons --}}
-                    <div class="lg:col-span-7 space-y-6 text-left">
-                        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-xs font-bold uppercase tracking-wider backdrop-blur-md">
-                            <i class="fa-solid fa-handshake-angle text-sky-400"></i> Program Kemitraan SekalaGo
-                        </span>
-                        
-                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15] drop-shadow-sm">
-                            {{ __('ui.partner_why_title') }}
-                        </h1>
-                        
-                        <p class="text-slate-200 text-base sm:text-lg font-normal leading-relaxed max-w-xl drop-shadow-sm">
-                            {{ __('ui.partner_why_hint') }}
-                        </p>
+            <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="max-w-2xl space-y-6 text-left">
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15] drop-shadow-md">
+                        {{ __('ui.partner_why_title') }}
+                    </h1>
 
-                        <div class="pt-2 flex flex-wrap gap-4 items-center">
-                            <a href="#register-section" class="px-7 py-3.5 bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white font-extrabold rounded-xl shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 transition duration-300 flex items-center gap-2.5 text-sm">
-                                <i class="fa-solid fa-pen-to-square"></i> Daftar Mitra Sekarang
-                            </a>
-                            <a href="#about-partnership" class="px-6 py-3.5 bg-slate-900/80 hover:bg-slate-800 text-slate-200 font-bold rounded-xl border border-slate-700/80 backdrop-blur-md transition duration-300 flex items-center gap-2 text-sm">
-                                Pelajari Kemitraan <i class="fa-solid fa-arrow-down text-xs text-sky-400"></i>
-                            </a>
-                        </div>
+                    <p class="text-white/90 text-base sm:text-lg font-normal leading-relaxed max-w-xl drop-shadow-md">
+                        {{ __('ui.partner_why_hint') }}
+                    </p>
+
+                    <div class="pt-2 flex flex-wrap gap-4 items-center">
+                        <a href="#register-section" class="px-7 py-3.5 bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white font-extrabold rounded-xl shadow-lg shadow-black/20 transition duration-300 flex items-center gap-2.5 text-sm">
+                            <i class="fa-solid fa-pen-to-square"></i> Daftar Mitra Sekarang
+                        </a>
+                        <a href="#about-partnership" class="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl border border-white/30 backdrop-blur-md transition duration-300 flex items-center gap-2 text-sm">
+                            Pelajari Kemitraan <i class="fa-solid fa-arrow-down text-xs text-sky-300"></i>
+                        </a>
                     </div>
-
-                    {{-- Sisi Kanan: Visual Highlight --}}
-                    <div class="lg:col-span-5">
-                        <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 group">
-                            <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=900&q=80" 
-                                 alt="Kemitraan SekalaGo" 
-                                 class="w-full h-[360px] sm:h-[420px] object-cover group-hover:scale-105 transition duration-700">
-                            
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent flex items-end p-6">
-                                <div class="bg-slate-950/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 w-full">
-                                    <span class="text-[10px] uppercase font-extrabold tracking-widest text-sky-400 block mb-1">Akomodasi & Armada Transportasi</span>
-                                    <h4 class="text-base font-bold text-white leading-snug">Jangkau Lebih Banyak Wisatawan & Klien Korporasi</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </section>
@@ -66,7 +41,7 @@
         <section id="about-partnership" class="bg-white py-16 border-b border-slate-200/80">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                    
+
                     {{-- Deskripsi Ringkas --}}
                     <div class="lg:col-span-7 space-y-4">
                         <span class="text-xs font-black text-sky-600 uppercase tracking-widest block">Tentang Kemitraan</span>
@@ -150,7 +125,7 @@
         {{-- 4. SEKSI LANGKAH BERGABUNG & FAQ --}}
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 border-t border-slate-200/60">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                
+
                 {{-- Steps Timeline Style --}}
                 <div>
                     <div class="mb-6">
@@ -160,7 +135,7 @@
                             {{ __('ui.partner_steps_title') }}
                         </h2>
                     </div>
-                    
+
                     <div class="relative space-y-4 pl-2">
                         @foreach (__('ui.partner_steps') as $i => $step)
                             <div class="relative flex items-start gap-4 rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm hover:border-sky-300 transition duration-200">
@@ -213,61 +188,68 @@
         </section>
 
         {{-- 5. FORMULIR PENDAFTARAN MITRA --}}
-        <section id="register-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-10">
-            <div class="bg-white rounded-3xl p-6 sm:p-10 lg:p-12 shadow-xl border border-slate-200/90 overflow-hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-                    
-                    {{-- Visual Info --}}
-                    <div class="lg:col-span-5 space-y-6">
+        <section id="register-section" class="relative overflow-hidden bg-neutral-800 py-16 sm:py-24">
+
+            {{-- Background sama seperti hero --}}
+            <div class="absolute inset-0 z-0 select-none">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1920&q=80"
+                     alt="" class="w-full h-full object-cover object-center">
+                <div class="absolute inset-0 bg-gradient-to-r from-black/65 via-black/40 to-black/20"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+
+                    {{-- Kiri: teks sambutan --}}
+                    <div class="lg:col-span-5 space-y-6 text-white">
                         <div>
-                            <span class="text-xs font-black text-sky-600 uppercase tracking-widest block mb-1">Langkah Terakhir</span>
-                            <h2 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-snug">
+                            <span class="text-xs font-black text-sky-300 uppercase tracking-widest block mb-2">Langkah Terakhir</span>
+                            <h2 class="text-3xl sm:text-5xl font-black tracking-tight leading-[1.15] drop-shadow-md">
                                 Siap Mengembangkan Usaha Bersama SekalaGo?
                             </h2>
                         </div>
-                        
-                        <p class="text-slate-600 text-sm leading-relaxed">
+
+                        <p class="text-white/90 text-sm sm:text-base leading-relaxed drop-shadow-md">
                             Isi formulir pendaftaran untuk mendaftarkan properti akomodasi atau armada kendaraan Anda. Tim operasional kami akan memverifikasi data Anda dalam waktu 1x24 jam.
                         </p>
 
-                        <div class="space-y-4 pt-4 border-t border-slate-100">
+                        <div class="space-y-4 pt-4 border-t border-white/15">
                             <div class="flex items-start gap-3.5">
-                                <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 border border-sky-100 shadow-sm">
+                                <div class="w-9 h-9 rounded-xl bg-white/10 text-sky-300 flex items-center justify-center shrink-0 border border-white/25 backdrop-blur-md">
                                     <i class="fa-solid fa-bolt text-sm"></i>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-xs text-slate-900">Proses Cepat & Langsung Aktif</h3>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Akun mitra langsung siap dikelola setelah verifikasi selesai.</p>
+                                    <h3 class="font-bold text-sm text-white">Proses Cepat & Langsung Aktif</h3>
+                                    <p class="text-xs text-white/75 mt-0.5">Akun mitra langsung siap dikelola setelah verifikasi selesai.</p>
                                 </div>
                             </div>
 
                             <div class="flex items-start gap-3.5">
-                                <div class="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0 border border-sky-100 shadow-sm">
+                                <div class="w-9 h-9 rounded-xl bg-white/10 text-sky-300 flex items-center justify-center shrink-0 border border-white/25 backdrop-blur-md">
                                     <i class="fa-solid fa-lock text-sm"></i>
                                 </div>
                                 <div>
-                                    <h3 class="font-bold text-xs text-slate-900">Kerahasiaan Data Terjamin</h3>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">Seluruh informasi legalitas dan identitas disimpan secara aman.</p>
+                                    <h3 class="font-bold text-sm text-white">Kerahasiaan Data Terjamin</h3>
+                                    <p class="text-xs text-white/75 mt-0.5">Seluruh informasi legalitas dan identitas disimpan secara aman.</p>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Help Callout Box --}}
-                        <div class="p-4 rounded-2xl bg-sky-50/60 border border-sky-100 flex items-center justify-between">
+                        <div class="p-4 rounded-2xl bg-black/30 backdrop-blur-md border border-white/15 flex items-center justify-between">
                             <div class="flex items-center gap-3">
-                                <i class="fa-solid fa-circle-info text-sky-600 text-base"></i>
-                                <span class="text-xs font-semibold text-slate-700">Butuh bantuan pendaftaran?</span>
+                                <i class="fa-solid fa-circle-info text-sky-300 text-base"></i>
+                                <span class="text-xs font-semibold text-white/90">Butuh bantuan pendaftaran?</span>
                             </div>
-                            <a href="https://wa.me/" target="_blank" class="text-xs font-extrabold text-sky-600 hover:text-sky-700 hover:underline flex items-center gap-1">
+                            <a href="https://wa.me/" target="_blank" class="text-xs font-extrabold text-sky-300 hover:text-sky-200 hover:underline flex items-center gap-1">
                                 Hubungi Kami <i class="fa-solid fa-arrow-right text-[10px]"></i>
                             </a>
                         </div>
                     </div>
 
-                    {{-- Form Pendaftaran --}}
-                    <div class="lg:col-span-7 bg-slate-50/70 rounded-2xl p-6 sm:p-8 border border-slate-200/80">
+                    {{-- Kanan: card putih berisi form --}}
+                    <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-10 shadow-2xl shadow-black/30 border border-white/20">
                         <div class="mb-6">
-                            <h3 class="text-xl font-black text-slate-900 tracking-tight">{{ __('ui.register_partner') }}</h3>
+                            <h3 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">{{ __('ui.register_partner') }}</h3>
                             <p class="text-slate-500 text-xs mt-1">{{ __('ui.register_partner_hint') }}</p>
                         </div>
 
@@ -286,7 +268,7 @@
                             @endif
 
                             @php
-                                $box = 'bg-white p-3.5 rounded-xl border border-slate-200/90 focus-within:border-sky-500 focus-within:ring-4 focus-within:ring-sky-500/10 transition duration-200 shadow-sm';
+                                $box = 'bg-slate-50 p-3.5 rounded-xl border border-slate-200/90 focus-within:bg-white focus-within:border-sky-500 focus-within:ring-4 focus-within:ring-sky-500/10 transition duration-200';
                                 $label = 'block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1';
                                 $input = 'w-full bg-transparent font-semibold text-slate-800 text-sm focus:outline-none placeholder-slate-400';
                             @endphp
