@@ -73,14 +73,27 @@ class DashboardMenu
 
             'partner' => $user->partner?->hasSignedAgreement()
                 ? [
+                    // Ringkasan (tanpa judul, selalu paling atas)
                     ['fa-gauge', 'ui.dashboard', 'partner.dashboard', ['partner.dashboard']],
+
+                    // Bisnis hotel
+                    ['section' => 'ui.menu_hotel'],
                     ['fa-hotel', 'ui.my_hotels', 'partner.hotels.index', ['partner.hotels.*', 'partner.room-types.*']],
                     ['fa-receipt', 'ui.incoming_bookings', 'partner.bookings.index', ['partner.bookings.*']],
-                    ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
-                    ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
+
+                    // Bisnis rental mobil
+                    ['section' => 'ui.menu_rental'],
                     ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']],
                     ['fa-car-on', 'ui.rentals', 'partner.rentals.index', ['partner.rentals.*']],
+
+                    // Uang
+                    ['section' => 'ui.menu_finance'],
                     ['fa-wallet', 'ui.payouts', 'partner.payouts.index', ['partner.payouts.*']],
+
+                    // Dokumen dan data mitra
+                    ['section' => 'ui.menu_account'],
+                    ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
+                    ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
                     self::ACCOUNT_SETTINGS,
                 ]
                 : [
@@ -91,11 +104,21 @@ class DashboardMenu
 
             'corporate' => $user->companyUser?->isFinance()
                 ? [
+                    // Ringkasan (tanpa judul, selalu paling atas)
                     ['fa-gauge', 'ui.dashboard', 'corporate.dashboard', ['corporate.dashboard']],
+
+                    // Karyawan dan aturan perusahaan
+                    ['section' => 'ui.menu_company'],
                     ['fa-users', 'ui.employees', 'corporate.employees.index', ['corporate.employees.*']],
                     ['fa-sliders', 'ui.positions_limits', 'corporate.positions.index', ['corporate.positions.*', 'corporate.policy.*']],
+
+                    // Pemesanan dan laporannya
+                    ['section' => 'ui.menu_bookings'],
                     ['fa-clipboard-check', 'ui.company_bookings', 'corporate.bookings.index', ['corporate.bookings.*']],
                     ['fa-chart-column', 'ui.reports', 'corporate.reports.index', ['corporate.reports.*']],
+
+                    // Akun sendiri
+                    ['section' => 'ui.menu_account'],
                     self::ACCOUNT_SETTINGS,
                 ]
                 : [],
@@ -104,14 +127,14 @@ class DashboardMenu
         });
     }
 
-    /** Pintasan ke etalase (Finance tetap bisa mencari dan memesan hotel). */
+    /**
+     * Pintasan di bawah menu utama (dipisah garis). Saat ini kosong untuk semua peran;
+     * layout tetap memanggil method ini, jadi pintasan baru cukup ditambahkan di sini.
+     * Contoh: 'corporate' => [['fa-magnifying-glass', 'ui.find_hotel', 'home', ['home', 'hotels.*']]],
+     */
     public static function shortcuts(User $user): array
     {
         return self::filter(match ($user->user_type) {
-            'corporate' => [
-                ['fa-magnifying-glass', 'ui.find_hotel', 'home', ['home', 'hotels.*']],
-                ['fa-suitcase-rolling', 'ui.my_bookings', 'bookings.index', ['bookings.*']],
-            ],
             default => [],
         });
     }

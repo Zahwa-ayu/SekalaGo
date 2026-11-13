@@ -138,8 +138,8 @@
                             </a>
                         @endif
 
-                        {{-- PENGATURAN AKUN --}}
-                        @if (Route::has('account.settings'))
+                        {{-- PENGATURAN AKUN (Finance tidak perlu di sini: aksesnya lewat sidebar Dashboard) --}}
+                        @if (Route::has('account.settings') && ! (auth()->user()->user_type === 'corporate' && auth()->user()->companyUser?->isFinance()))
                             <a href="{{ route('account.settings') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
                                 <i class="fa-solid fa-user-gear text-sky-400"></i> {{ __('ui.account_settings') }}
                             </a>

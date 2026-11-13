@@ -1028,4 +1028,12 @@ return [
 'menu_system'     => 'Sistem',
 // lang/id/ui.php
 'reset_filter' => 'Reset',
+
+// ui
+// lang/id/ui.php
+'menu_hotel'    => 'Hotel',
+'menu_rental'   => 'Rental Mobil',
+'menu_company'  => 'Perusahaan',
+'menu_bookings' => 'Pemesanan',
+'menu_account'  => 'Akun',
 ];

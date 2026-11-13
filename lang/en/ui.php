@@ -1024,4 +1024,12 @@ return [
 'menu_finance'    => 'Finance',
 'menu_content'    => 'Content & Data',
 'menu_system'     => 'System',
+
+// new ui
+// lang/en/ui.php
+'menu_hotel'    => 'Hotels',
+'menu_rental'   => 'Car Rental',
+'menu_company'  => 'Company',
+'menu_bookings' => 'Bookings',
+'menu_account'  => 'Account',
 ];
