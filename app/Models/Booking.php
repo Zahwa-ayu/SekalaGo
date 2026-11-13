@@ -20,7 +20,7 @@ class Booking extends Model
         'refund_amount', 'refunded_at', 'refund_reference',
         'decided_by', 'decided_at', 'decision_note', 'approval_reason', 'vehicle_id', 'with_driver', 
         'driver_fee_per_day', 'pickup_location', 'due_at', 'late_grace_minutes', 'late_fee_percent',
-        'picked_up_at', 'returned_at', 'late_minutes', 'late_fee_computed', 'late_fee',
+        'picked_up_at', 'returned_at', 'late_minutes', 'late_fee_computed', 'late_fee', 'payout_id',
     ];
 
     protected function casts(): array
@@ -169,4 +169,5 @@ public function canBeExtended(): bool
 {
     return app(\App\Services\ExtensionService::class)->canExtend($this);
 }
+public function payout() { return $this->belongsTo(Payout::class); }
 }

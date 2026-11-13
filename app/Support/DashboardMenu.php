@@ -33,6 +33,7 @@ class DashboardMenu
                 ],
                 ['fa-receipt', 'ui.all_bookings', 'admin.bookings.index', ['admin.bookings.*']],
                 ['fa-building', 'ui.corporate_management', 'admin.companies.index', ['admin.companies.*']],
+                ['fa-money-bill-transfer', 'ui.payouts', 'admin.payouts.index', ['admin.payouts.*']],
                 [
                     'icon'     => 'fa-database',
                     'label'    => 'ui.master_data',
@@ -47,14 +48,12 @@ class DashboardMenu
                     'children' => [
                         ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
                         ['fa-circle-question', 'ui.faq_management', 'admin.faqs.index', ['admin.faqs.*']],
-                        ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],   // baris baru
+                        ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],
                     ],
                 ],
                 ['fa-users', 'ui.admin_users', 'admin.users.index', ['admin.users.*']],
                 ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
                 self::ACCOUNT_SETTINGS,
-                // Tambahkan di sini begitu halamannya ada, misalnya:
-                // ['fa-money-bill-transfer', 'ui.payouts', 'admin.payouts.index', ['admin.payouts.*']],
             ],
 
             'partner' => $user->partner?->hasSignedAgreement()
@@ -66,6 +65,7 @@ class DashboardMenu
                     ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
                     ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']],
                     ['fa-car-on', 'ui.rentals', 'partner.rentals.index', ['partner.rentals.*']],
+                    ['fa-wallet', 'ui.payouts', 'partner.payouts.index', ['partner.payouts.*']],
                     self::ACCOUNT_SETTINGS,
                 ]
                 : [

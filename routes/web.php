@@ -15,6 +15,8 @@ use App\Http\Controllers\Corporate\ReportController;
 use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\AgreementController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
+use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
+use App\Http\Controllers\Partner\PayoutController as PartnerPayoutController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\ProfileController;
 use App\Http\Controllers\Partner\RoomStockController;
@@ -146,6 +148,15 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('companies/{company}', [AdminCompanyController::class, 'show'])->name('companies.show');
         Route::post('companies/{company}/topup', [AdminCompanyController::class, 'topup'])->name('companies.topup');
 
+                // Pencairan dana mitra
+        Route::get('payouts', [AdminPayoutController::class, 'index'])->name('payouts.index');
+        Route::post('payouts', [AdminPayoutController::class, 'store'])->name('payouts.store');
+        Route::post('payouts/generate', [AdminPayoutController::class, 'generate'])->name('payouts.generate');
+        Route::get('payouts/{payout}', [AdminPayoutController::class, 'show'])->name('payouts.show');
+        Route::get('payouts/{payout}/csv', [AdminPayoutController::class, 'csv'])->name('payouts.csv');
+        Route::post('payouts/{payout}/paid', [AdminPayoutController::class, 'markPaid'])->name('payouts.paid');
+        Route::post('payouts/{payout}/cancel', [AdminPayoutController::class, 'cancel'])->name('payouts.cancel');
+
         // Social media management
         Route::patch('social-media/{socialMedia}/status', [AdminSocialMediaController::class, 'updateStatus'])
             ->name('social-media.status');
@@ -203,6 +214,8 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::resource('hotels.room-types', RoomTypeController::class)
                 ->shallow()
                 ->except(['show']);
+            
+            Route::get('payouts', [PartnerPayoutController::class, 'index'])->name('payouts.index');
 
             Route::get('room-types/{room_type}/stocks', [RoomStockController::class, 'edit'])
                 ->name('room-types.stocks.edit');
