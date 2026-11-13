@@ -1018,4 +1018,10 @@ return [
 'schedule_weekly' => 'Weekly',
 'schedule_biweekly' => 'Every two weeks',
 'schedule_monthly' => 'Monthly',
+
+// sidebar
+'menu_operations' => 'Operations',
+'menu_finance'    => 'Finance',
+'menu_content'    => 'Content & Data',
+'menu_system'     => 'System',
 ];

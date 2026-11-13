@@ -11,17 +11,23 @@ class DashboardMenu
     private const ACCOUNT_SETTINGS = ['fa-user-gear', 'ui.account_settings', 'account.settings', ['account.*']];
 
     /**
-     * Menu utama sidebar. Dua bentuk baris:
-     *  - item  : [icon, label (kunci bahasa), route, pola route untuk status aktif]
-     *  - grup  : ['icon' => ..., 'label' => ..., 'children' => [item, item, ...]]
-     * Baris yang rutenya belum ada otomatis dilewati, dan grup tanpa isi tidak ditampilkan.
+     * Menu utama sidebar. Tiga bentuk baris:
+     *  - item   : [icon, label (kunci bahasa), route, pola route untuk status aktif]
+     *  - grup   : ['icon' => ..., 'label' => ..., 'children' => [item, item, ...]]
+     *  - judul  : ['section' => label (kunci bahasa)] -> judul kecil pemisah kelompok menu
+     * Baris yang rutenya belum ada otomatis dilewati, grup tanpa isi dan judul tanpa
+     * menu di bawahnya tidak ditampilkan.
      */
     public static function for(User $user): array
     {
         return self::filter(match ($user->user_type) {
             'admin' => [
+                // Ringkasan (tanpa judul, selalu paling atas)
                 ['fa-gauge', 'ui.dashboard', 'admin.dashboard', ['admin.dashboard']],
                 ['fa-chart-line', 'ui.analytics', 'admin.analytics.index', ['admin.analytics.*']],
+
+                // Pekerjaan harian admin
+                ['section' => 'ui.menu_operations'],
                 ['fa-handshake', 'ui.verify_partners', 'admin.partners.index', ['admin.partners.*']],
                 [
                     'icon'     => 'fa-clipboard-check',
@@ -33,7 +39,13 @@ class DashboardMenu
                 ],
                 ['fa-receipt', 'ui.all_bookings', 'admin.bookings.index', ['admin.bookings.*']],
                 ['fa-building', 'ui.corporate_management', 'admin.companies.index', ['admin.companies.*']],
+
+                // Uang
+                ['section' => 'ui.menu_finance'],
                 ['fa-money-bill-transfer', 'ui.payouts', 'admin.payouts.index', ['admin.payouts.*']],
+
+                // Data & isi situs
+                ['section' => 'ui.menu_content'],
                 [
                     'icon'     => 'fa-database',
                     'label'    => 'ui.master_data',
@@ -51,6 +63,9 @@ class DashboardMenu
                         ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],
                     ],
                 ],
+
+                // Pengguna admin, log, dan akun sendiri
+                ['section' => 'ui.menu_system'],
                 ['fa-users', 'ui.admin_users', 'admin.users.index', ['admin.users.*']],
                 ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
                 self::ACCOUNT_SETTINGS,
@@ -103,12 +118,20 @@ class DashboardMenu
 
     /**
      * Ubah baris mentah menjadi struktur siap tampil. Item tanpa rute dibuang;
-     * grup tanpa isi dibuang; grup dianggap aktif jika salah satu anaknya aktif.
+     * grup tanpa isi dibuang; grup dianggap aktif jika salah satu anaknya aktif;
+     * judul kelompok (section) dibuang jika tidak ada menu di bawahnya.
      */
     private static function filter(array $rows): array
     {
-        return collect($rows)
+        $items = collect($rows)
             ->map(function ($row) {
+                if (isset($row['section'])) {
+                    return [
+                        'type'  => 'section',
+                        'label' => $row['section'],
+                    ];
+                }
+
                 if (isset($row['children'])) {
                     $children = self::filter($row['children']);
 
@@ -140,5 +163,27 @@ class DashboardMenu
             ->filter()
             ->values()
             ->all();
+
+        return self::dropEmptySections($items);
+    }
+
+    /** Buang judul kelompok yang tidak diikuti menu apa pun (mis. semua rutenya belum ada). */
+    private static function dropEmptySections(array $items): array
+    {
+        $result = [];
+
+        foreach ($items as $i => $item) {
+            if ($item['type'] === 'section') {
+                $next = $items[$i + 1] ?? null;
+
+                if ($next === null || $next['type'] === 'section') {
+                    continue;
+                }
+            }
+
+            $result[] = $item;
+        }
+
+        return $result;
     }
 }

@@ -1020,4 +1020,12 @@ return [
 'schedule_weekly' => 'Mingguan',
 'schedule_biweekly' => 'Dua mingguan',
 'schedule_monthly' => 'Bulanan',
+
+// sidebar
+'menu_operations' => 'Operasional',
+'menu_finance'    => 'Keuangan',
+'menu_content'    => 'Konten & Data',
+'menu_system'     => 'Sistem',
+// lang/id/ui.php
+'reset_filter' => 'Reset',
 ];

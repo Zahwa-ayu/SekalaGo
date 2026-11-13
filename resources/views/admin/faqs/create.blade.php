@@ -1,15 +1,16 @@
-@extends('layouts.dashboard')
+@extends('layouts.app')
 
 @section('content')
-    <div class="max-w-3xl">
-        <h1 class="text-xl font-black text-slate-900 mb-6">Tambah FAQ</h1>
-        <form method="POST" action="{{ route('admin.faqs.store') }}">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <a href="{{ route('admin.faqs.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
+            <i class="fa-solid fa-arrow-left"></i> Kelola FAQ
+        </a>
+
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Tambah FAQ</h1>
+
+        <form method="POST" action="{{ route('admin.faqs.store') }}" class="space-y-6">
             @csrf
-            @include('admin.faqs._form')
-            <div class="flex gap-3">
-                <button class="px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm">Simpan</button>
-                <a href="{{ route('admin.faqs.index') }}" class="px-5 py-2.5 text-slate-600 text-sm font-bold">Batal</a>
-            </div>
+            @include('admin.faqs._form', ['submitLabel' => 'Simpan'])
         </form>
-    </div>
+    </section>
 @endsection

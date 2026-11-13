@@ -99,7 +99,7 @@
                 <!-- Navigation Items -->
                 <div id="nav-menu"
                      class="hidden lg:flex flex-col lg:flex-row lg:items-center gap-3 text-xs font-semibold
-                            absolute lg:static top-16 left-0 right-0 {{ $solidNav ? 'bg-white' : 'bg-slate-900' }} lg:bg-transparent
+                            absolute lg:static top-16 left-0 right-0 {{ $solidNav ? 'bg-white' : 'bg-sky-900' }} lg:bg-transparent
                             px-4 pb-4 pt-2 lg:p-0 border-b border-white/10 lg:border-0">
 
                     {{-- MENU UTAMA (Beranda dihapus, sudah diwakili logo) --}}
@@ -168,8 +168,8 @@
         @yield('content')
     </main>
 
-    {{-- FOOTER SLATE-900 SOLID --}}
-    <footer class="bg-slate-900 text-slate-300 text-xs border-t border-slate-800 mt-20">
+    {{-- FOOTER SKY-950 SOLID (biru tua, senada dengan hero) --}}
+    <footer class="bg-sky-950 text-sky-100/80 text-xs border-t border-sky-900 mt-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-col md:flex-row justify-between gap-8">
                 <div class="max-w-sm space-y-3">
@@ -178,7 +178,7 @@
                             alt="SekalaGo" 
                             class="h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
                     </a>
-                    <p class="leading-relaxed text-slate-400">{{ __('ui.footer_about') }}</p>
+                    <p class="leading-relaxed text-sky-200/70">{{ __('ui.footer_about') }}</p>
 
                     {{-- SOSIAL MEDIA (dari database, hanya yang berstatus aktif) --}}
                     @if ($socialLinks->isNotEmpty())
@@ -200,32 +200,32 @@
                 <div class="grid grid-cols-2 gap-10">
                     <div>
                         <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_services') }}</h4>
-                        <ul class="space-y-2 text-slate-400">
-                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_hotel') }}</li>
-                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_selfdrive') }}</li>
-                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_driver') }}</li>
-                            <li class="hover:text-sky-400 transition cursor-pointer">{{ __('ui.footer_service_combo') }}</li>
+                        <ul class="space-y-2 text-sky-200/70">
+                            <li class="hover:text-white transition cursor-pointer">{{ __('ui.footer_service_hotel') }}</li>
+                            <li class="hover:text-white transition cursor-pointer">{{ __('ui.footer_service_selfdrive') }}</li>
+                            <li class="hover:text-white transition cursor-pointer">{{ __('ui.footer_service_driver') }}</li>
+                            <li class="hover:text-white transition cursor-pointer">{{ __('ui.footer_service_combo') }}</li>
                         </ul>
                     </div>
                     <div>
                         <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_partnership') }}</h4>
                         <ul class="space-y-2">
-                            <li><a href="{{ route('register.partner') }}" class="hover:text-sky-400 transition">{{ __('ui.register_partner') }}</a></li>
+                            <li><a href="{{ route('register.partner') }}" class="hover:text-white transition">{{ __('ui.register_partner') }}</a></li>
                             {{-- Link FAQ baru muncul jika route 'faq' sudah terdaftar --}}
                             @if (Route::has('faq'))
-                                <li><a href="{{ route('faq') }}" class="hover:text-sky-400 transition">FAQ</a></li>
+                                <li><a href="{{ route('faq') }}" class="hover:text-white transition">FAQ</a></li>
                             @endif
                         </ul>
                     </div>
                 </div>
             </div>
-            <div class="mt-10 pt-5 border-t border-slate-800 text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="mt-10 pt-5 border-t border-sky-900 text-sky-300/60 flex flex-col sm:flex-row justify-between items-center gap-2">
                 <div>
                     © {{ date('Y') }} {{ config('app.name') }}. {{ __('ui.footer_rights') }}
                 </div>
                 <div class="flex gap-4 text-xs">
-                    <span class="hover:text-slate-300 cursor-pointer">{{ __('ui.footer_terms') }}</span>
-                    <span class="hover:text-slate-300 cursor-pointer">{{ __('ui.footer_privacy') }}</span>
+                    <span class="hover:text-white cursor-pointer">{{ __('ui.footer_terms') }}</span>
+                    <span class="hover:text-white cursor-pointer">{{ __('ui.footer_privacy') }}</span>
                 </div>
             </div>
         </div>
@@ -255,7 +255,7 @@
                         btnLogout.classList.add('border-slate-300', 'text-slate-700');
                     }
 
-                    menu.classList.remove('bg-slate-900');
+                    menu.classList.remove('bg-sky-900');
                     menu.classList.add('bg-white');
                 } else {
                     nav.classList.remove('is-scrolled');
@@ -267,7 +267,7 @@
                         btnLogout.classList.remove('border-slate-300', 'text-slate-700');
                     }
 
-                    menu.classList.add('bg-slate-900');
+                    menu.classList.add('bg-sky-900');
                     menu.classList.remove('bg-white');
                 }
             }

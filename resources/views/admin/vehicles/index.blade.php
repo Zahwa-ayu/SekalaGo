@@ -57,7 +57,11 @@
                                     <span class="px-2.5 py-1 text-[11px] font-bold rounded-full whitespace-nowrap {{ $badge }}">{{ __('ui.status_' . $vehicle->status) }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold">
-                                    <a href="{{ route('admin.vehicles.show', $vehicle) }}" class="text-sagara-blue hover:underline">{{ __('ui.review') }}</a>
+                                    {{-- <a href="{{ route('admin.vehicles.show', $vehicle) }}" class="text-sagara-blue hover:underline">{{ __('ui.review') }}</a> --}}
+                                <a href="{{ route('admin.vehicles.show', $vehicle) }}"
+                                    class="px-3 py-1.5 text-xs font-bold border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white rounded-lg transition whitespace-nowrap">
+                                    {{ __('ui.review') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+                                </a>
                                 </td>
                             </tr>
                         @empty

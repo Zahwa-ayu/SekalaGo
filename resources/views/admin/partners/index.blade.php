@@ -45,7 +45,7 @@
                                 };
                                 $mou = $partner->latestAgreement;
                                 $mouBadge = ! $mou ? 'bg-slate-100 text-slate-500'
-                                    : ($mou->status === 'signed' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sagara-blue');
+                                    : ($mou->status === 'signed' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700');
                             @endphp
                             <tr class="hover:bg-sky-50/50 transition">
                                 <td class="px-6 py-4 font-bold text-slate-900">{{ $partner->company_name }}</td>
@@ -61,6 +61,10 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right">
+                                    {{-- <a href="{{ route('admin.partners.show', $partner) }}"
+                                       class="px-3 py-1.5 text-xs font-bold border border-sky-500 text-sky-600 hover:bg-sky-500 hover:text-white rounded-lg transition whitespace-nowrap">
+                                        {{ __('ui.review') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+                                    </a> --}}
                                     <a href="{{ route('admin.partners.show', $partner) }}"
                                        class="px-3 py-1.5 text-xs font-bold border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white rounded-lg transition whitespace-nowrap">
                                         {{ __('ui.review') }} <i class="fa-solid fa-chevron-right ml-1"></i>

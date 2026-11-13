@@ -61,6 +61,10 @@
             html.sb-collapsed #sidebar .sb-item { justify-content: center; padding-left: 0; padding-right: 0; gap: 0; }
             html.sb-collapsed #sidebar .sb-brand { justify-content: center; padding-left: 0; padding-right: 0; }
 
+            /* Saat ciut: judul kelompok diganti garis pemisah tipis */
+            html.sb-collapsed #sidebar .sb-section { padding: .75rem .5rem .25rem; }
+            html.sb-collapsed #sidebar .sb-section-line { display: block; }
+
             /* Saat ciut, grup tidak bisa dibuka-tutup: semua sub-menu tampil sebagai ikon */
             html.sb-collapsed #sidebar .sb-group-list { display: block !important; margin-top: .25rem; }
 
@@ -125,10 +129,16 @@
             </button>
         </div>
 
-        <nav class="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 text-sm font-medium">
+        <nav id="sidebar-nav" class="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 text-sm font-medium">
             <div class="space-y-1">
                 @foreach ($menu as $item)
-                    @if ($item['type'] === 'group')
+                    @if ($item['type'] === 'section')
+                        {{-- JUDUL KELOMPOK: teks kecil saat sidebar lebar, berubah jadi garis tipis saat ciut --}}
+                        <div class="sb-section px-3 pt-5 pb-1">
+                            <span class="sb-label block text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ __($item['label']) }}</span>
+                            <div class="sb-section-line hidden h-px bg-white/10"></div>
+                        </div>
+                    @elseif ($item['type'] === 'group')
                         {{-- GRUP: bisa dibuka-tutup; otomatis terbuka jika salah satu halamannya aktif --}}
                         @php $open = request()->routeIs(...$item['active']); @endphp
 
@@ -148,6 +158,7 @@
                                     <div class="sb-tree-item">
                                         <a href="{{ route($child['route']) }}"
                                            title="{{ __($child['label']) }}"
+                                           @if ($active) data-sb-active @endif
                                            class="{{ $linkBase }} py-2 text-[13px] {{ $active ? 'bg-white/10 text-white font-semibold border-sky-500' : 'border-transparent text-slate-400 hover:bg-white/5 hover:text-white' }}">
                                             <i class="fa-solid {{ $child['icon'] }} sb-child-icon w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
                                             <span class="sb-label truncate">{{ __($child['label']) }}</span>
@@ -160,6 +171,7 @@
                         @php $active = request()->routeIs(...$item['active']); @endphp
                         <a href="{{ route($item['route']) }}"
                            title="{{ __($item['label']) }}"
+                           @if ($active) data-sb-active @endif
                            class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
                             <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0 {{ $active ? 'text-sky-400' : '' }}"></i>
                             <span class="sb-label truncate">{{ __($item['label']) }}</span>
@@ -174,6 +186,7 @@
                         @php $active = request()->routeIs(...$item['active']); @endphp
                         <a href="{{ route($item['route']) }}"
                            title="{{ __($item['label']) }}"
+                           @if ($active) data-sb-active @endif
                            class="{{ $linkBase }} {{ $active ? 'bg-white/10 text-white border-sky-500' : 'border-transparent hover:bg-white/5 hover:text-white' }}">
                             <i class="fa-solid {{ $item['icon'] }} w-5 text-center shrink-0"></i>
                             <span class="sb-label truncate">{{ __($item['label']) }}</span>
@@ -200,6 +213,30 @@
             </form>
         </div>
     </aside>
+
+    {{-- POSISI SCROLL SIDEBAR: dipulihkan langsung setelah sidebar tergambar (sebelum konten halaman),
+         jadi saat pindah halaman menu tidak lompat ke atas. Kalau belum ada posisi tersimpan,
+         menu yang aktif digulir ke area yang terlihat. --}}
+    <script>
+        (function () {
+            const nav = document.getElementById('sidebar-nav');
+            if (!nav) return;
+
+            const KEY = 'sidebar-nav-scroll';
+            let saved = null;
+            try { saved = sessionStorage.getItem(KEY); } catch (e) {}
+
+            if (saved !== null) {
+                nav.scrollTop = parseInt(saved, 10) || 0;
+            } else {
+                nav.querySelector('[data-sb-active]')?.scrollIntoView({ block: 'nearest' });
+            }
+
+            nav.addEventListener('scroll', () => {
+                try { sessionStorage.setItem(KEY, String(nav.scrollTop)); } catch (e) {}
+            }, { passive: true });
+        })();
+    </script>
 
     {{-- AREA KONTEN --}}
     <div class="flex-1 min-w-0 flex flex-col">

@@ -7,6 +7,10 @@
         $keep    = request()->except(['range', 'from', 'to', 'page']);
         $money   = fn ($value) => format_price($value, 'IDR');
 
+        // Nilai tanggal untuk input filter (dipakai juga sebagai batas min/max)
+        $fromValue = $filters['from'] ?? $start->toDateString();
+        $toValue   = $filters['to'] ?? $end->toDateString();
+
         // Perubahan dibanding periode sebelumnya (inverse: kenaikan dianggap buruk, mis. refund)
         $delta = function (?float $value, bool $inverse = false) {
             if ($value === null) {
@@ -63,13 +67,29 @@
                 <form method="GET" action="{{ route('admin.analytics.index') }}" class="flex flex-wrap items-center gap-2 ml-0 sm:ml-2">
                     <input type="hidden" name="range" value="custom">
                     @if ($filters['product'])<input type="hidden" name="product" value="{{ $filters['product'] }}">@endif
-                    <input type="date" name="from" required value="{{ $filters['from'] ?? $start->toDateString() }}" class="{{ $input }}" aria-label="{{ __('ui.analytics_from') }}">
+
+                    {{-- "from" tidak boleh melewati "to" --}}
+                    <input type="date" id="analytics-from" name="from" required
+                           value="{{ $fromValue }}"
+                           max="{{ $toValue }}"
+                           class="{{ $input }}" aria-label="{{ __('ui.analytics_from') }}">
                     <span class="text-slate-400 text-xs">-</span>
-                    <input type="date" name="to" required value="{{ $filters['to'] ?? $end->toDateString() }}" class="{{ $input }}" aria-label="{{ __('ui.analytics_to') }}">
+                    {{-- "to" tidak boleh sebelum "from" --}}
+                    <input type="date" id="analytics-to" name="to" required
+                           value="{{ $toValue }}"
+                           min="{{ $fromValue }}"
+                           class="{{ $input }}" aria-label="{{ __('ui.analytics_to') }}">
+
                     <button class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $current === 'custom' ? 'bg-sagara-navy text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         {{ __('ui.range_custom') }}
                     </button>
                 </form>
+
+                {{-- RESET FILTER: kembali ke tampilan default (tanpa parameter) --}}
+                <a href="{{ route('admin.analytics.index') }}"
+                   class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-white border border-slate-200 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200">
+                    <i class="fa-solid fa-rotate-left"></i> {{ __('ui.reset_filter') }}
+                </a>
             </div>
 
             @include('partials.product-filter', ['route' => 'admin.analytics.index'])
@@ -228,6 +248,22 @@
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
+        // Batasi input tanggal: "from" tidak boleh setelah "to", "to" tidak boleh sebelum "from"
+        (function () {
+            const from = document.getElementById('analytics-from');
+            const to   = document.getElementById('analytics-to');
+            if (!from || !to) return;
+
+            const sync = () => {
+                to.min   = from.value || '';
+                from.max = to.value || '';
+            };
+
+            from.addEventListener('change', sync);
+            to.addEventListener('change', sync);
+            sync();
+        })();
+
         (function () {
             const series = @json($series);
             const products = @json($byProduct->map(fn ($row) => ['label' => $productLabels[$row['key']] ?? $row['key'], 'gmv' => $row['gmv']])->values());
