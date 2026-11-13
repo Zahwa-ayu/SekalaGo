@@ -11,21 +11,39 @@ use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
 {
-    /** Tab "Informasi Akun". */
+    /**
+     * Halaman akun: info akun + ringkasan bahasa & mata uang.
+     */
     public function show(Request $request)
     {
         $user = $this->loadedUser($request);
 
-        return view('account.show', [
-            'user'     => $user,
-            'name'     => $this->displayName($user),
-            'roleKey'  => $this->roleKey($user),
-            'currency' => app(CurrencyService::class)->current(),
-            'locales'  => $this->locales(),
+        return view('account.index', [
+            'user'          => $user,
+            'name'          => $this->displayName($user),
+            'roleKey'       => $this->roleKey($user),
+            'locales'       => $this->locales(),
+            'currentLocale' => app()->getLocale(),
+            'currencies'    => Currency::orderBy('code')->get(),
+            'currentCode'   => app(CurrencyService::class)->current()->code,
         ]);
     }
 
-    /** Tab "Edit Akun". */
+    /**
+     * Halaman ganti bahasa & mata uang.
+     * Penyimpanan memakai PreferenceController yang sudah ada (preferences.update).
+     */
+    public function preferences(Request $request)
+    {
+        return view('account.preferences', [
+            'locales'       => $this->locales(),
+            'currentLocale' => app()->getLocale(),
+            'currencies'    => Currency::orderBy('code')->get(),
+            'currentCode'   => app(CurrencyService::class)->current()->code,
+        ]);
+    }
+
+    /** Halaman "Edit Akun" (profil, kontak, dan ganti password). */
     public function edit(Request $request)
     {
         $user = $this->loadedUser($request);
@@ -88,17 +106,6 @@ class AccountController extends Controller
         });
 
         return redirect()->route('account.settings')->with('success', __('ui.account_updated'));
-    }
-
-    /** Tab "Bahasa & Mata Uang". Penyimpanannya memakai PreferenceController yang sudah ada. */
-    public function preferences(Request $request)
-    {
-        return view('account.preferences', [
-            'locales'       => $this->locales(),
-            'currentLocale' => app()->getLocale(),
-            'currencies'    => Currency::orderBy('code')->get(),
-            'currentCode'   => app(CurrencyService::class)->current()->code,
-        ]);
     }
 
     // ---------------------------------------------------------------- helper

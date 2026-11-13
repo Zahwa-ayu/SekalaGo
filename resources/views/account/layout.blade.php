@@ -13,11 +13,6 @@
             <p class="text-sm text-slate-500 mt-1">{{ __('ui.account_settings_hint') }}</p>
         </div>
 
-        {{-- Selama password sementara belum diganti, hanya form password yang boleh dibuka --}}
-        @unless ($authUser->must_change_password)
-            @include('account._nav')
-        @endunless
-
         @if ($errors->any())
             <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">
                 @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach

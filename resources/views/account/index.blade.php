@@ -99,7 +99,7 @@
             <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.account_preferences') }}</h2>
             <div class="text-slate-600">
                 {{ __('ui.language') }}: <strong class="text-slate-900">{{ $localeName }}</strong>
-                &middot; {{ __('ui.currency') }}: <strong class="text-slate-900">{{ $currency->code }}</strong>
+                &middot; {{ __('ui.currency') }}: <strong class="text-slate-900">{{ $currentCode }}</strong>
             </div>
         </div>
         <a href="{{ route('account.preferences') }}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-sky-50 hover:text-sky-600 text-sm font-bold transition">

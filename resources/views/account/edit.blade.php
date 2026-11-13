@@ -5,16 +5,19 @@
         $type  = $user->user_type;
         $input = 'w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
         $label = 'block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1';
+        $title = 'text-[11px] font-bold uppercase tracking-wider text-slate-400';
+        $card  = 'bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8';
     @endphp
 
-    <form method="POST" action="{{ route('account.update') }}" class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8 space-y-6">
+    {{-- EDIT AKUN --}}
+    <form method="POST" action="{{ route('account.update') }}" class="{{ $card }} space-y-6">
         @csrf
         @method('PUT')
 
         {{-- PROFIL --}}
         @if (in_array($type, ['customer', 'admin', 'corporate'], true))
             <div class="space-y-4">
-                <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.account_profile') }}</h2>
+                <h2 class="{{ $title }}">{{ __('ui.account_profile') }}</h2>
 
                 <div>
                     <label class="{{ $label }}">{{ __('ui.full_name') }}</label>
@@ -64,7 +67,7 @@
 
         {{-- KONTAK --}}
         <div class="space-y-4 pt-2">
-            <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.account_contact') }}</h2>
+            <h2 class="{{ $title }}">{{ __('ui.account_contact') }}</h2>
 
             <div class="grid sm:grid-cols-2 gap-4">
                 <div>
@@ -94,5 +97,34 @@
                 {{ __('ui.cancel') }}
             </a>
         </div>
+    </form>
+
+    {{-- GANTI PASSWORD --}}
+    <form id="password" method="POST" action="{{ route('account.password.update') }}" class="{{ $card }} space-y-4">
+        @csrf
+        @method('PUT')
+
+        <h2 class="{{ $title }}"><i class="fa-solid fa-key"></i> {{ __('ui.change_password') }}</h2>
+
+        <div>
+            <label class="{{ $label }}">{{ __('ui.current_password') }}</label>
+            <input type="password" name="current_password" required autocomplete="current-password" class="{{ $input }}">
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div>
+                <label class="{{ $label }}">{{ __('ui.new_password') }}</label>
+                <input type="password" name="password" required autocomplete="new-password" class="{{ $input }}">
+            </div>
+            <div>
+                <label class="{{ $label }}">{{ __('ui.confirm_password') }}</label>
+                <input type="password" name="password_confirmation" required autocomplete="new-password" class="{{ $input }}">
+            </div>
+        </div>
+        <p class="text-[11px] text-slate-400 -mt-2">{{ __('ui.password_rules_hint') }}</p>
+
+        <button class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold shadow-md shadow-sky-500/20 transition">
+            {{ __('ui.save_password') }}
+        </button>
     </form>
 @endsection
