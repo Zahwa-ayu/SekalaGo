@@ -9,8 +9,8 @@
         ];
     @endphp
 
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <div>
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-6">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.banners') }}</h1>
             <p class="text-sm text-slate-500 mt-1">{{ __('ui.banners_hint') }}</p>
         </div>
@@ -37,7 +37,7 @@
                                     <i class="fa-solid {{ $icon }} text-sky-500 mr-1"></i> {{ __($label) }}
                                 </h2>
                             </div>
-                            <span class="px-2.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap
+                            <span class="px-2.5 py-1 text-[11px] font-bold rounded-full whitespace-nowrap
                                          {{ $banner['custom'] ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">
                                 {{ $banner['custom'] ? __('ui.banner_custom') : __('ui.banner_default') }}
                             </span>
@@ -59,7 +59,7 @@
                                           file:bg-sky-50 file:text-sky-700 file:font-bold hover:file:bg-sky-100">
                             <p class="text-[11px] text-slate-400">{{ __('ui.banner_size_hint') }}</p>
 
-                            <button class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold shadow-md shadow-sky-500/20 transition">
+                            <button class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
                                 <i class="fa-solid fa-upload mr-1"></i> {{ __('ui.banner_save') }}
                             </button>
                         </form>
@@ -69,7 +69,7 @@
                                   onsubmit="return confirm(@js(__('ui.banner_reset_confirm')))">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-sm font-bold text-red-600 hover:underline">
+                                <button class="text-xs font-bold text-red-600 hover:underline">
                                     <i class="fa-solid fa-rotate-left mr-1"></i> {{ __('ui.banner_reset') }}
                                 </button>
                             </form>

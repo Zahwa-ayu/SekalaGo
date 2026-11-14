@@ -170,7 +170,12 @@
                                 </td>
                                 <td class="px-3 py-3 text-xs text-slate-500">{{ $payout->created_at->format('d/m/Y') }}</td>
                                 <td class="px-6 py-3 text-right">
-                                    <a href="{{ route('admin.payouts.show', $payout) }}" class="text-sm font-bold text-sky-600 hover:underline">{{ __('ui.view') }}</a>
+                                    {{-- <a href="{{ route('admin.payouts.show', $payout) }}" class="text-sm font-bold text-sky-600 hover:underline">{{ __('ui.view') }}</a>
+                                </td> --}}
+                                <a href="{{ route('admin.payouts.show', $payout) }}"
+                                    class="px-3 py-1.5 text-xs font-bold border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white rounded-lg transition whitespace-nowrap">
+                                    {{ __('ui.view') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+                                </a>
                                 </td>
                             </tr>
                         @empty
