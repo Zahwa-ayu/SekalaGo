@@ -12,6 +12,7 @@ use App\Http\Controllers\Corporate\DashboardController as CorporateDashboardCont
 use App\Http\Controllers\Corporate\EmployeeController;
 use App\Http\Controllers\Corporate\PositionController;
 use App\Http\Controllers\Corporate\ReportController;
+use App\Http\Controllers\Admin\CurrencyController as AdminCurrencyController;
 use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\AgreementController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
@@ -157,6 +158,14 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('payouts/{payout}/paid', [AdminPayoutController::class, 'markPaid'])->name('payouts.paid');
         Route::post('payouts/{payout}/cancel', [AdminPayoutController::class, 'cancel'])->name('payouts.cancel');
         Route::get('payouts/{payout}/proof', [AdminPayoutController::class, 'proof'])->name('payouts.proof');
+
+                // Master data: mata uang dan kurs
+        Route::get('currencies', [AdminCurrencyController::class, 'index'])->name('currencies.index');
+        Route::post('currencies', [AdminCurrencyController::class, 'store'])->name('currencies.store');
+        Route::get('currencies/{currency}/edit', [AdminCurrencyController::class, 'edit'])->name('currencies.edit');
+        Route::put('currencies/{currency}', [AdminCurrencyController::class, 'update'])->name('currencies.update');
+        Route::put('currencies/{currency}/rate', [AdminCurrencyController::class, 'updateRate'])->name('currencies.rate');
+        Route::delete('currencies/{currency}', [AdminCurrencyController::class, 'destroy'])->name('currencies.destroy');
 
         // Social media management
         Route::patch('social-media/{socialMedia}/status', [AdminSocialMediaController::class, 'updateStatus'])

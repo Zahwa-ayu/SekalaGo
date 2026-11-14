@@ -104,5 +104,9 @@ return [
         'bank_account_name' => 'nama pemilik rekening',
         'paid_on' => 'tanggal transfer',
         'transfer_reference' => 'referensi transfer',
+        'rate_to_base' => 'kurs',
+        'decimal_places' => 'jumlah desimal',
+        'symbol' => 'simbol',
+        'code' => 'kode',
     ],
 ];

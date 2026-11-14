@@ -16,7 +16,7 @@ class CurrencySeeder extends Seeder
         ];
 
         foreach ($rows as $row) {
-            Currency::updateOrCreate(['code' => $row['code']], $row);
+            Currency::firstOrCreate(['code' => $row['code']], $row);
         }
     }
 }

@@ -11,7 +11,7 @@ class PreferenceController extends Controller
     {
         $data = $request->validate([
             'locale'   => ['nullable', Rule::in(array_keys(config('sekalago.locales')))],
-            'currency' => ['nullable', 'exists:currencies,code'],
+            'currency' => ['nullable', Rule::exists('currencies', 'code')->where('is_active', true)],
         ]);
 
         $prefs = array_filter($data);

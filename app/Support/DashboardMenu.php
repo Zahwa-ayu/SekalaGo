@@ -51,7 +51,7 @@ class DashboardMenu
                     'label'    => 'ui.master_data',
                     'children' => [
                         ['fa-location-dot', 'ui.cities', 'admin.cities.index', ['admin.cities.*']],
-                        // Tambahkan di sini begitu halamannya ada: Fasilitas, Mata Uang & Kurs
+                        ['fa-coins', 'ui.currencies', 'admin.currencies.index', ['admin.currencies.*']],
                     ],
                 ],
                 [

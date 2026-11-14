@@ -31,7 +31,7 @@
             </span>
             <select name="currency" onchange="this.form.submit()"
                     class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-sky-500">
-                @foreach ($currencyService->all() as $c)
+                @foreach ($currencyService->selectable() as $c)
                     <option value="{{ $c->code }}" @selected($currencyService->current()->code === $c->code)>
                         {{ $c->code }} ({{ $c->symbol }})
                     </option>

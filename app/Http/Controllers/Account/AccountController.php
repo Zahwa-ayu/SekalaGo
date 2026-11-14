@@ -38,7 +38,7 @@ class AccountController extends Controller
         return view('account.preferences', [
             'locales'       => $this->locales(),
             'currentLocale' => app()->getLocale(),
-            'currencies'    => Currency::orderBy('code')->get(),
+            'currencies'    => Currency::active()->orderBy('code')->get(),
             'currentCode'   => app(CurrencyService::class)->current()->code,
         ]);
     }

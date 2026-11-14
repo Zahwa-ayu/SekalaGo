@@ -20,17 +20,27 @@ class CurrencyService
         return $this->currencies ??= Currency::orderBy('code')->get()->keyBy('code');
     }
 
+        /** Mata uang yang boleh dipilih pengunjung (yang aktif). */
+    public function selectable(): Collection
+    {
+        return $this->all()->filter(fn (Currency $currency) => $currency->is_active);
+    }
+
     public function use(string $code): void
     {
-        if ($this->all()->has($code)) {
+        if ($this->selectable()->has($code)) {
             $this->code = $code;
         }
     }
 
     public function current(): Currency
     {
-        return $this->all()->get($this->code)
-            ?? $this->all()->get(config('sekalago.default_currency'));
+        $selected = $this->all()->get($this->code);
+
+        // Pilihan yang sudah dinonaktifkan admin kembali ke mata uang dasar
+        return ($selected && $selected->is_active)
+            ? $selected
+            : $this->all()->get(config('sekalago.default_currency'));
     }
 
     /** Harga dasar (IDR) -> format tampilan dalam mata uang aktif */
