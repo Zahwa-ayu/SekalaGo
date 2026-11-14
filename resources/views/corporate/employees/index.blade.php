@@ -2,12 +2,12 @@
 
 @section('content')
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="flex items-center justify-between mb-6 gap-4">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.employees') }}</h1>
 
             <a href="{{ route('corporate.employees.create') }}"
-               class="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue rounded-xl shadow-md transition">
-                <i class="fa-solid fa-user-plus"></i> {{ __('ui.add_employee') }}
+               class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
+                <i class="fa-solid fa-user-plus mr-1"></i> {{ __('ui.add_employee') }}
             </a>
         </div>
 
@@ -22,7 +22,7 @@
                             <th class="px-6 py-4 font-bold">{{ __('ui.position') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.role') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.status') }}</th>
-                            <th class="px-6 py-4"></th>
+                            <th class="px-6 py-4 font-bold">{{ __('ui.actions') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -42,10 +42,9 @@
                                         {{ $employee->user->is_active ? __('ui.active') : __('ui.inactive') }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('corporate.employees.edit', $employee) }}"
-                                       class="px-3 py-1.5 text-xs font-bold border border-slate-300 text-slate-600 hover:bg-slate-100 rounded-lg transition whitespace-nowrap">
-                                        <i class="fa-solid fa-pen"></i> {{ __('ui.edit') }}
+                                <td class="px-6 py-4 whitespace-nowrap text-xs font-bold">
+                                    <a href="{{ route('corporate.employees.edit', $employee) }}" class="text-sagara-blue hover:underline">
+                                        {{ __('ui.edit') }}
                                     </a>
                                 </td>
                             </tr>

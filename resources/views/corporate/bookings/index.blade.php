@@ -29,14 +29,14 @@
                 @foreach (['pending_approval', 'confirmed', 'rejected', 'cancelled', 'expired'] as $s)
                     <a href="{{ route('corporate.bookings.index', ['status' => $s]) }}"
                        class="px-4 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-2 transition
-                              {{ $status === $s ? 'bg-sky-500 text-white font-bold shadow-md shadow-sky-500/20' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50' }}">
+                              {{ $status === $s ? 'bg-sagara-blue text-white font-bold shadow-md' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50' }}">
                         {{ __('ui.booking_status_' . $s) }}
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold {{ $status === $s ? 'bg-white/20' : 'bg-slate-100 text-slate-500' }}">{{ $counts->get($s, 0) }}</span>
                     </a>
                 @endforeach
                 <a href="{{ route('corporate.bookings.index', ['status' => 'all']) }}"
                    class="px-4 py-2 rounded-xl text-xs sm:text-sm transition
-                          {{ $status === 'all' ? 'bg-sky-500 text-white font-bold shadow-md shadow-sky-500/20' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50' }}">
+                          {{ $status === 'all' ? 'bg-sagara-blue text-white font-bold shadow-md' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50' }}">
                     {{ __('ui.all') }}
                 </a>
             </div>
