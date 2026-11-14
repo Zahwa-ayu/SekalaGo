@@ -6,6 +6,8 @@ use App\Models\Booking;
 use App\Models\Partner;
 use App\Models\PartnerAgreement;
 use App\Models\Payout;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -101,7 +103,7 @@ class PayoutService
 
                 $state = match (true) {
                     $amount === 0                      => 'none',
-                    blank($partner->bank_account_no)   => 'no_bank',
+                    ! $partner->hasBankDetails()       => 'no_bank',
                     $amount < $minimum                 => 'below_minimum',
                     $nextDue && $nextDue->isFuture()   => 'not_due',
                     default                            => 'due',
@@ -122,9 +124,10 @@ class PayoutService
     }
 
     /** Buat pencairan dari semua pesanan mitra yang sudah boleh dicairkan. */
+/** Buat pencairan dari semua pesanan mitra yang sudah boleh dicairkan. */
     public function create(Partner $partner, User $by, ?string $note = null): Payout
     {
-        if (blank($partner->bank_account_no)) {
+        if (! $partner->hasBankDetails()) {
             $this->fail('payout_no_bank');
         }
 
@@ -150,7 +153,9 @@ class PayoutService
                 'total_amount'       => (int) $bookings->sum('vendor_revenue'),
                 'platform_fee_total' => (int) $bookings->sum('platform_fee'),
                 'booking_count'      => $bookings->count(),
-                'bank_account'       => $partner->bank_account_no,
+                'bank_name'          => $partner->bank_name,
+                'bank_account_no'    => $partner->bank_account_no,
+                'bank_account_name'  => $partner->bank_account_name,
                 'schedule'           => $schedule,
                 'note'               => $note,
                 'created_by'         => $by->id,
@@ -186,25 +191,41 @@ class PayoutService
     }
 
     /** Admin sudah mentransfer lewat bank dan mencatat referensinya. */
-    public function markPaid(Payout $payout, User $by, string $reference, ?Carbon $paidAt = null): Payout
-    {
-        return DB::transaction(function () use ($payout, $by, $reference, $paidAt) {
+/** Admin sudah mentransfer lewat bank dan mengunggah bukti transfernya. */
+public function markPaid(Payout $payout, User $by, UploadedFile $proof, ?string $reference = null, ?Carbon $paidAt = null): Payout
+{
+    $path = null;
+
+    try {
+        return DB::transaction(function () use ($payout, $by, $proof, $reference, $paidAt, &$path) {
             $fresh = Payout::lockForUpdate()->findOrFail($payout->id);
 
             if ($fresh->status !== 'pending') {
                 $this->fail('payout_not_pending');
             }
 
+            // Bukti disimpan di disk privat: hanya admin dan mitra pemilik yang bisa membukanya
+            $path = $proof->store('payout-proofs', 'local');
+
             $fresh->update([
                 'status'             => 'paid',
                 'transfer_reference' => $reference,
+                'proof_path'         => $path,
                 'paid_at'            => $paidAt ?? now(),
                 'paid_by'            => $by->id,
             ]);
 
             return $fresh;
         });
+    } catch (\Throwable $e) {
+        // Gagal menyimpan: jangan tinggalkan berkas yatim
+        if ($path) {
+            Storage::disk('local')->delete($path);
+        }
+
+        throw $e;
     }
+}
 
     /** Batalkan pencairan yang belum ditransfer; pesanannya bisa dicairkan lagi. */
     public function cancel(Payout $payout, User $by, string $reason): Payout

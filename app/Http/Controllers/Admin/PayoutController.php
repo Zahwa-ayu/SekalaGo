@@ -8,6 +8,7 @@ use App\Models\Payout;
 use App\Services\PayoutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class PayoutController extends Controller
@@ -75,22 +76,37 @@ class PayoutController extends Controller
         ]);
     }
 
-    public function markPaid(Request $request, Payout $payout)
-    {
-        $data = $request->validate([
-            'transfer_reference' => ['required', 'string', 'max:100'],
-            'paid_on'            => ['nullable', 'date', 'before_or_equal:today'],
-        ]);
+public function markPaid(Request $request, Payout $payout)
+{
+    $data = $request->validate([
+        'proof'              => ['required', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:4096'],
+        'transfer_reference' => ['nullable', 'string', 'max:100'],
+        'paid_on'            => ['nullable', 'date', 'before_or_equal:today'],
+    ]);
 
-        // Tanggal hari ini memakai jam sekarang; tanggal lain dicatat pukul 12.00
-        $paidAt = isset($data['paid_on']) && ! Carbon::parse($data['paid_on'])->isToday()
-            ? Carbon::parse($data['paid_on'])->setTime(12, 0)
-            : now();
+    // Tanggal hari ini memakai jam sekarang; tanggal lain dicatat pukul 12.00
+    $paidAt = isset($data['paid_on']) && ! Carbon::parse($data['paid_on'])->isToday()
+        ? Carbon::parse($data['paid_on'])->setTime(12, 0)
+        : now();
 
-        $this->payouts->markPaid($payout, $request->user(), $data['transfer_reference'], $paidAt);
+    $this->payouts->markPaid(
+        $payout,
+        $request->user(),
+        $request->file('proof'),
+        $data['transfer_reference'] ?? null,
+        $paidAt
+    );
 
-        return back()->with('success', __('ui.payout_marked_paid'));
-    }
+    return back()->with('success', __('ui.payout_marked_paid'));
+}
+
+/** Bukti transfer: tampil di browser (gambar atau PDF). */
+public function proof(Payout $payout)
+{
+    abort_unless($payout->proof_path && Storage::disk('local')->exists($payout->proof_path), 404);
+
+    return Storage::disk('local')->response($payout->proof_path);
+}
 
     public function cancel(Request $request, Payout $payout)
     {

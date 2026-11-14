@@ -11,7 +11,7 @@ class Partner extends Model
     
     protected $fillable = [
         'user_id', 'company_name', 'business_license_no', 'bank_account_no',
-        'verification_status', 'verification_note',
+        'verification_status', 'verification_note', 'bank_name', 'bank_account_name'
     ];
 
     public function user()       { return $this->belongsTo(User::class); }
@@ -64,4 +64,16 @@ class Partner extends Model
     public function logLabel(): string { return $this->company_name; }
 
     public function vehicles() { return $this->hasMany(Vehicle::class); }
+
+    /** Rekening pencairan lengkap: bank, nomor, dan nama pemilik. */
+    public function hasBankDetails(): bool
+    {
+        return filled($this->bank_name) && filled($this->bank_account_no) && filled($this->bank_account_name);
+    }
+
+    public function bankLabel(): string
+    {
+        return trim($this->bank_name . ' ' . $this->bank_account_no
+            . ($this->bank_account_name ? ' a.n. ' . $this->bank_account_name : ''));
+    }
 }

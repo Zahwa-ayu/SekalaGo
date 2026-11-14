@@ -98,5 +98,11 @@ return [
         'province' => 'provinsi',
         'aliases' => 'nama lain',
         'sort_order' => 'urutan',
+        'proof' => 'bukti transfer',
+        'bank_name' => 'nama bank',
+        'bank_account_no' => 'nomor rekening',
+        'bank_account_name' => 'nama pemilik rekening',
+        'paid_on' => 'tanggal transfer',
+        'transfer_reference' => 'referensi transfer',
     ],
 ];

@@ -51,17 +51,20 @@
     </div>
 
     {{-- REKENING --}}
-    <div class="bg-white rounded-3xl border {{ filled($partner->bank_account_no) ? 'border-slate-100' : 'border-red-200' }} shadow-md p-5 flex flex-wrap items-center justify-between gap-3">
+    <div class="bg-white rounded-2xl border {{ $partner->hasBankDetails() ? 'border-slate-100' : 'border-red-200' }} shadow-md p-5 flex flex-wrap items-center justify-between gap-3">
         <div>
             <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.payout_bank_account') }}</div>
-            @if (filled($partner->bank_account_no))
-                <div class="font-mono text-sm text-slate-900 mt-1 break-all">{{ $partner->bank_account_no }}</div>
+            @if ($partner->hasBankDetails())
+                <div class="mt-1 text-sm text-slate-900">
+                    <span class="font-bold">{{ $partner->bank_name }}</span>
+                    <span class="font-mono ml-1">{{ $partner->bank_account_no }}</span>
+                    <div class="text-xs text-slate-500">a.n. {{ $partner->bank_account_name }}</div>
+                </div>
             @else
                 <div class="text-sm font-semibold text-red-600 mt-1">{{ __('ui.payout_no_bank_partner') }}</div>
             @endif
         </div>
-        <a href="{{ route('partner.profile.edit') }}"
-           class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
+        <a href="{{ route('partner.profile.edit') }}" class="text-sm font-bold text-sky-600 hover:underline">
             <i class="fa-solid fa-pen mr-1"></i> {{ __('ui.business_profile') }}
         </a>
     </div>
@@ -78,7 +81,7 @@
                         <th class="{{ $th }} text-right">{{ __('ui.payout_amount') }}</th>
                         <th class="{{ $th }} text-right">{{ __('ui.col_orders') }}</th>
                         <th class="{{ $th }}">{{ __('ui.account_status') }}</th>
-                        <th class="{{ $th }}">{{ __('ui.payout_reference') }}</th>
+                        <th class="{{ $th }}">{{ __('ui.payout_proof') }}</th>
                         <th class="{{ $th }}">{{ __('ui.payout_paid_on') }}</th>
                     </tr>
                 </thead>
@@ -93,7 +96,18 @@
                                     {{ __('ui.payout_status_' . $payout->status) }}
                                 </span>
                             </td>
-                            <td class="{{ $td }} text-xs text-slate-600">{{ $payout->transfer_reference ?: '-' }}</td>
+                            <td class="{{ $td }} text-xs text-slate-600">
+                                @if ($payout->proof_path)
+                                    <a href="{{ route('partner.payouts.proof', $payout) }}" target="_blank" rel="noopener" class="font-bold text-sky-600 hover:underline whitespace-nowrap">
+                                        <i class="fa-solid fa-paperclip"></i> {{ __('ui.payout_proof_view') }}
+                                    </a>
+                                    @if ($payout->transfer_reference)
+                                        <div class="text-[11px] text-slate-400">{{ $payout->transfer_reference }}</div>
+                                    @endif
+                                @else
+                                    -
+                                @endif
+                            </td>
                             <td class="{{ $td }} text-xs text-slate-500 whitespace-nowrap">{{ $payout->paid_at?->format('d/m/Y') ?? '-' }}</td>
                         </tr>
                     @empty

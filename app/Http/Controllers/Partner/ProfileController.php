@@ -21,7 +21,9 @@ class ProfileController extends Controller
         $data = $request->validate([
             'company_name'        => ['required', 'string', 'max:255'],
             'business_license_no' => ['required', 'string', 'max:100'],
-            'bank_account_no'     => ['nullable', 'string', 'max:50'],
+            'bank_name'         => ['nullable', 'string', 'max:60', 'required_with:bank_account_no,bank_account_name'],
+            'bank_account_no'   => ['nullable', 'string', 'max:50', 'regex:/^[0-9\s\-]+$/', 'required_with:bank_name,bank_account_name'],
+            'bank_account_name' => ['nullable', 'string', 'max:100', 'required_with:bank_name,bank_account_no'],
         ]);
 
         $message = __('ui.profile_saved');

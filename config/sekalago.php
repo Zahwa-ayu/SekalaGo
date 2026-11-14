@@ -21,4 +21,10 @@ return [
         'ms' => 'Melayu',
         'es' => 'Spanyol / Español',
     ],
+
+        // Saran nama bank di Profil Usaha mitra
+    'banks' => [
+        'BCA', 'BRI', 'BNI', 'Mandiri', 'BSI', 'CIMB Niaga', 'Permata', 'Danamon', 'BTN',
+        'OCBC', 'Maybank', 'Panin', 'Mega', 'Bank Jago', 'SeaBank', 'Jenius (BTPN)',
+    ],
 ];

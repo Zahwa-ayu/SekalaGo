@@ -2,186 +2,188 @@
 
 @section('content')
     @php
-        $badge = match ($partner->verification_status) {
-            'verified' => 'bg-emerald-100 text-emerald-700',
-            'rejected' => 'bg-red-100 text-red-700',
-            default => 'bg-amber-100 text-amber-700',
-        };
-        $box = 'bg-slate-50 p-3 rounded-2xl border border-slate-200 focus-within:border-sagara-blue transition';
+        $money = fn ($value) => format_price($value, 'IDR');
+        $statusStyle = [
+            'pending'   => 'bg-amber-100 text-amber-700',
+            'paid'      => 'bg-emerald-100 text-emerald-700',
+            'cancelled' => 'bg-slate-100 text-slate-500',
+        ];
+        $input = 'w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
         $label = 'block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1';
-        $input = 'w-full bg-transparent font-semibold text-slate-800 text-sm focus:outline-none';
-        // Tombol aksi: biru sky, sama dengan tombol Daftar/Cari di situs publik
-        $btn = 'px-6 py-2.5 rounded-xl bg-sky-600 text-white text-sm font-bold hover:bg-sky-700 transition flex items-center gap-2';
-        $sendLabel = $partner->verification_status === 'verified' ? __('ui.mou_resend_btn') : __('ui.mou_send_btn');
+
+        $accountDigits = preg_replace('/\D/', '', (string) $payout->bank_account_no);
+        $proofIsImage  = $payout->proof_path && preg_match('/\.(jpe?g|png|webp)$/i', $payout->proof_path);
     @endphp
 
-    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-        <a href="{{ route('admin.partners.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
-            <i class="fa-solid fa-arrow-left"></i> {{ __('ui.verify_partners') }}
-        </a>
-
-        <div class="flex flex-wrap items-center gap-3">
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ $partner->company_name }}</h1>
-            <span class="px-3 py-1 text-xs font-bold rounded-full {{ $badge }}">{{ __('ui.verification_' . $partner->verification_status) }}</span>
+    <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <div>
+            <a href="{{ route('admin.payouts.index') }}" class="text-xs font-bold text-sky-600 hover:underline">
+                <i class="fa-solid fa-chevron-left mr-1"></i> {{ __('ui.payouts') }}
+            </a>
+            <div class="flex flex-wrap items-center gap-3 mt-1">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono">{{ $payout->code }}</h1>
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold {{ $statusStyle[$payout->status] }}">{{ __('ui.payout_status_' . $payout->status) }}</span>
+            </div>
         </div>
 
         @if ($errors->any())
             <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
+                @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
             </ul>
         @endif
 
-        {{-- DETAIL PARTNER --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8">
-            @if ($partner->verification_note)
-                <div class="mb-6 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-sm">
-                    <strong>{{ __('ui.verification_note') }}:</strong> {{ $partner->verification_note }}
-                </div>
-            @endif
+        {{-- RINGKASAN TRANSFER --}}
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8 grid sm:grid-cols-2 gap-6">
+            <div class="space-y-3 text-sm">
+                <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.payout_transfer_to') }}</h2>
+                <div class="font-extrabold text-slate-900 text-lg">{{ $payout->partner->company_name }}</div>
 
-            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 text-sm">
-                @foreach ([
-                    ['fa-envelope', __('ui.email'), $partner->user->email],
-                    ['fa-phone', __('ui.phone'), $partner->user->phone_number ?? '-'],
-                    ['fa-id-card', __('ui.business_license_no'), $partner->business_license_no],
-                    ['fa-building-columns', __('ui.bank_account_no'), $partner->bank_account_no ?? '-'],
-                    ['fa-calendar-days', __('ui.registered_at'), $partner->created_at->format('d/m/Y H:i')],
-                    ['fa-hotel', __('ui.my_hotels'), $partner->hotels_count],
-                ] as [$icon, $lbl, $value])
-                    <div>
-                        <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1"><i class="fa-solid {{ $icon }} text-sagara-blue"></i> {{ $lbl }}</dt>
-                        <dd class="font-semibold text-slate-800 break-words">{{ $value }}</dd>
+                <div class="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 space-y-1">
+                    <div class="text-xs font-bold uppercase tracking-wider text-slate-500">{{ $payout->bank_name ?: '-' }}</div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-mono text-lg font-bold text-slate-900 break-all">{{ $payout->bank_account_no ?: '-' }}</span>
+                        @if ($accountDigits !== '')
+                            <button type="button"
+                                    onclick="navigator.clipboard.writeText(@js($accountDigits)).then(() => { this.textContent = @js(__('ui.copied')) })"
+                                    class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition">
+                                {{ __('ui.copy_number') }}
+                            </button>
+                        @endif
                     </div>
-                @endforeach
-            </dl>
-        </div>
-
-        {{-- MOU --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8">
-            <h2 class="text-lg font-extrabold text-slate-900 mb-4"><i class="fa-solid fa-file-signature text-sagara-blue"></i> {{ __('ui.mou_title') }}</h2>
-
-            @if ($agreement)
-                <div class="flex flex-wrap items-center gap-2 mb-5">
-                    <span class="px-3 py-1 text-xs font-bold rounded-full {{ $agreement->status === 'signed' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sagara-blue' }}">
-                        {{ __('ui.mou_status_' . $agreement->status) }}
-                    </span>
-                    <span class="font-mono text-xs text-slate-500">{{ $agreement->documentNumber() }}</span>
+                    <div class="text-sm text-slate-700">a.n. {{ $payout->bank_account_name ?: '-' }}</div>
                 </div>
 
-                <dl class="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-5 text-sm">
-                    <div>
-                        <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.commission_rate') }}</dt>
-                        <dd class="font-black text-xl text-sagara-blue">{{ $agreement->commissionPercent() }}%</dd>
-                    </div>
-                    <div>
-                        <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.payout_schedule') }}</dt>
-                        <dd class="font-semibold text-slate-800">{{ __('ui.payout_' . $agreement->payout_schedule) }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.free_cancel_days') }}</dt>
-                        <dd class="font-semibold text-slate-800">{{ $agreement->free_cancel_days }}</dd>
-                    </div>
-                </dl>
+                <div class="text-xs text-slate-500">
+                    {{ __('ui.payout_schedule') }}: {{ $payout->schedule ? __('ui.schedule_' . $payout->schedule) : '-' }}
+                    &middot; {{ __('ui.payout_created_by', ['name' => $payout->creator?->email ?? '-', 'date' => $payout->created_at->format('d/m/Y H:i')]) }}
+                </div>
+            </div>
 
-                @if ($agreement->status === 'signed')
-                    <div class="mt-5 pt-5 border-t border-slate-100 space-y-3 text-sm">
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ __('ui.signed_by') }}</span>
-                            <span class="font-semibold text-slate-800">{{ $agreement->signed_name }}</span>
-                            <span class="text-slate-500">• {{ $agreement->signed_at->format('d/m/Y H:i') }} ({{ $agreement->signed_ip }})</span>
-                        </div>
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">{{ __('ui.document_integrity') }}</span>
-                            @if ($agreement->hashIsValid() === null)
-                                <span class="text-slate-500">-</span>
-                            @elseif ($agreement->hashIsValid())
-                                <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-emerald-100 text-emerald-700"><i class="fa-solid fa-circle-check"></i> {{ __('ui.integrity_valid') }}</span>
-                            @else
-                                <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-red-100 text-red-700"><i class="fa-solid fa-triangle-exclamation"></i> {{ __('ui.integrity_invalid') }}</span>
+            <div class="space-y-3 text-sm">
+                <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.payout_amount') }}</h2>
+                <div class="text-3xl font-black text-slate-900">{{ $money($payout->total_amount) }}</div>
+                <div class="text-xs text-slate-500">
+                    {{ $payout->booking_count }} {{ __('ui.col_orders') }}
+                    &middot; {{ __('ui.kpi_commission') }}: {{ $money($payout->platform_fee_total) }}
+                </div>
+
+                @if ($payout->status === 'paid')
+                    <div class="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-xs text-emerald-800 space-y-2">
+                        <div>{{ $payout->paid_at->format('d/m/Y H:i') }} &middot; {{ $payout->payer?->email }}</div>
+
+                        @if ($payout->transfer_reference)
+                            <div><strong>{{ __('ui.payout_reference') }}:</strong> {{ $payout->transfer_reference }}</div>
+                        @endif
+
+                        @if ($payout->proof_path)
+                            <a href="{{ route('admin.payouts.proof', $payout) }}" target="_blank" rel="noopener"
+                               class="inline-flex items-center gap-1 font-bold text-emerald-700 hover:underline">
+                                <i class="fa-solid fa-paperclip"></i> {{ __('ui.payout_proof_view') }}
+                            </a>
+
+                            @if ($proofIsImage)
+                                <a href="{{ route('admin.payouts.proof', $payout) }}" target="_blank" rel="noopener" class="block">
+                                    <img src="{{ route('admin.payouts.proof', $payout) }}" alt="{{ __('ui.payout_proof') }}"
+                                         class="max-h-56 rounded-xl border border-emerald-200 bg-white">
+                                </a>
                             @endif
-                            @if ($agreement->signature_hash)
-                                <p class="font-mono text-[11px] text-slate-500 break-all mt-2">SHA-256: {{ $agreement->signature_hash }}</p>
-                            @endif
-                        </div>
+                        @endif
+                    </div>
+                @elseif ($payout->status === 'cancelled')
+                    <div class="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-xs text-slate-600">
+                        <strong>{{ __('ui.payout_cancel_reason') }}:</strong> {{ $payout->note }}
                     </div>
                 @endif
-
-                <div class="mt-5">
-                    <a href="{{ route('admin.partners.agreement.download', $partner) }}"
-                       class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold border border-sky-600 text-sky-700 hover:bg-sky-600 hover:text-white rounded-xl transition">
-                        <i class="fa-solid fa-file-pdf"></i>
-                        {{ $agreement->status === 'signed' ? __('ui.download_signed_pdf') : __('ui.download_pdf') }}
-                    </a>
-                </div>
-
-                <details class="mt-5 group border border-slate-200 rounded-2xl">
-                    <summary class="cursor-pointer px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-2xl">{{ __('ui.mou_content') }}</summary>
-                    <pre class="whitespace-pre-wrap text-xs text-slate-600 p-4 border-t border-slate-200 bg-slate-50 rounded-b-2xl font-sans leading-relaxed">{{ $agreement->content }}</pre>
-                </details>
-            @else
-                <p class="text-sm text-slate-500 flex items-center gap-2"><i class="fa-solid fa-circle-info text-slate-400"></i> {{ __('ui.mou_not_sent') }}</p>
-            @endif
-
-            @if (! $agreement || $agreement->status !== 'signed')
-                <div class="mt-6 pt-6 border-t border-slate-100">
-                    <h3 class="text-base font-bold text-slate-900 mb-4">{{ $sendLabel }}</h3>
-
-                    <form method="POST" action="{{ route('admin.partners.agreement', $partner) }}" class="space-y-4">
-                        @csrf
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="{{ $box }}">
-                                <label class="{{ $label }}"><i class="fa-solid fa-percent text-sagara-blue"></i> {{ __('ui.commission_rate') }} (10 - 25)</label>
-                                <input type="number" name="commission_percent" min="10" max="25" step="0.5" required class="{{ $input }}"
-                                       value="{{ old('commission_percent', $agreement?->commissionPercent() ?? 15) }}">
-                            </div>
-                            <div class="{{ $box }}">
-                                <label class="{{ $label }}"><i class="fa-solid fa-money-bill-transfer text-sagara-blue"></i> {{ __('ui.payout_schedule') }}</label>
-                                <select name="payout_schedule" class="{{ $input }} cursor-pointer">
-                                    @foreach (['weekly', 'biweekly', 'monthly'] as $option)
-                                        <option value="{{ $option }}"
-                                            @selected(old('payout_schedule', $agreement?->payout_schedule ?? 'monthly') === $option)>
-                                            {{ __('ui.payout_' . $option) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="{{ $box }}">
-                                <label class="{{ $label }}"><i class="fa-solid fa-calendar-xmark text-sagara-coral"></i> {{ __('ui.free_cancel_days') }}</label>
-                                <input type="number" name="free_cancel_days" min="0" max="30" required class="{{ $input }}"
-                                       value="{{ old('free_cancel_days', $agreement?->free_cancel_days ?? 3) }}">
-                            </div>
-                        </div>
-                        <button class="{{ $btn }}"><i class="fa-solid fa-paper-plane"></i> {{ $sendLabel }}</button>
-                    </form>
-                </div>
-            @endif
+            </div>
         </div>
 
-        {{-- KEPUTUSAN --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8">
-            <h2 class="text-lg font-extrabold text-slate-900 mb-4">{{ __('ui.decision') }}</h2>
+        {{-- AKSI (hanya saat menunggu transfer) --}}
+        @if ($payout->status === 'pending')
+            <div class="grid md:grid-cols-2 gap-6">
+                <form method="POST" action="{{ route('admin.payouts.paid', $payout) }}" enctype="multipart/form-data"
+                      class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 space-y-4">
+                    @csrf
+                    <h2 class="font-extrabold text-slate-900"><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> {{ __('ui.payout_mark_paid') }}</h2>
 
-            @if ($partner->verification_status === 'rejected')
-                <form method="POST" action="{{ route('admin.partners.reopen', $partner) }}">
-                    @csrf
-                    <button class="{{ $btn }}"><i class="fa-solid fa-rotate-left"></i> {{ __('ui.reopen') }}</button>
-                </form>
-            @else
-                <form method="POST" action="{{ route('admin.partners.reject', $partner) }}" class="space-y-3">
-                    @csrf
-                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 focus-within:border-sagara-coral transition">
-                        <label class="{{ $label }}"><i class="fa-solid fa-comment-dots text-sagara-coral"></i> {{ __('ui.rejection_reason_label') }}</label>
-                        <textarea name="verification_note" rows="3" maxlength="500" required
-                                  placeholder="{{ __('ui.rejection_reason_label') }}"
-                                  class="w-full bg-transparent text-slate-800 text-sm focus:outline-none resize-y">{{ old('verification_note') }}</textarea>
+                    <div>
+                        <label class="{{ $label }}">{{ __('ui.payout_proof') }}</label>
+                        <input type="file" name="proof" required accept="image/jpeg,image/png,image/webp,application/pdf"
+                               class="block w-full text-sm text-slate-600 file:mr-3 file:px-4 file:py-2.5 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold hover:file:bg-emerald-100">
+                        <p class="text-[11px] text-slate-400 mt-1">{{ __('ui.payout_proof_hint') }}</p>
                     </div>
-                    <button class="px-6 py-2.5 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition flex items-center gap-2">
-                        <i class="fa-solid fa-circle-xmark"></i> {{ __('ui.reject') }}
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="{{ $label }}">{{ __('ui.payout_reference_optional') }}</label>
+                            <input name="transfer_reference" maxlength="100" value="{{ old('transfer_reference') }}" class="{{ $input }}">
+                        </div>
+                        <div>
+                            <label class="{{ $label }}">{{ __('ui.payout_paid_on') }}</label>
+                            <input type="date" name="paid_on" max="{{ today()->toDateString() }}" value="{{ old('paid_on', today()->toDateString()) }}" class="{{ $input }}">
+                        </div>
+                    </div>
+
+                    <button class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md transition">
+                        {{ __('ui.payout_mark_paid') }}
                     </button>
                 </form>
-            @endif
+
+                <form method="POST" action="{{ route('admin.payouts.cancel', $payout) }}" class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 space-y-4"
+                      onsubmit="return confirm(@js(__('ui.payout_cancel_confirm')))">
+                    @csrf
+                    <h2 class="font-extrabold text-slate-900"><i class="fa-solid fa-ban text-red-500 mr-1"></i> {{ __('ui.payout_cancel') }}</h2>
+                    <p class="text-xs text-slate-500">{{ __('ui.payout_cancel_hint') }}</p>
+
+                    <div>
+                        <label class="{{ $label }}">{{ __('ui.payout_cancel_reason') }}</label>
+                        <input name="reason" required maxlength="500" value="{{ old('reason') }}" class="{{ $input }}">
+                    </div>
+
+                    <button class="px-5 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">
+                        {{ __('ui.payout_cancel') }}
+                    </button>
+                </form>
+            </div>
+        @endif
+
+        {{-- RINCIAN PESANAN --}}
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
+            <div class="px-6 pt-6 pb-4 flex items-center justify-between gap-3">
+                <h2 class="font-extrabold text-slate-900">{{ __('ui.booking_detail') }}</h2>
+                <a href="{{ route('admin.payouts.csv', $payout) }}" class="text-sm font-bold text-sky-600 hover:underline">
+                    <i class="fa-solid fa-file-csv mr-1"></i> {{ __('ui.analytics_csv') }}
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">
+                        <tr>
+                            <th class="text-left px-6 py-2.5">{{ __('ui.booking_code') }}</th>
+                            <th class="text-left px-3 py-2.5">{{ __('ui.item_name') }}</th>
+                            <th class="text-left px-3 py-2.5">{{ __('ui.period_start') }} - {{ __('ui.period_end') }}</th>
+                            <th class="text-right px-3 py-2.5">GMV</th>
+                            <th class="text-right px-3 py-2.5">{{ __('ui.kpi_commission') }}</th>
+                            <th class="text-right px-6 py-2.5">{{ __('ui.csv_vendor') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @foreach ($bookings as $booking)
+                            <tr>
+                                <td class="px-6 py-2.5 font-mono text-xs text-slate-600">{{ $booking->booking_code }}</td>
+                                <td class="px-3 py-2.5 text-slate-800">
+                                    <i class="fa-solid {{ $booking->productIcon() }} text-sky-500 mr-1"></i>{{ $booking->hotel_name }}
+                                    <span class="text-[11px] text-slate-500">/ {{ $booking->room_name }}</span>
+                                </td>
+                                <td class="px-3 py-2.5 text-xs text-slate-500">{{ $booking->check_in->format('d/m') }} - {{ $booking->check_out->format('d/m/Y') }}</td>
+                                <td class="px-3 py-2.5 text-right text-slate-600">{{ $money($booking->total_price) }}</td>
+                                <td class="px-3 py-2.5 text-right text-slate-500">{{ $money($booking->platform_fee) }}</td>
+                                <td class="px-6 py-2.5 text-right font-bold text-slate-900">{{ $money($booking->vendor_revenue) }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 @endsection

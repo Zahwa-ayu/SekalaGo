@@ -59,10 +59,35 @@
                 <input name="business_license_no" value="{{ old('business_license_no', $partner->business_license_no) }}" required class="{{ $input }}">
             </div>
 
-            <div class="{{ $box }}">
-                <label class="{{ $label }}"><i class="fa-solid fa-building-columns text-sagara-blue"></i> {{ __('ui.bank_account_no') }}</label>
-                <input name="bank_account_no" value="{{ old('bank_account_no', $partner->bank_account_no) }}" class="{{ $input }}">
-            </div>
+<div class="space-y-4">
+    <div>
+        <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.payout_bank_account') }}</h2>
+        <p class="text-xs text-slate-500 mt-1">{{ __('ui.bank_account_hint') }}</p>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-4">
+        <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_name') }}</label>
+            <input name="bank_name" list="bank-list" maxlength="60" value="{{ old('bank_name', $partner->bank_name) }}"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+            <datalist id="bank-list">
+                @foreach (config('sekalago.banks') as $bank)
+                    <option value="{{ $bank }}"></option>
+                @endforeach
+            </datalist>
+        </div>
+        <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_account_no') }}</label>
+            <input name="bank_account_no" inputmode="numeric" maxlength="50" value="{{ old('bank_account_no', $partner->bank_account_no) }}"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+        </div>
+        <div>
+            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_account_name') }}</label>
+            <input name="bank_account_name" maxlength="100" value="{{ old('bank_account_name', $partner->bank_account_name) }}"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+        </div>
+    </div>
+</div>
 
             <button class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
                 <i class="fa-solid fa-floppy-disk mr-1"></i> {{ __('ui.save') }}

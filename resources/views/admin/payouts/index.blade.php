@@ -92,7 +92,7 @@
                             <tr class="hover:bg-slate-50/60">
                                 <td class="px-6 py-3">
                                     <div class="font-bold text-slate-900">{{ $row['partner']->company_name }}</div>
-                                    <div class="text-[11px] text-slate-500 break-all">{{ $row['partner']->bank_account_no ?: __('ui.payout_no_bank_short') }}</div>
+                                    <div class="text-[11px] text-slate-500 break-all">{{ $row['partner']->hasBankDetails() ? $row['partner']->bankLabel() : __('ui.payout_no_bank_short') }}</div>
                                 </td>
                                 <td class="px-3 py-3 text-slate-600 text-xs">{{ __('ui.schedule_' . $row['schedule']) }}</td>
                                 <td class="px-3 py-3 text-right">

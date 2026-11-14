@@ -156,6 +156,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('payouts/{payout}/csv', [AdminPayoutController::class, 'csv'])->name('payouts.csv');
         Route::post('payouts/{payout}/paid', [AdminPayoutController::class, 'markPaid'])->name('payouts.paid');
         Route::post('payouts/{payout}/cancel', [AdminPayoutController::class, 'cancel'])->name('payouts.cancel');
+        Route::get('payouts/{payout}/proof', [AdminPayoutController::class, 'proof'])->name('payouts.proof');
 
         // Social media management
         Route::patch('social-media/{socialMedia}/status', [AdminSocialMediaController::class, 'updateStatus'])
@@ -216,6 +217,7 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
                 ->except(['show']);
             
             Route::get('payouts', [PartnerPayoutController::class, 'index'])->name('payouts.index');
+            Route::get('payouts/{payout}/proof', [PartnerPayoutController::class, 'proof'])->name('payouts.proof');
 
             Route::get('room-types/{room_type}/stocks', [RoomStockController::class, 'edit'])
                 ->name('room-types.stocks.edit');
