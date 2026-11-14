@@ -1,13 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    @php
-        $authUser = auth()->user();
-        // Pengguna dengan sidebar memakai header lengket; yang memakai navbar butuh ruang di atas
-        $withSidebar = in_array($authUser->user_type, ['admin', 'partner'], true) || $authUser->companyUser?->isFinance();
-    @endphp
-
-    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 {{ $withSidebar ? 'py-8' : 'pt-28 pb-12' }} space-y-6">
+    {{-- Navbar (putih solid) dan topbar dashboard sama-sama memakai ruangnya sendiri,
+         jadi tidak perlu padding atas besar atau percabangan per peran. --}}
+    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
         <div>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.account_settings') }}</h1>
             <p class="text-sm text-slate-500 mt-1">{{ __('ui.account_settings_hint') }}</p>

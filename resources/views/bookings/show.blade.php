@@ -10,8 +10,8 @@
         };
     @endphp
 
-    {{-- BANNER GELAP --}}
-    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 pt-24 pb-24">
+    {{-- BANNER GELAP: navbar putih solid memakai ruangnya sendiri, jadi padding atas kecil --}}
+    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 pt-8 sm:pt-10 pb-28 sm:pb-32">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
             <a href="{{ route('bookings.index') }}" class="text-xs font-bold text-sky-300 hover:text-white transition">
                 <i class="fa-solid fa-chevron-left mr-1"></i> {{ __('ui.my_bookings') }}
@@ -21,7 +21,8 @@
         </div>
     </div>
 
-    <section class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-12 space-y-6">
+    {{-- KONTEN: margin negatif menarik kartu masuk ke banner (pb banner - mt konten = jarak 32px) --}}
+    <section class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 sm:-mt-24 pb-12 space-y-6">
 
         @if ($errors->any())
             <div class="rounded-2xl border border-red-200 bg-red-50 text-red-700 px-5 py-4 text-sm shadow-md">

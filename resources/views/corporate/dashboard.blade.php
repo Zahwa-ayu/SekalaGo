@@ -3,8 +3,8 @@
 @section('content')
     <div class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased">
 
-        {{-- 1. HEADER: warna solid (tanpa gambar) supaya navbar transparan tetap terbaca --}}
-        <section class="bg-slate-950 text-white pt-24 pb-20 border-b border-slate-800/80">
+        {{-- 1. HEADER: warna solid. Padding atas kecil karena topbar dashboard tidak transparan/menimpa --}}
+        <section class="bg-slate-950 text-white pt-8 sm:pt-10 pb-28 sm:pb-32 border-b border-slate-800/80">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
 
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/15 border border-sky-400/30 text-sky-300 text-[11px] font-bold uppercase tracking-wider">
@@ -38,8 +38,8 @@
             </div>
         </section>
 
-        {{-- KONTEN: -mt-10 membuat kartu pertama sedikit menimpa header --}}
-        <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 pb-10 space-y-6">
+        {{-- KONTEN: margin negatif menarik kartu pertama masuk ke header (pb header - mt konten = jarak 32px) --}}
+        <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 sm:-mt-24 pb-10 space-y-6">
 
             {{-- 2. LIMIT & BUDGET KARYAWAN --}}
             <div class="bg-white rounded-2xl border border-slate-200/90 shadow-lg p-5">

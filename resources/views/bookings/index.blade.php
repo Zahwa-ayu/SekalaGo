@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-    {{-- BANNER GELAP: berada di bawah navbar transparan agar menu & logo putih tetap terbaca --}}
-    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 pt-24 pb-24">
+    {{-- BANNER GELAP: navbar di halaman ini putih solid dan memakai ruangnya sendiri, jadi padding atas kecil --}}
+    <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 pt-8 sm:pt-10 pb-28 sm:pb-32">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-white">{{ __('ui.my_bookings') }}</h1>
         </div>
     </div>
 
-    {{-- KONTEN: -mt-12 membuat kartu sedikit menimpa banner --}}
-    <section class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 pb-12">
+    {{-- KONTEN: margin negatif menarik kartu masuk ke banner (pb banner - mt konten = jarak 32px) --}}
+    <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 sm:-mt-24 pb-12">
         <div class="bg-white rounded-3xl border border-slate-100 shadow-lg overflow-hidden">
 
             {{-- FILTER PRODUK --}}
