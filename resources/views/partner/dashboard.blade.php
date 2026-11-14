@@ -11,8 +11,8 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.dashboard') }}</h1>
             <a href="{{ route('partner.hotels.create') }}"
-               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sagara-navy text-white text-sm font-bold shadow-md hover:bg-sagara-blue transition">
-                <i class="fa-solid fa-plus"></i> {{ __('ui.add_hotel') }}
+               class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
+                <i class="fa-solid fa-plus mr-1"></i> {{ __('ui.add_hotel') }}
             </a>
         </div>
 
