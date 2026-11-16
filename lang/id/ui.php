@@ -1174,4 +1174,10 @@ return [
 'admin_note_hint' => 'Misalnya alasan jika angkanya berbeda dari usulan (opsional)',
 'proposal_accepted' => 'Usulan komisi Anda :percent% disetujui admin.',
 'proposal_adjusted' => 'Anda mengusulkan :proposed%. Admin menetapkan :final% di MOU ini.',
+
+// tombol booking create
+'back'          => 'Kembali',
+'order_summary' => 'Ringkasan Pesanan',
+'room'          => 'Kamar',
+'max_guests'    => 'Maks. :count tamu',
 ];

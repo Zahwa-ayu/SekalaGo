@@ -1171,4 +1171,10 @@ return [
 'admin_note_hint' => 'For example, the reason if the figure differs from the proposal (optional)',
 'proposal_accepted' => 'Your proposed commission of :percent% was accepted by the admin.',
 'proposal_adjusted' => 'You proposed :proposed%. The admin set :final% in this MOU.',
+
+// button booking 
+'back'          => 'Back',
+'order_summary' => 'Order Summary',
+'room'          => 'Room',
+'max_guests'    => 'Max :count guests',
 ];

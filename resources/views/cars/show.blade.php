@@ -5,23 +5,15 @@
         $photos   = $vehicle->photos;
         $chip     = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold';
         $card     = 'bg-white rounded-3xl border border-slate-100 shadow-md p-6';
-        $input    = 'w-full min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue';
+        $input    = 'w-full min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
         $mapQuery = rawurlencode(collect([$vehicle->address, $vehicle->area, $vehicle->city])->filter()->join(', '));
-        $backUrl  = $params
-            ? route('cars.search', array_merge($params, ['city' => $params['city'] ?? $vehicle->city]))
-            : route('cars.home');
 
-    $previous = url()->previous();
-    $samePage = strtok($previous, '?') === strtok(url()->current(), '?');
-    $backUrl  = (! $samePage && str_starts_with($previous, url('/')))
-        ? $previous
-        : ($params
-            ? route('cars.home', array_merge($params, ['city' => $params['city'] ?? $vehicle->city]))
-            : route('cars.home'));
+        // Tombol kembali selalu ke halaman utama Rental Mobil
+        $backUrl  = route('cars.home');
     @endphp
 
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
+        <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:text-sky-800 transition">
             <i class="fa-solid fa-arrow-left"></i> {{ __('ui.car_results') }}
         </a>
 
@@ -37,7 +29,7 @@
                         @if ($photos->isNotEmpty())
                             <img id="vehicle-main-photo" src="{{ $photos->first()->url() }}" alt="{{ $vehicle->name }}" class="w-full h-full object-cover">
                         @else
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-sagara-navy to-sagara-blue text-white/70 text-6xl">
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-700 to-sky-500 text-white/70 text-6xl">
                                 <i class="fa-solid fa-car-side"></i>
                             </div>
                         @endif
@@ -48,7 +40,7 @@
                             @foreach ($photos->take(6) as $photo)
                                 <button type="button"
                                         onclick="document.getElementById('vehicle-main-photo').src='{{ $photo->url() }}'"
-                                        class="rounded-xl overflow-hidden aspect-[4/3] bg-slate-200 hover:ring-2 hover:ring-sagara-teal transition">
+                                        class="rounded-xl overflow-hidden aspect-[4/3] bg-slate-200 hover:ring-2 hover:ring-sky-400 transition">
                                     <img src="{{ $photo->url() }}" alt="" class="w-full h-full object-cover" loading="lazy">
                                 </button>
                             @endforeach
@@ -60,15 +52,15 @@
                 <div>
                     <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 break-words">{{ $vehicle->name }}</h1>
                     <div class="flex flex-wrap gap-2 mt-3">
-                        <span class="{{ $chip }}"><i class="fa-solid fa-car-side text-sagara-blue"></i> {{ __('ui.vehicle_type_' . $vehicle->type) }}</span>
-                        <span class="{{ $chip }}"><i class="fa-solid fa-chair text-sagara-blue"></i> {{ $vehicle->seats }} {{ __('ui.seats_short') }}</span>
-                        <span class="{{ $chip }}"><i class="fa-solid fa-gears text-sagara-blue"></i> {{ __('ui.transmission_' . $vehicle->transmission) }}</span>
-                        <span class="{{ $chip }}"><i class="fa-solid fa-gas-pump text-sagara-blue"></i> {{ __('ui.fuel_type_' . $vehicle->fuel_type) }}</span>
+                        <span class="{{ $chip }}"><i class="fa-solid fa-car-side text-sky-600"></i> {{ __('ui.vehicle_type_' . $vehicle->type) }}</span>
+                        <span class="{{ $chip }}"><i class="fa-solid fa-chair text-sky-600"></i> {{ $vehicle->seats }} {{ __('ui.seats_short') }}</span>
+                        <span class="{{ $chip }}"><i class="fa-solid fa-gears text-sky-600"></i> {{ __('ui.transmission_' . $vehicle->transmission) }}</span>
+                        <span class="{{ $chip }}"><i class="fa-solid fa-gas-pump text-sky-600"></i> {{ __('ui.fuel_type_' . $vehicle->fuel_type) }}</span>
                         @if ($vehicle->luggage_capacity !== null)
-                            <span class="{{ $chip }}"><i class="fa-solid fa-suitcase-rolling text-sagara-blue"></i> {{ $vehicle->luggage_capacity }}</span>
+                            <span class="{{ $chip }}"><i class="fa-solid fa-suitcase-rolling text-sky-600"></i> {{ $vehicle->luggage_capacity }}</span>
                         @endif
                         @if ($vehicle->model_year)
-                            <span class="{{ $chip }}"><i class="fa-solid fa-calendar text-sagara-blue"></i> {{ $vehicle->model_year }}</span>
+                            <span class="{{ $chip }}"><i class="fa-solid fa-calendar text-sky-600"></i> {{ $vehicle->model_year }}</span>
                         @endif
                     </div>
                 </div>
@@ -85,7 +77,7 @@
                         <div class="flex flex-wrap gap-2">
                             @foreach ($vehicle->features as $feature)
                                 <span class="{{ $chip }}">
-                                    <i class="fa-solid {{ \App\Models\Vehicle::FEATURE_ICONS[$feature] ?? 'fa-circle-check' }} text-sagara-blue"></i>
+                                    <i class="fa-solid {{ \App\Models\Vehicle::FEATURE_ICONS[$feature] ?? 'fa-circle-check' }} text-sky-600"></i>
                                     {{ __('ui.feature_' . $feature) }}
                                 </span>
                             @endforeach
@@ -98,27 +90,27 @@
                     <h2 class="font-extrabold text-slate-900">{{ __('ui.driver_and_extras') }}</h2>
 
                     <div class="flex items-start gap-3">
-                        <i class="fa-solid fa-id-card-clip text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                        <i class="fa-solid fa-id-card-clip text-sky-600 w-5 mt-0.5 shrink-0"></i>
                         <span>{{ __('ui.driver_mode_' . $vehicle->driver_mode) }}</span>
                     </div>
 
                     @if ($vehicle->offersDriver() && $vehicle->driver_fee_per_day !== null)
                         <div class="flex items-start gap-3">
-                            <i class="fa-solid fa-user-tie text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                            <i class="fa-solid fa-user-tie text-sky-600 w-5 mt-0.5 shrink-0"></i>
                             <span>{{ __('ui.driver_costs_note', ['amount' => format_price($vehicle->driver_fee_per_day, 'IDR')]) }}</span>
                         </div>
                     @endif
 
                     @if ($vehicle->extras_note)
                         <div class="flex items-start gap-3">
-                            <i class="fa-solid fa-gas-pump text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                            <i class="fa-solid fa-gas-pump text-sky-600 w-5 mt-0.5 shrink-0"></i>
                             <span>{{ $vehicle->extras_note }}</span>
                         </div>
                     @endif
 
                     {{-- KEBIJAKAN PENGEMBALIAN DAN KETERLAMBATAN --}}
                     <div class="flex items-start gap-3">
-                        <i class="fa-solid fa-clock text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                        <i class="fa-solid fa-clock text-sky-600 w-5 mt-0.5 shrink-0"></i>
                         <span>{{ __('ui.return_policy_note', [
                             'time'    => substr((string) $vehicle->return_time, 0, 5),
                             'grace'   => $vehicle->late_grace_minutes,
@@ -194,7 +186,7 @@
                             </div>
                         @endif
 
-                        <button class="col-span-2 px-4 py-2 rounded-xl bg-sky-100 text-sagara-blue text-xs font-bold hover:bg-sky-200 transition">
+                        <button class="col-span-2 px-4 py-2 rounded-xl bg-sky-100 text-sky-700 text-xs font-bold hover:bg-sky-200 transition">
                             {{ __('ui.check_availability') }}
                         </button>
                     </form>
@@ -214,7 +206,7 @@
                             'passengers'  => $passengers,
                             'with_driver' => $driver === 'with_driver' ? 1 : 0,
                         ]) }}"
-                           class="block w-full text-center px-6 py-3 rounded-xl bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue text-white text-sm font-bold shadow-lg transition">
+                           class="block w-full text-center px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white text-sm font-bold shadow-lg shadow-sky-500/20 transition">
                             {{ __('ui.book_car') }}
                         </a>
                     @else
@@ -227,11 +219,11 @@
                 <div class="{{ $card }}">
                     <h2 class="font-extrabold text-slate-900 mb-3">{{ __('ui.pickup_location') }}</h2>
                     <p class="text-sm text-slate-700 flex items-start gap-3">
-                        <i class="fa-solid fa-location-dot text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                        <i class="fa-solid fa-location-dot text-sky-600 w-5 mt-0.5 shrink-0"></i>
                         <span class="break-words">{{ collect([$vehicle->address, $vehicle->area, $vehicle->city])->filter()->join(', ') }}</span>
                     </p>
                     <a href="https://www.google.com/maps/search/?api=1&query={{ $mapQuery }}" target="_blank" rel="noopener"
-                       class="mt-3 inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:underline">
+                       class="mt-3 inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:underline">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> {{ __('ui.view_map') }}
                     </a>
                 </div>

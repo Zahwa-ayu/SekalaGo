@@ -9,23 +9,17 @@
             : rawurlencode(trim($hotel->name . ' ' . $hotel->address . ' ' . $hotel->city));
         $chip  = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold';
         $card  = 'bg-white rounded-3xl border border-slate-100 shadow-md p-6';
-        $input = 'w-full min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sagara-blue';
-
-        $previous = url()->previous();
-        $samePage = strtok($previous, '?') === strtok(url()->current(), '?');
-        $backUrl  = (! $samePage && str_starts_with($previous, url('/')))
-            ? $previous
-            : ($params ? route('hotels.search', $params + ['city' => $params['city'] ?? $hotel->city]) : route('hotels.search'));
+        $input = 'w-full min-w-0 rounded-xl border border-slate-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
 
         $minPrice  = $roomTypes->min('base_price');
         $openCount = $params ? $roomTypes->where('is_open', true)->count() : null;
-        $backUrl   = $params
-            ? route('hotels.search', $params + ['city' => $params['city'] ?? $hotel->city])
-            : route('home');
+
+        // Tombol kembali selalu ke halaman pencarian hotel
+        $backUrl   = route('hotels.search');
     @endphp
 
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
+        <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:text-sky-800 transition">
             <i class="fa-solid fa-arrow-left"></i> {{ __('ui.search_results') }}
         </a>
 
@@ -41,7 +35,7 @@
                         @if ($photos->isNotEmpty())
                             <img id="hotel-main-photo" src="{{ $photos->first()->url() }}" alt="{{ $hotel->name }}" class="w-full h-full object-cover">
                         @else
-                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-sagara-navy to-sagara-blue text-white/70 text-6xl">
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-700 to-sky-500 text-white/70 text-6xl">
                                 <i class="fa-solid fa-hotel"></i>
                             </div>
                         @endif
@@ -52,7 +46,7 @@
                             @foreach ($photos->take(6) as $photo)
                                 <button type="button"
                                         onclick="document.getElementById('hotel-main-photo').src='{{ $photo->url() }}'"
-                                        class="rounded-xl overflow-hidden aspect-[4/3] bg-slate-200 hover:ring-2 hover:ring-sagara-teal transition">
+                                        class="rounded-xl overflow-hidden aspect-[4/3] bg-slate-200 hover:ring-2 hover:ring-sky-400 transition">
                                     <img src="{{ $photo->url() }}" alt="" class="w-full h-full object-cover" loading="lazy">
                                 </button>
                             @endforeach
@@ -66,17 +60,17 @@
                     <div class="flex flex-wrap gap-2 mt-3">
                         @if ($hotel->star_rating)
                             <span class="{{ $chip }}">
-                                <span class="text-sagara-gold">
+                                <span class="text-amber-400">
                                     @for ($i = 0; $i < $hotel->star_rating; $i++)<i class="fa-solid fa-star"></i>@endfor
                                 </span>
                             </span>
                         @endif
                         <span class="{{ $chip }}">
-                            <i class="fa-solid fa-location-dot text-sagara-blue"></i>
+                            <i class="fa-solid fa-location-dot text-sky-600"></i>
                             {{ collect([$hotel->area, $hotel->city])->filter()->join(', ') }}
                         </span>
-                        <span class="{{ $chip }}"><i class="fa-solid fa-right-to-bracket text-sagara-blue"></i> {{ __('ui.check_in_from', ['time' => $hotel->checkInLabel()]) }}</span>
-                        <span class="{{ $chip }}"><i class="fa-solid fa-right-from-bracket text-sagara-blue"></i> {{ __('ui.check_out_until', ['time' => $hotel->checkOutLabel()]) }}</span>
+                        <span class="{{ $chip }}"><i class="fa-solid fa-right-to-bracket text-sky-600"></i> {{ __('ui.check_in_from', ['time' => $hotel->checkInLabel()]) }}</span>
+                        <span class="{{ $chip }}"><i class="fa-solid fa-right-from-bracket text-sky-600"></i> {{ __('ui.check_out_until', ['time' => $hotel->checkOutLabel()]) }}</span>
                     </div>
                 </div>
 
@@ -91,7 +85,7 @@
                         <h2 class="font-extrabold text-slate-900 mb-3">{{ __('ui.hotel_facilities') }}</h2>
                         <div class="flex flex-wrap gap-2">
                             @foreach ($hotel->facilities as $facility)
-                                <span class="{{ $chip }}"><i class="fa-solid {{ $facility->icon() }} text-sagara-blue"></i> {{ $facility->label }}</span>
+                                <span class="{{ $chip }}"><i class="fa-solid {{ $facility->icon() }} text-sky-600"></i> {{ $facility->label }}</span>
                             @endforeach
                         </div>
                     </div>
@@ -126,7 +120,7 @@
                                         </span>
                                     @endif
                                 @else
-                                    <div class="w-full h-full min-h-40 flex items-center justify-center bg-gradient-to-br from-sky-100 to-sky-200 text-sagara-blue/40 text-4xl">
+                                    <div class="w-full h-full min-h-40 flex items-center justify-center bg-gradient-to-br from-sky-100 to-sky-200 text-sky-400/60 text-4xl">
                                         <i class="fa-solid fa-bed"></i>
                                     </div>
                                 @endif
@@ -141,10 +135,10 @@
                                 </div>
 
                                 <div class="flex flex-wrap gap-2">
-                                    <span class="{{ $chip }}"><i class="fa-solid fa-bed text-sagara-blue"></i> {{ $roomType->bed_count }} &times; {{ __('ui.bed_type_' . $roomType->bed_type) }}</span>
-                                    <span class="{{ $chip }}"><i class="fa-solid fa-user-group text-sagara-blue"></i> {{ $roomType->capacity }}</span>
+                                    <span class="{{ $chip }}"><i class="fa-solid fa-bed text-sky-600"></i> {{ $roomType->bed_count }} &times; {{ __('ui.bed_type_' . $roomType->bed_type) }}</span>
+                                    <span class="{{ $chip }}"><i class="fa-solid fa-user-group text-sky-600"></i> {{ $roomType->capacity }}</span>
                                     <span class="{{ $chip }}">
-                                        <i class="fa-solid {{ $roomType->smoking_allowed ? 'fa-smoking' : 'fa-ban-smoking' }} text-sagara-blue"></i>
+                                        <i class="fa-solid {{ $roomType->smoking_allowed ? 'fa-smoking' : 'fa-ban-smoking' }} text-sky-600"></i>
                                         {{ $roomType->smoking_allowed ? __('ui.smoking_yes') : __('ui.smoking_no') }}
                                     </span>
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold {{ $roomType->meal_plan === 'room_only' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700' }}">
@@ -155,7 +149,7 @@
                                 @if ($roomType->facilities->isNotEmpty())
                                     <div class="flex flex-wrap gap-2">
                                         @foreach ($roomType->facilities as $facility)
-                                            <span class="{{ $chip }}"><i class="fa-solid {{ $facility->icon() }} text-sagara-blue"></i> {{ $facility->label }}</span>
+                                            <span class="{{ $chip }}"><i class="fa-solid {{ $facility->icon() }} text-sky-600"></i> {{ $facility->label }}</span>
                                         @endforeach
                                     </div>
                                 @endif
@@ -186,7 +180,7 @@
                                                 'check_out' => $params['check_out'],
                                                 'guests'    => $params['guests'],
                                             ]) }}"
-                                               class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-sagara-blue to-sagara-teal text-white text-sm font-bold shadow-lg hover:from-sagara-navy hover:to-sagara-blue transition">
+                                               class="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white text-sm font-bold shadow-lg shadow-sky-500/20 transition">
                                                 {{ __('ui.book') }}
                                             </a>
                                         @else
@@ -207,7 +201,7 @@
                     @forelse ($hotel->nearbyPlaces as $place)
                         <div class="flex items-center justify-between gap-3 py-2 border-b border-slate-100 last:border-0 text-sm">
                             <span class="text-slate-700 flex items-start gap-3 min-w-0">
-                                <i class="fa-solid {{ $place->icon() }} text-sagara-blue w-5 mt-0.5 text-center shrink-0"></i>
+                                <i class="fa-solid {{ $place->icon() }} text-sky-600 w-5 mt-0.5 text-center shrink-0"></i>
                                 <span class="break-words">
                                     {{ $place->name }}
                                     <span class="text-[11px] text-slate-400">({{ __('ui.nearby_type_' . $place->type) }})</span>
@@ -274,7 +268,7 @@
                                    class="{{ $input }} pl-9">
                         </div>
 
-                        <button class="col-span-2 px-4 py-2 rounded-xl bg-sky-100 text-sagara-blue text-xs font-bold hover:bg-sky-200 transition">
+                        <button class="col-span-2 px-4 py-2 rounded-xl bg-sky-100 text-sky-700 text-xs font-bold hover:bg-sky-200 transition">
                             {{ __('ui.check_availability') }}
                         </button>
                     </form>
@@ -290,11 +284,11 @@
                     <h2 class="font-extrabold text-slate-900 mb-3">{{ __('ui.hotel_info') }}</h2>
                     <div class="space-y-2 text-sm text-slate-700">
                         <div class="flex items-start gap-3">
-                            <i class="fa-solid fa-right-to-bracket text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                            <i class="fa-solid fa-right-to-bracket text-sky-600 w-5 mt-0.5 shrink-0"></i>
                             <span>{{ __('ui.check_in_from', ['time' => $hotel->checkInLabel()]) }}</span>
                         </div>
                         <div class="flex items-start gap-3">
-                            <i class="fa-solid fa-right-from-bracket text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                            <i class="fa-solid fa-right-from-bracket text-sky-600 w-5 mt-0.5 shrink-0"></i>
                             <span>{{ __('ui.check_out_until', ['time' => $hotel->checkOutLabel()]) }}</span>
                         </div>
                     </div>
@@ -304,7 +298,7 @@
                     <h2 class="font-extrabold text-slate-900 mb-3">{{ __('ui.location') }}</h2>
 
                     <p class="text-sm text-slate-700 flex items-start gap-3 mb-3">
-                        <i class="fa-solid fa-location-dot text-sagara-blue w-5 mt-0.5 shrink-0"></i>
+                        <i class="fa-solid fa-location-dot text-sky-600 w-5 mt-0.5 shrink-0"></i>
                         <span class="break-words">{{ collect([$hotel->address, $hotel->area, $hotel->city])->filter()->join(', ') }}</span>
                     </p>
 
@@ -318,7 +312,7 @@
                     @endif
 
                     <a href="https://www.google.com/maps/search/?api=1&query={{ $mapQuery }}" target="_blank" rel="noopener"
-                       class="mt-3 inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:underline">
+                       class="mt-3 inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:underline">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> {{ __('ui.view_map') }}
                     </a>
                 </div>
