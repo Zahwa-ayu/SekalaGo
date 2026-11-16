@@ -149,4 +149,17 @@ class AccountController extends Controller
             ->map(fn ($value, $code) => is_array($value) ? ($value['name'] ?? $value['label'] ?? strtoupper($code)) : $value)
             ->all();
     }
+
+        /** Tab "Notifikasi". */
+    public function notifications(Request $request)
+    {
+        return view('account.notifications', ['user' => $request->user()]);
+    }
+
+    public function updateNotifications(Request $request)
+    {
+        $request->user()->update(['notify_email' => $request->boolean('notify_email')]);
+
+        return back()->with('success', __('ui.notifications_saved'));
+    }
 }

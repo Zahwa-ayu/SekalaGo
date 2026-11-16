@@ -122,6 +122,20 @@
                     @endif
                 </div>
             @endif
+
+            {{-- STATUS MENGINAP (hotel) --}}
+            @if ($stay = $booking->stayStage())
+                <div class="pt-5 border-t border-slate-100 text-sm text-slate-600 space-y-1">
+                    <div>
+                        <i class="fa-solid fa-flag-checkered text-sky-500 w-5"></i>
+                        <strong class="text-slate-900">{{ __('ui.stay_stage_' . $stay) }}</strong>
+                        @if ($stay === 'in_house' && $booking->checked_in_at) &middot; {{ __('ui.stay_arrived_at', ['time' => $booking->checked_in_at->format('d/m H:i')]) }} @endif
+                    </div>
+                    @if ($stay === 'no_show')
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-4 py-3">{{ __('ui.stay_no_show_customer_note') }}</div>
+                    @endif
+                </div>
+            @endif
         </div>
 
         @if ($booking->contact_phone || $booking->special_requests || $booking->trip_purpose)

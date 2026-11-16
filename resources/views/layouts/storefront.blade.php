@@ -165,6 +165,9 @@
                             </a>
                         @endif
 
+                        {{-- LONCENG NOTIFIKASI --}}
+                        @include('partials.notification-bell', ['tone' => 'dark'])
+
                         {{-- PENGATURAN AKUN (Finance tidak perlu di sini: aksesnya lewat sidebar Dashboard) --}}
                         @if (Route::has('account.settings') && ! (auth()->user()->user_type === 'corporate' && auth()->user()->companyUser?->isFinance()))
                             <a href="{{ route('account.settings') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">

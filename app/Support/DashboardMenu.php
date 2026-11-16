@@ -80,6 +80,7 @@ class DashboardMenu
                     ['section' => 'ui.menu_hotel'],
                     ['fa-hotel', 'ui.my_hotels', 'partner.hotels.index', ['partner.hotels.*', 'partner.room-types.*']],
                     ['fa-receipt', 'ui.incoming_bookings', 'partner.bookings.index', ['partner.bookings.*']],
+                    ['fa-bell-concierge', 'ui.guests_page', 'partner.stays.index', ['partner.stays.*']],
 
                     // Bisnis rental mobil
                     ['section' => 'ui.menu_rental'],

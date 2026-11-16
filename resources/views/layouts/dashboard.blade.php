@@ -255,6 +255,7 @@
             </div>
 
             <div class="flex items-center gap-3 text-sm">
+                @include('partials.notification-bell', ['tone' => 'light'])
                 <span class="hidden sm:block font-semibold text-slate-600">{{ $authUser->email }}</span>
                 <!-- Avatar Profil: Solid Sky Blue -->
                 <div class="w-9 h-9 rounded-full bg-sky-500 text-white font-black flex items-center justify-center shadow-md shadow-sky-500/20">

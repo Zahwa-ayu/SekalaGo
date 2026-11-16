@@ -39,6 +39,7 @@ use App\Http\Controllers\Admin\CityController as AdminCityController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Partner\RentalController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\CarBookingController;
 use App\Http\Controllers\Admin\AnalyticsController as AdminAnalyticsController;
 use App\Http\Controllers\Account\AccountController;
@@ -46,6 +47,7 @@ use App\Http\Controllers\BookingExtensionController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\Partner\StayController as PartnerStayController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CarSearchController;
 
@@ -102,6 +104,16 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/account/password', [PasswordController::class, 'edit'])->name('account.password.edit');
     Route::put('/account/password', [PasswordController::class, 'update'])->name('account.password.update');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/count', [NotificationController::class, 'count'])->name('notifications.count');
+    Route::get('/notifications/latest', [NotificationController::class, 'latest'])->name('notifications.latest');
+    Route::get('/notifications/{id}/open', [NotificationController::class, 'open'])->name('notifications.open');
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+
+    // Pengaturan notifikasi (tab di Pengaturan Akun)
+    Route::get('/account/notifications', [AccountController::class, 'notifications'])->name('account.notifications');
+    Route::put('/account/notifications', [AccountController::class, 'updateNotifications'])->name('account.notifications.update');
 });
 
 // Pemesanan: pelanggan B2C (bayar lewat gateway) dan karyawan corporate (saldo kantor)
@@ -264,6 +276,11 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::get('vehicles/{vehicle}/blackouts', [BlackoutController::class, 'index'])->name('vehicles.blackouts.index');
             Route::post('vehicles/{vehicle}/blackouts', [BlackoutController::class, 'store'])->name('vehicles.blackouts.store');
             Route::delete('blackouts/{blackout}', [BlackoutController::class, 'destroy'])->name('blackouts.destroy');
+
+            Route::get('stays', [PartnerStayController::class, 'index'])->name('stays.index');
+            Route::post('stays/{booking}/arrive', [PartnerStayController::class, 'arrive'])->name('stays.arrive');
+            Route::post('stays/{booking}/no-show', [PartnerStayController::class, 'noShow'])->name('stays.noshow');
+            Route::post('stays/{booking}/depart', [PartnerStayController::class, 'depart'])->name('stays.depart');
         });
     });
 

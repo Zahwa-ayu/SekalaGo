@@ -12,7 +12,7 @@ class User extends Authenticatable
     use Notifiable; 
     protected $fillable = [
         'email', 'password', 'phone_number', 'user_type',
-        'is_active', 'preferred_locale', 'preferred_currency', 'must_change_password',
+        'is_active', 'preferred_locale', 'preferred_currency', 'must_change_password', 'notify_email',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -23,6 +23,7 @@ class User extends Authenticatable
             'password'  => 'hashed',
             'is_active' => 'boolean',
             'must_change_password' => 'boolean',
+            'notify_email' => 'boolean',
         ];
     }
 

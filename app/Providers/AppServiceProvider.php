@@ -60,5 +60,12 @@ class AppServiceProvider extends ServiceProvider
                 ->line(__('ui.reset_mail_expire', ['count' => $minutes]))
                 ->line(__('ui.reset_mail_ignore'));
         });
+
+            foreach ([
+                \App\Models\Booking::class, \App\Models\Partner::class, \App\Models\PartnerAgreement::class,
+                \App\Models\Company::class, \App\Models\Hotel::class, \App\Models\Vehicle::class, \App\Models\Payout::class,
+            ] as $model) {
+                $model::observe(\App\Observers\NotificationEvents::class);
+            }
     }
 }

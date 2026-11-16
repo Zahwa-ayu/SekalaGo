@@ -23,6 +23,7 @@ class Booking extends Model
         'picked_up_at', 'returned_at', 'late_minutes', 'late_fee_computed', 'late_fee', 'payout_id',
         'contact_name', 'contact_email', 'contact_phone', 'arrival_time', 'special_requests',
         'destination', 'license_confirmed', 'trip_purpose', 'cost_center',
+        'checked_in_at', 'checked_out_at', 'no_show_at',
     ];
 
     protected function casts(): array
@@ -42,6 +43,9 @@ class Booking extends Model
             'due_at'       => 'datetime',
             'picked_up_at' => 'datetime',
             'returned_at'  => 'datetime',
+            'checked_in_at'  => 'datetime',
+            'checked_out_at' => 'datetime',
+            'no_show_at'     => 'datetime',
         ];
     }
 
@@ -172,4 +176,19 @@ public function canBeExtended(): bool
     return app(\App\Services\ExtensionService::class)->canExtend($this);
 }
 public function payout() { return $this->belongsTo(Payout::class); }
+
+/** Tahap menginap hotel: upcoming, in_house, departed, atau no_show. Null untuk mobil atau pesanan yang belum terkonfirmasi. */
+public function stayStage(): ?string
+{
+    if ($this->product_type !== 'hotel' || $this->status !== 'confirmed') {
+        return null;
+    }
+
+    return match (true) {
+        $this->no_show_at !== null     => 'no_show',
+        $this->checked_out_at !== null => 'departed',
+        $this->checked_in_at !== null  => 'in_house',
+        default                        => 'upcoming',
+    };
+}
 }

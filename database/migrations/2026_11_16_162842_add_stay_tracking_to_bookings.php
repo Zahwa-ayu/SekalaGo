@@ -1,0 +1,22 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dateTime('checked_in_at')->nullable();
+            $table->dateTime('checked_out_at')->nullable();
+            $table->dateTime('no_show_at')->nullable();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('bookings', fn (Blueprint $table) => $table->dropColumn(['checked_in_at', 'checked_out_at', 'no_show_at']));
+    }
+};
