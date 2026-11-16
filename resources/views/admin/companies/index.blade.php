@@ -10,6 +10,11 @@
             </a>
         </div>
 
+        {{-- TAB STATUS VERIFIKASI --}}
+        <div class="mb-6">
+            @include('admin.companies._status-tabs')
+        </div>
+
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
@@ -25,8 +30,14 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse ($companies as $company)
+                            @php $badge = ['pending' => 'bg-amber-100 text-amber-700', 'verified' => 'bg-emerald-100 text-emerald-700', 'rejected' => 'bg-red-100 text-red-700'][$company->verification_status] ?? 'bg-slate-100 text-slate-600'; @endphp
                             <tr class="hover:bg-sky-50/50 transition">
-                                <td class="px-6 py-4 font-bold text-slate-900">{{ $company->company_name }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <span class="font-bold text-slate-900">{{ $company->company_name }}</span>
+                                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold {{ $badge }}">{{ __('ui.company_status_' . $company->verification_status) }}</span>
+                                    </div>
+                                </td>
                                 <td class="px-6 py-4 text-slate-600 font-mono text-xs">{{ $company->corporate_code }}</td>
                                 <td class="px-6 py-4 text-slate-600 whitespace-nowrap">{{ format_price($company->deposit_balance, 'IDR') }}</td>
                                 <td class="px-6 py-4 text-slate-600 whitespace-nowrap">{{ format_price($company->travel_policy_limit, 'IDR') }}</td>

@@ -2,11 +2,11 @@
     // Halaman yang latarnya terang (tanpa hero) mendapat navbar putih sejak awal.
     // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
     $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
-        || request()->routeIs('cars.show', 'hotels.show', 'auth.login', 'corporate.dashboard',
+        || request()->routeIs('cars.show', 'hotels.show', 'auth.login', 'corporate.dashboard', 'register.corporate', 
         'bookings.*',
          'account.*');
 
-    // Gaya link menu utama (Hotel / Mobil / FAQ / Daftar Mitra)
+    // Gaya link menu utama (Hotel / Mobil / FAQ / Bisnis)
     $navLink = 'nav-link-text px-3 py-2 rounded-lg transition';
     $navOn   = 'nav-link-active';
     $navOff  = 'hover:bg-white/5 hover:text-sky-300';
@@ -34,6 +34,9 @@
         .pref-btn { border: 1px solid rgba(255, 255, 255, 0.25); }
         .is-scrolled .pref-btn { border-color: rgba(15, 23, 42, 0.15); }
         .pref-dd summary::-webkit-details-marker { display: none; }
+
+        /* Dropdown Bisnis: sembunyikan panah bawaan <details> */
+        .biz-dd summary::-webkit-details-marker { display: none; }
 
         /* Link menu saat navbar putih */
         .is-scrolled .nav-link-text {
@@ -115,11 +118,35 @@
                         </a>
                     @endif
 
-                    {{-- DAFTAR MITRA (hanya tamu; hapus @guest kalau mau tampil untuk semua) --}}
+                    {{-- BISNIS (hanya tamu): dropdown ke pendaftaran Mitra & Corporate (B2B) --}}
                     @guest
-                        <a href="{{ route('register.partner') }}" class="{{ $navLink }} {{ request()->routeIs('register.partner') ? $navOn : $navOff }}">
-                            <i class="fa-solid fa-handshake mr-1"></i> {{ __('ui.register_partner') }}
-                        </a>
+                        @php $bizActive = request()->routeIs('register.partner', 'register.corporate'); @endphp
+                        <details class="biz-dd relative">
+                            <summary class="{{ $navLink }} {{ $bizActive ? $navOn : $navOff }} cursor-pointer list-none flex items-center gap-1">
+                                <i class="fa-solid fa-briefcase mr-1"></i> {{ __('ui.business') }}
+                                <i class="fa-solid fa-chevron-down text-[10px] ml-0.5"></i>
+                            </summary>
+
+                            <div class="lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-60 mt-1 z-50
+                                        bg-white text-slate-700 rounded-xl border border-slate-200 shadow-lg p-1.5">
+                                <a href="{{ route('register.partner') }}"
+                                   class="flex items-start gap-2.5 px-3 py-2.5 rounded-lg hover:bg-sky-50 hover:text-sky-600 transition">
+                                    <i class="fa-solid fa-handshake mt-0.5 text-sky-500"></i>
+                                    <span>
+                                        <span class="block font-bold">{{ __('ui.register_partner') }}</span>
+                                        <span class="block font-normal text-[11px] text-slate-500">{{ __('ui.register_partner_desc') }}</span>
+                                    </span>
+                                </a>
+                                <a href="{{ route('register.corporate') }}"
+                                   class="flex items-start gap-2.5 px-3 py-2.5 rounded-lg hover:bg-sky-50 hover:text-sky-600 transition">
+                                    <i class="fa-solid fa-building mt-0.5 text-sky-500"></i>
+                                    <span>
+                                        <span class="block font-bold">{{ __('ui.register_corporate') }}</span>
+                                        <span class="block font-normal text-[11px] text-slate-500">{{ __('ui.register_corporate_desc') }}</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </details>
                     @endguest
 
                     {{-- BAHASA & MATA UANG (satu tombol ikon bola) --}}
@@ -211,6 +238,7 @@
                         <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_partnership') }}</h4>
                         <ul class="space-y-2">
                             <li><a href="{{ route('register.partner') }}" class="hover:text-white transition">{{ __('ui.register_partner') }}</a></li>
+                            <li><a href="{{ route('register.corporate') }}" class="hover:text-white transition">{{ __('ui.register_corporate') }}</a></li>
                             {{-- Link FAQ baru muncul jika route 'faq' sudah terdaftar --}}
                             @if (Route::has('faq'))
                                 <li><a href="{{ route('faq') }}" class="hover:text-white transition">FAQ</a></li>
@@ -284,6 +312,13 @@
                 menu.classList.toggle('hidden', !open);
                 btnMobile.setAttribute('aria-expanded', String(open));
             });
+
+            // Dropdown Bisnis: tutup saat klik di luar atau tekan Esc
+            const bizDd = document.querySelector('.biz-dd');
+            if (bizDd) {
+                document.addEventListener('click', (e) => { if (!bizDd.contains(e.target)) bizDd.open = false; });
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') bizDd.open = false; });
+            }
         })();
     </script>
     @stack('scripts')

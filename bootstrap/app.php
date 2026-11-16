@@ -16,8 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'partner.verified' => \App\Http\Middleware\EnsurePartnerVerified::class,
             'partner.mou'      => \App\Http\Middleware\EnsureMouSigned::class,
-            'corporate.finance' => \App\Http\Middleware\EnsureCorporateFinance::class,
-            
+            'corporate.finance' => \App\Http\Middleware\EnsureCorporateFinance::class,            
         ]);
 
         $middleware->web(append: [
@@ -26,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             \App\Http\Middleware\EnsurePasswordChanged::class,
+            \App\Http\Middleware\EnsureCompanyVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

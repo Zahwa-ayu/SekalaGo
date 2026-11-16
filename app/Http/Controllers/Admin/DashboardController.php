@@ -28,6 +28,7 @@ class DashboardController extends Controller
             'monthly'         => $monthly,
             'recent'          => Booking::with('partner')->latest()->limit(6)->get(),
             'pendingVehicles' => Vehicle::where('status', 'pending')->count(),
+            'pendingCompanies' => Company::where('verification_status', 'pending')->count(),
         ]);
     }
 }

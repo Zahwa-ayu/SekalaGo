@@ -31,6 +31,9 @@
             </ul>
         @endif
 
+        {{-- VERIFIKASI PERUSAHAAN --}}
+        @include('admin.companies._verification')
+
         <div class="grid lg:grid-cols-3 gap-6 items-start">
             {{-- KOLOM KIRI --}}
             <div class="lg:col-span-2 space-y-6">

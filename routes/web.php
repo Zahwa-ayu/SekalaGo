@@ -21,6 +21,7 @@ use App\Http\Controllers\Partner\PayoutController as PartnerPayoutController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\ProfileController;
 use App\Http\Controllers\Partner\RoomStockController;
+use App\Http\Controllers\CorporateRegistrationController;
 use App\Http\Controllers\Admin\FaqAdminController;
 use App\Http\Controllers\Partner\RoomTypeController;
 use App\Http\Controllers\PartnerRegistrationController;
@@ -76,6 +77,9 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/register/partner', [PartnerRegistrationController::class, 'create'])->name('register.partner');
     Route::post('/register/partner', [PartnerRegistrationController::class, 'store'])->name('register.partner.store');
+
+    Route::get('/register/corporate', [CorporateRegistrationController::class, 'create'])->name('register.corporate');
+    Route::post('/register/corporate', [CorporateRegistrationController::class, 'store'])->middleware('throttle:6,1')->name('register.corporate.store');
 });
 
 // Logout
@@ -148,6 +152,10 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('companies', [AdminCompanyController::class, 'store'])->name('companies.store');
         Route::get('companies/{company}', [AdminCompanyController::class, 'show'])->name('companies.show');
         Route::post('companies/{company}/topup', [AdminCompanyController::class, 'topup'])->name('companies.topup');
+        Route::post('companies/{company}/verify', [AdminCompanyController::class, 'verify'])->name('companies.verify');
+        Route::post('companies/{company}/reject', [AdminCompanyController::class, 'reject'])->name('companies.reject');
+        Route::post('companies/{company}/reopen', [AdminCompanyController::class, 'reopen'])->name('companies.reopen');
+        Route::get('companies/{company}/documents/{type}', [AdminCompanyController::class, 'document'])->where('type', 'tax|license')->name('companies.document');
 
                 // Pencairan dana mitra
         Route::get('payouts', [AdminPayoutController::class, 'index'])->name('payouts.index');
