@@ -9,6 +9,7 @@ use App\Services\Payment\PaymentGateway;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Support\BookingDetails;
 use Illuminate\Validation\ValidationException;
 
 class BookingController extends Controller
@@ -64,20 +65,23 @@ class BookingController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['guest_name' => ['required', 'string', 'max:255']]);
+        $member = $this->member($request);
+        $data   = $request->validate(BookingDetails::rules('hotel', $member !== null));
 
         [$roomType, $checkIn, $checkOut, $guests] = $this->resolveStay($request);
 
-        $member  = $this->member($request);
         $booking = $this->bookings->create(
             $request->user(),
             $roomType,
             $checkIn,
             $checkOut,
             $guests,
-            $request->input('guest_name'),
-            $member
+            $data['guest_name'],
+            $member,
+            BookingDetails::attributes($data)
         );
+
+        BookingDetails::rememberContact($request->user(), $data);
 
         if ($member) {
             $message = $booking->status === 'confirmed'

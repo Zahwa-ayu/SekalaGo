@@ -21,6 +21,8 @@ class Booking extends Model
         'decided_by', 'decided_at', 'decision_note', 'approval_reason', 'vehicle_id', 'with_driver', 
         'driver_fee_per_day', 'pickup_location', 'due_at', 'late_grace_minutes', 'late_fee_percent',
         'picked_up_at', 'returned_at', 'late_minutes', 'late_fee_computed', 'late_fee', 'payout_id',
+        'contact_name', 'contact_email', 'contact_phone', 'arrival_time', 'special_requests',
+        'destination', 'license_confirmed', 'trip_purpose', 'cost_center',
     ];
 
     protected function casts(): array

@@ -40,6 +40,9 @@
         <tr><td class="label">Hari / Days</td><td>{{ $booking->nights }}</td></tr>
         <tr><td class="label">Penumpang / Passengers</td><td>{{ $booking->guests }}</td></tr>
         <tr><td class="label">Nama penyewa / Renter</td><td>{{ $booking->guest_name }}</td></tr>
+        <tr><td class="label">Jam ambil / Pick-up time</td><td>{{ $booking->arrival_time ? substr($booking->arrival_time, 0, 5) : '-' }}</td></tr>
+        @if ($booking->destination)<tr><td class="label">Tujuan / Destination</td><td>{{ $booking->destination }}</td></tr>@endif
+        <tr><td class="label">Kontak / Contact</td><td>{{ $booking->contact_phone ?: '-' }}</td></tr>
     </table>
 
     @if ($booking->extensions->isNotEmpty())

@@ -124,6 +124,13 @@
             @endif
         </div>
 
+        @if ($booking->contact_phone || $booking->special_requests || $booking->trip_purpose)
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8 space-y-3">
+                <h2 class="text-base font-extrabold text-slate-900">{{ __('ui.booking_details_title') }}</h2>
+                @include('partials.booking-contact-block', ['booking' => $booking, 'showCorporate' => true])
+            </div>
+        @endif
+
         {{-- DIBATALKAN --}}
         @if ($booking->status === 'cancelled')
             <div class="bg-white rounded-3xl border border-red-100 shadow-md p-6 text-sm space-y-1">

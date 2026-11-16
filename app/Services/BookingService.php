@@ -39,6 +39,7 @@ class BookingService
         int $guests,
         string $guestName,
         ?CompanyUser $member = null,
+        array $details = [],
     ): Booking {
         $roomType->loadMissing('hotel.translations', 'hotel.partner', 'translations');
 
@@ -46,7 +47,7 @@ class BookingService
         $firstDay  = $checkIn->toDateString();
         $lastNight = $checkOut->copy()->subDay()->toDateString();
 
-        return DB::transaction(function () use ($user, $roomType, $checkOut, $guests, $guestName, $member, $nights, $firstDay, $lastNight) {
+        return DB::transaction(function () use ($user, $roomType, $checkOut, $guests, $guestName, $member, $nights, $firstDay, $lastNight, $details) {
             // Kunci baris stok selama transaksi
             $stocks = RoomStock::where('room_type_id', $roomType->id)
                 ->whereBetween('date', [$firstDay, $lastNight])
@@ -92,6 +93,8 @@ class BookingService
                 'total_price_display' => round($total / $currency->rate_to_base, $currency->decimal_places),
                 'free_cancel_days'    => $partner->freeCancelDays(),
             ];
+
+            $attributes += $details;
 
             if ($member) {
                 return $this->createCorporateBooking($user, $member, $attributes, $total);
@@ -363,12 +366,13 @@ public function createForVehicle(
     string $renterName,
     bool $withDriver,
     ?CompanyUser $member = null,
+    array $details = [],
 ): Booking {
     $vehicle->loadMissing('partner', 'translations');
 
     $days = (int) $pickup->diffInDays($return);
 
-    return DB::transaction(function () use ($user, $vehicle, $pickup, $return, $passengers, $renterName, $withDriver, $member, $days) {
+    return DB::transaction(function () use ($user, $vehicle, $pickup, $return, $passengers, $renterName, $withDriver, $member, $days, $details) {
         // Kunci baris armada: pemesanan untuk armada yang sama diproses bergantian
         $locked = Vehicle::lockForUpdate()->findOrFail($vehicle->id);
 
@@ -415,6 +419,8 @@ public function createForVehicle(
             'late_grace_minutes' => $locked->late_grace_minutes,
             'late_fee_percent'   => $locked->late_fee_percent,
         ];
+
+        
 
         if ($member) {
             return $this->createCorporateBooking($user, $member, $attributes, $total);

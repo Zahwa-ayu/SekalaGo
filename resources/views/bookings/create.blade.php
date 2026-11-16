@@ -106,14 +106,7 @@
                             <input type="hidden" name="check_out" value="{{ $checkOut->toDateString() }}">
                             <input type="hidden" name="guests" value="{{ $guests }}">
 
-                            <div class="space-y-1.5">
-                                <label for="guest_name" class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                                    {{ __('ui.guest_name') }}
-                                </label>
-                                <input type="text" id="guest_name" name="guest_name" required maxlength="255"
-                                       value="{{ old('guest_name', auth()->user()->name) }}"
-                                       class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500">
-                            </div>
+                            @include('partials.booking-details-fields', ['type' => 'hotel', 'isCorporate' => $isCorporate])
 
                             <button type="submit"
                                     class="w-full px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold shadow-md shadow-sky-500/20 transition">

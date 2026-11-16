@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Vehicle;
 use App\Services\BookingService;
 use App\Services\VehicleAvailability;
+use App\Support\BookingDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
@@ -50,21 +51,24 @@ class CarBookingController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['guest_name' => ['required', 'string', 'max:255']]);
-
         [$vehicle, $pickup, $return, , $passengers, $withDriver] = $this->resolve($request);
 
-        $member  = $this->member($request);
+        $member = $this->member($request);
+        $data   = $request->validate(BookingDetails::rules('car', $member !== null, ! $withDriver));
+
         $booking = $this->bookings->createForVehicle(
             $request->user(),
             $vehicle,
             $pickup,
             $return,
             $passengers,
-            $request->input('guest_name'),
+            $data['guest_name'],
             $withDriver,
-            $member
+            $member,
+            BookingDetails::attributes($data)
         );
+
+        BookingDetails::rememberContact($request->user(), $data);
 
         if ($member) {
             $message = $booking->status === 'confirmed'

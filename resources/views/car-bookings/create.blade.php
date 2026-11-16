@@ -126,14 +126,7 @@
                 <input type="hidden" name="passengers" value="{{ $passengers }}">
                 <input type="hidden" name="with_driver" value="{{ $withDriver ? 1 : 0 }}">
 
-                <label class="block bg-slate-50 p-3 rounded-2xl border border-slate-200 focus-within:border-sagara-blue transition">
-                    <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                        <i class="fa-solid fa-user text-sagara-blue"></i> {{ __('ui.renter_name') }}
-                    </span>
-                    <input name="guest_name" required maxlength="255"
-                           value="{{ old('guest_name', auth()->user()->customer?->full_name ?? auth()->user()->companyUser?->displayName()) }}"
-                           class="w-full bg-transparent font-semibold text-slate-800 text-sm focus:outline-none">
-                </label>
+                @include('partials.booking-details-fields', ['type' => 'car', 'isCorporate' => $isCorporate, 'selfDrive' => ! $withDriver])
 
                 <button class="w-full px-8 py-3 bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue text-white font-bold rounded-xl shadow-lg transition">
                     @if ($isCorporate)

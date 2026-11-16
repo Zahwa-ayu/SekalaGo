@@ -48,6 +48,8 @@
         <tr><td class="label">Malam / Nights</td><td>{{ $booking->nights }}</td></tr>
         <tr><td class="label">Tamu / Guests</td><td>{{ $booking->guests }}</td></tr>
         <tr><td class="label">Nama tamu / Guest name</td><td>{{ $booking->guest_name }}</td></tr>
+        @if ($booking->arrival_time)<tr><td class="label">Perkiraan tiba / Est. arrival</td><td>{{ substr($booking->arrival_time, 0, 5) }}</td></tr>@endif
+        @if ($booking->special_requests)<tr><td class="label">Permintaan khusus / Requests</td><td>{{ $booking->special_requests }}</td></tr>@endif
     </table>
 
     <h2>Pembayaran / Payment</h2>

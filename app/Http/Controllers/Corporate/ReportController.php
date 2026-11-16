@@ -43,7 +43,7 @@ class ReportController extends Controller
                 __('ui.booking_code'), __('ui.booked_on'), __('ui.product'), __('ui.employees'), __('ui.department'),
                 __('ui.item_name'), __('ui.room_option'), __('ui.period_start'), __('ui.period_end'),
                 __('ui.nights_or_days'), __('ui.total_price') . ' (IDR)', __('ui.limit_label') . ' (IDR)',
-                __('ui.late_fee') . ' (IDR)',
+                __('ui.late_fee') . ' (IDR)', __('ui.trip_purpose'), __('ui.cost_center'),
             ], ';', '"', '\\');
 
             foreach ($report['rows'] as $booking) {
@@ -61,6 +61,7 @@ class ReportController extends Controller
                     $booking->total_price,
                     $booking->late_fee,
                     $booking->policy_limit ?? '',
+                    $booking->trip_purpose ?? '', $booking->cost_center ?? '',
                 ], ';', '"', '\\');
             }
 
