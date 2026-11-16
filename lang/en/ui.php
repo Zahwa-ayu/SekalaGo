@@ -1155,4 +1155,20 @@ return [
 'register_partner_desc'   => 'Register your hotel or rental vehicle',
 'register_corporate'      => 'Register Corporate',
 'register_corporate_desc' => 'Book hotels & cars for company employees',
+
+// percentage mou
+'commission_proposal' => 'Commission proposal',
+'commission_proposal_hint' => 'Optional. Propose the platform commission percentage (10 to 25%). The admin decides the final figure in the MOU, and you can change the proposal until the MOU is signed.',
+'proposed_commission' => 'Proposed commission',
+'commission_proposal_note' => 'Reason or note (optional)',
+'commission_locked' => 'The MOU is signed. Commission in effect: :percent%.',
+'partner_proposes' => 'The partner proposes a :percent% commission',
+'proposal_on' => 'Submitted :date',
+'proposal_admin_hint' => 'The figure in the MOU may be the same as or different from the proposal.',
+'partner_no_proposal' => 'The partner did not propose a commission.',
+'proposes_short' => 'Proposes :percent%',
+'admin_note_for_partner' => 'Note for the partner',
+'admin_note_hint' => 'For example, the reason if the figure differs from the proposal (optional)',
+'proposal_accepted' => 'Your proposed commission of :percent% was accepted by the admin.',
+'proposal_adjusted' => 'You proposed :proposed%. The admin set :final% in this MOU.',
 ];

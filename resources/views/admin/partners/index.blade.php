@@ -48,7 +48,12 @@
                                     : ($mou->status === 'signed' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700');
                             @endphp
                             <tr class="hover:bg-sky-50/50 transition">
-                                <td class="px-6 py-4 font-bold text-slate-900">{{ $partner->company_name }}</td>
+                                <td class="px-6 py-4 font-bold text-slate-900">
+                                    {{ $partner->company_name }}
+                                    @if ($partner->proposedPercent() !== null && ! $partner->hasSignedAgreement())
+                                        <span class="ml-1 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[10px] font-bold">{{ __('ui.proposes_short', ['percent' => rtrim(rtrim(number_format($partner->proposedPercent(), 2, '.', ''), '0'), '.')]) }}</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 text-slate-600">{{ $partner->user->email }}</td>
                                 <td class="px-6 py-4 text-slate-600 font-mono text-xs">{{ $partner->business_license_no }}</td>
                                 <td class="px-6 py-4 text-slate-500 whitespace-nowrap">{{ $partner->created_at->format('d/m/Y') }}</td>

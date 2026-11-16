@@ -30,6 +30,8 @@ class PartnerRegistrationController extends Controller
             'email'               => ['required', 'email', 'unique:users,email'],
             'phone_number'        => ['nullable', 'string', 'max:20'],
             'password'            => ['required', 'confirmed', 'min:8'],
+            'proposed_commission'      => ['nullable', 'numeric', 'between:10,25'],
+            'commission_proposal_note' => ['nullable', 'string', 'max:300'],
         ]);
 
         DB::transaction(function () use ($data) {
@@ -45,6 +47,9 @@ class PartnerRegistrationController extends Controller
                 'company_name'        => $data['company_name'],
                 'business_license_no' => $data['business_license_no'],
                 'bank_account_no'     => $data['bank_account_no'] ?? null,
+                'proposed_commission_rate' => filled($data['proposed_commission'] ?? null) ? round($data['proposed_commission'] / 100, 4) : null,
+                'commission_proposal_note' => filled($data['proposed_commission'] ?? null) ? ($data['commission_proposal_note'] ?? null) : null,
+                'commission_proposed_at'   => filled($data['proposed_commission'] ?? null) ? now() : null,
             ]);
         });
 

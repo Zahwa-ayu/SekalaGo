@@ -61,6 +61,7 @@ class PartnerController extends Controller
             'commission_percent' => ['required', 'numeric', 'between:10,25'],
             'payout_schedule'    => ['required', Rule::in(array_keys(self::PAYOUT_LABELS))],
             'free_cancel_days'   => ['required', 'integer', 'between:0,30'],
+            'admin_note' => ['nullable', 'string', 'max:300'],
         ]);
 
         if ($partner->agreements()->where('status', 'signed')->exists()) {
@@ -96,6 +97,8 @@ class PartnerController extends Controller
                 'content'          => $content,
                 'status'           => 'sent',
                 'sent_at'          => now(),
+                'proposed_rate' => $partner->proposed_commission_rate,
+                'admin_note'    => $data['admin_note'] ?? null,
             ]);
 
             $partner->update(['verification_status' => 'verified', 'verification_note' => null]);

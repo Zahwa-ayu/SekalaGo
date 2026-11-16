@@ -11,8 +11,17 @@ class Partner extends Model
     
     protected $fillable = [
         'user_id', 'company_name', 'business_license_no', 'bank_account_no',
-        'verification_status', 'verification_note', 'bank_name', 'bank_account_name'
+        'verification_status', 'verification_note', 'bank_name', 'bank_account_name',
+        'proposed_commission_rate', 'commission_proposal_note', 'commission_proposed_at',
     ];
+
+     protected function casts(): array
+    {
+        return [
+            'proposed_commission_rate' => 'float',
+            'commission_proposed_at'   => 'datetime',
+        ];
+    }
 
     public function user()       { return $this->belongsTo(User::class); }
     public function hotels()     { return $this->hasMany(Hotel::class); }
@@ -75,5 +84,33 @@ class Partner extends Model
     {
         return trim($this->bank_name . ' ' . $this->bank_account_no
             . ($this->bank_account_name ? ' a.n. ' . $this->bank_account_name : ''));
+    }
+
+    /** Usulan komisi mitra dalam persen (misalnya 12.5), atau null jika tidak mengusulkan. */
+    public function proposedPercent(): ?float
+    {
+        return $this->proposed_commission_rate === null
+            ? null
+            : round($this->proposed_commission_rate * 100, 2);
+    }
+
+    /**
+     * Kolom usulan dari isian form profil. Terkunci setelah MOU ditandatangani;
+     * waktu usulan hanya diperbarui jika angkanya benar-benar berubah.
+     */
+    public function proposalAttributes(array $data): array
+    {
+        if ($this->hasSignedAgreement() || ! array_key_exists('proposed_commission', $data)) {
+            return [];
+        }
+
+        $rate = filled($data['proposed_commission']) ? round($data['proposed_commission'] / 100, 4) : null;
+        $old  = $this->proposed_commission_rate === null ? null : round((float) $this->proposed_commission_rate, 4);
+
+        return [
+            'proposed_commission_rate' => $rate,
+            'commission_proposal_note' => $rate === null ? null : ($data['commission_proposal_note'] ?? null),
+            'commission_proposed_at'   => $rate === $old ? $this->commission_proposed_at : ($rate === null ? null : now()),
+        ];
     }
 }

@@ -126,5 +126,8 @@ return [
         'verification_note' => 'alasan',
         'travel_policy_limit' => 'limit perjalanan',
         'default_monthly_budget' => 'anggaran bulanan',
+        'proposed_commission' => 'usulan komisi',
+        'commission_proposal_note' => 'catatan usulan',
+        'admin_note' => 'catatan untuk mitra',
     ],
 ];

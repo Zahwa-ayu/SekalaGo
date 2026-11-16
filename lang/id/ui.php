@@ -1158,4 +1158,20 @@ return [
 'register_partner_desc'   => 'Daftarkan hotel atau kendaraan rental Anda',
 'register_corporate'      => 'Daftar Korporat',
 'register_corporate_desc' => 'Pesan hotel & mobil untuk karyawan perusahaan',
+
+// percentage mou
+'commission_proposal' => 'Usulan komisi',
+'commission_proposal_hint' => 'Opsional. Usulkan persentase komisi platform (10 sampai 25%). Admin memutuskan angka akhirnya di MOU, dan Anda bisa mengubah usulan sampai MOU ditandatangani.',
+'proposed_commission' => 'Usulan komisi',
+'commission_proposal_note' => 'Alasan atau catatan (opsional)',
+'commission_locked' => 'MOU sudah ditandatangani. Komisi yang berlaku: :percent%.',
+'partner_proposes' => 'Mitra mengusulkan komisi :percent%',
+'proposal_on' => 'Diajukan :date',
+'proposal_admin_hint' => 'Angka di MOU boleh sama atau berbeda dengan usulan.',
+'partner_no_proposal' => 'Mitra tidak mengajukan usulan komisi.',
+'proposes_short' => 'Usul :percent%',
+'admin_note_for_partner' => 'Catatan untuk mitra',
+'admin_note_hint' => 'Misalnya alasan jika angkanya berbeda dari usulan (opsional)',
+'proposal_accepted' => 'Usulan komisi Anda :percent% disetujui admin.',
+'proposal_adjusted' => 'Anda mengusulkan :proposed%. Admin menetapkan :final% di MOU ini.',
 ];

@@ -11,7 +11,7 @@ class PartnerAgreement extends Model
     protected $fillable = [
         'partner_id', 'version', 'commission_rate', 'payout_schedule', 'free_cancel_days',
         'content', 'status', 'sent_at', 'signed_at', 'signed_name', 'signed_ip',
-        'signature_hash', 'pdf_path',
+        'signature_hash', 'pdf_path', 'proposed_rate', 'admin_note', 
     ];
 
     protected function casts(): array
@@ -20,6 +20,7 @@ class PartnerAgreement extends Model
             'commission_rate' => 'float',
             'sent_at'         => 'datetime',
             'signed_at'       => 'datetime',
+            'proposed_rate' => 'float'
         ];
     }
 
@@ -73,4 +74,14 @@ class PartnerAgreement extends Model
     public function logLabel(): string { return 'MOU ' . $this->documentNumber(); }
 
     public function logScope(): ?Model { return $this->partner; }
+
+    /** as_proposed (sesuai usulan), adjusted (disesuaikan admin), atau null jika mitra tidak mengusulkan. */
+    public function proposalDecision(): ?string
+    {
+        if ($this->proposed_rate === null) {
+            return null;
+        }
+
+        return abs((float) $this->commission_rate - (float) $this->proposed_rate) < 0.00005 ? 'as_proposed' : 'adjusted';
+    }
 }

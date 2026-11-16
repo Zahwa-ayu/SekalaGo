@@ -299,6 +299,29 @@
                                     <input type="email" name="email" value="{{ old('email') }}" placeholder="email@perusahaan.com" required class="{{ $input }}">
                                 </div>
 
+                                <div class="sm:col-span-2 rounded-2xl bg-sky-50 border border-sky-100 p-4 space-y-3">
+                                    <div>
+                                        <div class="font-extrabold text-slate-900 text-sm">{{ __('ui.commission_proposal') }}</div>
+                                        <p class="text-xs text-slate-500">{{ __('ui.commission_proposal_hint') }}</p>
+                                    </div>
+
+                                    <div class="grid sm:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.proposed_commission') }}</label>
+                                            <div class="flex items-center gap-2">
+                                                <input type="number" name="proposed_commission" min="10" max="25" step="0.5" value="{{ old('proposed_commission') }}" placeholder="15"
+                                                       class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                                                <span class="text-sm font-bold text-slate-500">%</span>
+                                            </div>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.commission_proposal_note') }}</label>
+                                            <input name="commission_proposal_note" maxlength="300" value="{{ old('commission_proposal_note') }}"
+                                                   class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="{{ $box }}">
                                     <label class="{{ $label }}"><i class="fa-solid fa-lock text-sky-600 mr-1"></i> {{ __('ui.password') }}</label>
                                     <input type="password" name="password" placeholder="••••••••" required class="{{ $input }}">

@@ -24,6 +24,8 @@ class ProfileController extends Controller
             'bank_name'         => ['nullable', 'string', 'max:60', 'required_with:bank_account_no,bank_account_name'],
             'bank_account_no'   => ['nullable', 'string', 'max:50', 'regex:/^[0-9\s\-]+$/', 'required_with:bank_name,bank_account_name'],
             'bank_account_name' => ['nullable', 'string', 'max:100', 'required_with:bank_name,bank_account_no'],
+            'proposed_commission'      => ['nullable', 'numeric', 'between:10,25'],
+            'commission_proposal_note' => ['nullable', 'string', 'max:300'],
         ]);
 
         $message = __('ui.profile_saved');
@@ -35,7 +37,7 @@ class ProfileController extends Controller
             $message = __('ui.profile_resubmitted');
         }
 
-        $partner->update($data);
+        $partner->update(\Illuminate\Support\Arr::except($data, ['proposed_commission']) + $partner->proposalAttributes($data));
 
         return redirect()->route('partner.profile.edit')->with('success', $message);
     }

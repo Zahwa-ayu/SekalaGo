@@ -3,7 +3,7 @@
     // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
     $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
         || request()->routeIs('cars.show', 'hotels.show', 'auth.login', 'corporate.dashboard', 'register.corporate', 
-        'bookings.*',
+        'bookings.*', 'password.*',
          'account.*');
 
     // Gaya link menu utama (Hotel / Mobil / FAQ / Bisnis)

@@ -89,6 +89,35 @@
     </div>
 </div>
 
+            <div class="space-y-3">
+                <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.commission_proposal') }}</h2>
+
+                @if ($partner->hasSignedAgreement())
+                    <div class="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-700">
+                        {{ __('ui.commission_locked', ['percent' => rtrim(rtrim(number_format($partner->commissionRate() * 100, 2, '.', ''), '0'), '.')]) }}
+                    </div>
+                @else
+                    <p class="text-xs text-slate-500">{{ __('ui.commission_proposal_hint') }}</p>
+
+                    <div class="grid sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.proposed_commission') }}</label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" name="proposed_commission" min="10" max="25" step="0.5"
+                                       value="{{ old('proposed_commission', $partner->proposedPercent()) }}"
+                                       class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                                <span class="text-sm font-bold text-slate-500">%</span>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.commission_proposal_note') }}</label>
+                            <input name="commission_proposal_note" maxlength="300" value="{{ old('commission_proposal_note', $partner->commission_proposal_note) }}"
+                                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                        </div>
+                    </div>
+                @endif
+            </div>
+
             <button class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
                 <i class="fa-solid fa-floppy-disk mr-1"></i> {{ __('ui.save') }}
             </button>

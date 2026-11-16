@@ -132,6 +132,9 @@
                     @endif
 
                     @if (! $agreement || $agreement->status !== 'signed')
+                        {{-- USULAN KOMISI DARI MITRA --}}
+                        @include('admin.partners._commission-proposal')
+
                         <div class="mt-6 pt-6 border-t border-slate-100">
                             <h3 class="text-base font-bold text-slate-900 mb-4">{{ $sendLabel }}</h3>
 
@@ -141,7 +144,7 @@
                                     <div class="{{ $box }}">
                                         <label class="{{ $label }}"><i class="fa-solid fa-percent text-sagara-blue"></i> {{ __('ui.commission_rate') }} (10 - 25)</label>
                                         <input type="number" name="commission_percent" min="10" max="25" step="0.5" required class="{{ $input }}"
-                                               value="{{ old('commission_percent', $agreement?->commissionPercent() ?? 15) }}">
+                                               value="{{ old('commission_percent', $partner->proposedPercent() ?? 15) }}">
                                     </div>
                                     <div class="{{ $box }}">
                                         <label class="{{ $label }}"><i class="fa-solid fa-money-bill-transfer text-sagara-blue"></i> {{ __('ui.payout_schedule') }}</label>
@@ -159,6 +162,11 @@
                                         <input type="number" name="free_cancel_days" min="0" max="30" required class="{{ $input }}"
                                                value="{{ old('free_cancel_days', $agreement?->free_cancel_days ?? 3) }}">
                                     </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.admin_note_for_partner') }}</label>
+                                    <input name="admin_note" maxlength="300" value="{{ old('admin_note') }}" placeholder="{{ __('ui.admin_note_hint') }}"
+                                           class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
                                 </div>
                                 <button class="{{ $btn }}"><i class="fa-solid fa-paper-plane"></i> {{ $sendLabel }}</button>
                             </form>
