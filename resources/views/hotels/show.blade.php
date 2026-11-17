@@ -262,12 +262,15 @@
                             <input type="hidden" name="city" value="{{ $params['city'] }}">
                         @endif
 
-                        <input type="date" name="check_in" required min="{{ today()->toDateString() }}"
-                               value="{{ $params['check_in'] ?? today()->addDay()->toDateString() }}"
-                               class="{{ $input }}">
-                        <input type="date" name="check_out" required min="{{ today()->addDay()->toDateString() }}"
-                               value="{{ $params['check_out'] ?? today()->addDays(2)->toDateString() }}"
-                               class="{{ $input }}">
+                        @include('partials.date-range-picker', [
+                            'type'      => 'hotels',
+                            'class'     => 'col-span-2',
+                            'label'     => __('ui.check_in') . ' - ' . __('ui.check_out'),
+                            'startName' => 'check_in',
+                            'endName'   => 'check_out',
+                            'start'     => $params['check_in'] ?? today()->addDay()->toDateString(),
+                            'end'       => $params['check_out'] ?? today()->addDays(2)->toDateString(),
+                        ])
 
                         <div class="col-span-2 relative">
                             <i class="fa-solid fa-user-group absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>

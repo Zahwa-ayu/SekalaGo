@@ -171,12 +171,15 @@
 
                     {{-- Ubah tanggal, penumpang, dan opsi supir --}}
                     <form method="GET" action="{{ route('cars.show', $vehicle) }}" class="grid grid-cols-2 gap-2">
-                        <input type="date" name="pickup_date" required min="{{ today()->toDateString() }}"
-                               value="{{ $params['pickup_date'] ?? today()->addDay()->toDateString() }}"
-                               class="{{ $input }}">
-                        <input type="date" name="return_date" required min="{{ today()->addDay()->toDateString() }}"
-                               value="{{ $params['return_date'] ?? today()->addDays(3)->toDateString() }}"
-                               class="{{ $input }}">
+                        @include('partials.date-range-picker', [
+                            'type'      => 'cars',
+                            'class'     => 'col-span-2',
+                            'label'     => __('ui.pickup_date') . ' - ' . __('ui.return_date'),
+                            'startName' => 'pickup_date',
+                            'endName'   => 'return_date',
+                            'start'     => $params['pickup_date'] ?? today()->addDay()->toDateString(),
+                            'end'       => $params['return_date'] ?? today()->addDays(3)->toDateString(),
+                        ])
 
                         <input type="number" name="passengers" min="1" max="{{ $vehicle->seats }}" value="{{ $passengers }}"
                                title="{{ __('ui.passengers_count') }}" placeholder="{{ __('ui.passengers_count') }}"

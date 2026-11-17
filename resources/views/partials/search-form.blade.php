@@ -45,17 +45,15 @@
                 @include('partials.city-datalist', ['id' => 'city-list', 'for' => 'hotels'])
             </div>
 
-            <div class="{{ $boxClass }}">
-                <label class="{{ $labelClass }}"><i class="fa-solid fa-calendar-days text-sky-500"></i> {{ __('ui.check_in') }}</label>
-                <input type="date" name="check_in" class="{{ $inputClass }}" min="{{ today()->toDateString() }}"
-                       value="{{ old('check_in', $params['check_in'] ?? today()->addDay()->toDateString()) }}" required>
-            </div>
-
-            <div class="{{ $boxClass }}">
-                <label class="{{ $labelClass }}"><i class="fa-solid fa-calendar-check text-rose-500"></i> {{ __('ui.check_out') }}</label>
-                <input type="date" name="check_out" class="{{ $inputClass }}" min="{{ today()->addDay()->toDateString() }}"
-                       value="{{ old('check_out', $params['check_out'] ?? today()->addDays(2)->toDateString()) }}" required>
-            </div>
+            @include('partials.date-range-picker', [
+                'type'      => 'hotels',
+                'class'     => 'md:col-span-2',
+                'label'     => __('ui.check_in') . ' - ' . __('ui.check_out'),
+                'startName' => 'check_in',
+                'endName'   => 'check_out',
+                'start'     => old('check_in', $params['check_in'] ?? today()->addDay()->toDateString()),
+                'end'       => old('check_out', $params['check_out'] ?? today()->addDays(2)->toDateString()),
+            ])
 
             <div class="{{ $boxClass }}">
                 <label class="{{ $labelClass }}"><i class="fa-solid fa-users text-sky-500"></i> {{ __('ui.guests') }}</label>

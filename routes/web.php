@@ -21,6 +21,7 @@ use App\Http\Controllers\Partner\PayoutController as PartnerPayoutController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Partner\ProfileController;
 use App\Http\Controllers\Partner\RoomStockController;
+use App\Http\Controllers\CalendarPriceController;
 use App\Http\Controllers\CorporateRegistrationController;
 use App\Http\Controllers\Admin\FaqAdminController;
 use App\Http\Controllers\Partner\RoomTypeController;
@@ -61,6 +62,7 @@ Route::get('/cars/{vehicle}', [CarSearchController::class, 'show'])->name('cars.
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 // Pilihan bahasa & mata uang (tamu dan user login)
 Route::post('/preferences', [PreferenceController::class, 'update'])->name('preferences.update');
+Route::get('/calendar/prices', [CalendarPriceController::class, 'index'])->middleware('throttle:60,1')->name('calendar.prices');
 
 // Lupa dan reset password (tamu)
 Route::middleware('guest')->group(function () {

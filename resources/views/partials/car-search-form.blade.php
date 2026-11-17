@@ -27,17 +27,16 @@
         @include('partials.city-datalist', ['id' => 'car-city-list', 'for' => 'cars'])
     </div>
 
-    <div class="{{ $box }}">
-        <label class="{{ $label }}"><i class="fa-solid fa-calendar-day text-sagara-blue"></i> {{ __('ui.pickup_date') }}</label>
-        <input type="date" name="pickup_date" required class="{{ $input }}" min="{{ today()->toDateString() }}"
-               value="{{ old('pickup_date', $params['pickup_date'] ?? today()->addDay()->toDateString()) }}">
-    </div>
-
-    <div class="{{ $box }}">
-        <label class="{{ $label }}"><i class="fa-solid fa-calendar-check text-sagara-blue"></i> {{ __('ui.return_date') }}</label>
-        <input type="date" name="return_date" required class="{{ $input }}" min="{{ today()->addDay()->toDateString() }}"
-               value="{{ old('return_date', $params['return_date'] ?? today()->addDays(3)->toDateString()) }}">
-    </div>
+    {{-- Satu kolom tanggal: kalender rentang dengan harga per hari --}}
+    @include('partials.date-range-picker', [
+        'type'      => 'cars',
+        'class'     => 'md:col-span-2',
+        'label'     => __('ui.pickup_date') . ' - ' . __('ui.return_date'),
+        'startName' => 'pickup_date',
+        'endName'   => 'return_date',
+        'start'     => old('pickup_date', $params['pickup_date'] ?? today()->addDay()->toDateString()),
+        'end'       => old('return_date', $params['return_date'] ?? today()->addDays(3)->toDateString()),
+    ])
 
     <div class="{{ $box }}">
         <label class="{{ $label }}"><i class="fa-solid fa-id-card-clip text-sagara-blue"></i> {{ __('ui.driver_mode') }}</label>
