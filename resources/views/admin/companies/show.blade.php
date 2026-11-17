@@ -18,9 +18,17 @@
         {{-- HEADER --}}
         <div class="flex flex-wrap items-end justify-between gap-3">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 break-words min-w-0">{{ $company->company_name }}</h1>
-            @if ($company->corporate_code)
-                <span class="{{ $chip }} font-mono">{{ $company->corporate_code }}</span>
-            @endif
+
+            <div class="flex flex-wrap items-center gap-3">
+                @if ($company->corporate_code)
+                    <span class="{{ $chip }} font-mono">{{ $company->corporate_code }}</span>
+                @endif
+
+                <a href="{{ route('admin.companies.audit', $company) }}"
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-sky-50 hover:text-sky-600 text-sm font-bold transition">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> {{ __('ui.financial_audit') }}
+                </a>
+            </div>
         </div>
 
         @if ($errors->any())
@@ -135,6 +143,8 @@
                        placeholder="{{ __('ui.topup_amount') }}" required class="{{ $input }}">
                 <input name="note" maxlength="255" value="{{ old('note') }}"
                        placeholder="{{ __('ui.topup_note') }}" class="{{ $input }}">
+                <input name="reference" maxlength="100" value="{{ old('reference') }}"
+                       placeholder="{{ __('ui.topup_reference') }}" class="{{ $input }}">
                 <button class="w-full px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition">
                     <i class="fa-solid fa-plus"></i> {{ __('ui.topup') }}
                 </button>

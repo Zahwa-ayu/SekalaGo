@@ -26,6 +26,7 @@ use App\Http\Controllers\CorporateRegistrationController;
 use App\Http\Controllers\Admin\FaqAdminController;
 use App\Http\Controllers\Partner\RoomTypeController;
 use App\Http\Controllers\PartnerRegistrationController;
+use App\Http\Controllers\Corporate\AuditController as CorporateAuditController;
 use App\Http\Controllers\PreferenceController;
 use App\Http\Controllers\Admin\SocialMediaController as AdminSocialMediaController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -171,6 +172,10 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('companies/{company}/reopen', [AdminCompanyController::class, 'reopen'])->name('companies.reopen');
         Route::get('companies/{company}/documents/{type}', [AdminCompanyController::class, 'document'])->where('type', 'tax|license')->name('companies.document');
 
+        Route::get('companies/{company}/audit', [CorporateAuditController::class, 'index'])->name('companies.audit');
+        Route::get('companies/{company}/audit/csv', [CorporateAuditController::class, 'csv'])->name('companies.audit.csv');
+        Route::get('companies/{company}/audit/pdf', [CorporateAuditController::class, 'pdf'])->name('companies.audit.pdf');
+
                 // Pencairan dana mitra
         Route::get('payouts', [AdminPayoutController::class, 'index'])->name('payouts.index');
         Route::post('payouts', [AdminPayoutController::class, 'store'])->name('payouts.store');
@@ -306,5 +311,9 @@ Route::middleware(['auth', 'role:corporate'])
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
             Route::get('reports/csv', [ReportController::class, 'csv'])->name('reports.csv');
             Route::get('reports/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
+
+            Route::get('audit', [CorporateAuditController::class, 'index'])->name('audit.index');
+            Route::get('audit/csv', [CorporateAuditController::class, 'csv'])->name('audit.csv');
+            Route::get('audit/pdf', [CorporateAuditController::class, 'pdf'])->name('audit.pdf');
         });
     });

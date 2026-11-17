@@ -117,6 +117,7 @@ class DashboardMenu
                     ['section' => 'ui.menu_bookings'],
                     ['fa-clipboard-check', 'ui.company_bookings', 'corporate.bookings.index', ['corporate.bookings.*']],
                     ['fa-chart-column', 'ui.reports', 'corporate.reports.index', ['corporate.reports.*']],
+                    ['fa-magnifying-glass-chart', 'ui.financial_audit', 'corporate.audit.index', ['corporate.audit.*']],
 
                     // Akun sendiri
                     ['section' => 'ui.menu_account'],

@@ -12,4 +12,11 @@ class DepositTransaction extends Model
 
     public function company() { return $this->belongsTo(Company::class); }
     public function creator() { return $this->belongsTo(User::class, 'created_by'); }
+
+    protected static function booted(): void
+    {
+        // Buku besar hanya bertambah: baris yang sudah ada tidak boleh diubah atau dihapus
+        static::updating(fn () => throw new \LogicException('Mutasi saldo tidak boleh diubah.'));
+        static::deleting(fn () => throw new \LogicException('Mutasi saldo tidak boleh dihapus.'));
+    }
 }

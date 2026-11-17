@@ -110,9 +110,10 @@ class CompanyController extends Controller
         $data = $request->validate([
             'amount' => ['required', 'integer', 'min:1'],
             'note'   => ['nullable', 'string', 'max:255'],
+            'reference' => ['nullable', 'string', 'max:100'],
         ]);
 
-        $this->deposits->credit($company, (int) $data['amount'], 'topup', $data['note'] ?? null, null, $request->user());
+        $this->deposits->credit($company, (int) $data['amount'], 'topup', $data['note'] ?? null, $data['reference'] ?? null, $request->user());
 
         return redirect()->route('admin.companies.show', $company)->with('success', __('ui.topup_done'));
     }
