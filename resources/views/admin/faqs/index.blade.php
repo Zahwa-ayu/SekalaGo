@@ -75,5 +75,7 @@
             </table>
         </div>
     </div>
+
+    <div class="mt-6">{{ $faqs->links() }}</div>
 </section>
 @endsection

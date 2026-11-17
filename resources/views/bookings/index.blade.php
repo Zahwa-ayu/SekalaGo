@@ -76,5 +76,7 @@
                 </table>
             </div>
         </div>
+
+        <div class="mt-6">{{ $bookings->links() }}</div>
     </section>
-@endsection`
+@endsection

@@ -18,7 +18,8 @@ class VehicleController extends Controller
         $vehicles = Vehicle::with(['partner', 'translations', 'photos'])
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->latest()
-            ->get();
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         $counts = Vehicle::selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status');
 

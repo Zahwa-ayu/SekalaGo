@@ -115,5 +115,7 @@
             </table>
         </div>
     </div>
+
+    <div class="mt-6">{{ $vehicles->links() }}</div>
 </section>
 @endsection

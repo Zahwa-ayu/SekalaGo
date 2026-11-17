@@ -21,8 +21,9 @@ class CurrencyController extends Controller
             ->withCount('bookings')
             ->orderByRaw('code = ? DESC', [config('sekalago.default_currency')])
             ->orderBy('code')
-            ->get();
-
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
+            
         return view('admin.currencies.index', compact('currencies'));
     }
 

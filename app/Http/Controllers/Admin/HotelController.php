@@ -22,7 +22,7 @@ class HotelController extends Controller
         }
 
         return view('admin.hotels.index', [
-            'hotels' => $query->get(),
+            'hotels' => $query->paginate((int) config('sekalago.per_page', 15))->withQueryString(),
             'status' => $status,
             'counts' => Hotel::selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status'),
         ]);

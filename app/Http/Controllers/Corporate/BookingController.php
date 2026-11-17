@@ -37,7 +37,8 @@ class BookingController extends Controller
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->with('user.companyUser')
             ->latest()
-            ->get();
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         $counts = (clone $base)
             ->selectRaw('status, count(*) as total')

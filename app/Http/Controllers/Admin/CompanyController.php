@@ -26,7 +26,8 @@ class CompanyController extends Controller
             ->when($status, fn ($q, $value) => $q->where('verification_status', $value))
             ->orderByRaw("verification_status = 'pending' DESC")   // yang menunggu selalu di atas
             ->orderBy('company_name')
-            ->get();
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         $counts = Company::selectRaw('verification_status, COUNT(*) AS total')
             ->groupBy('verification_status')

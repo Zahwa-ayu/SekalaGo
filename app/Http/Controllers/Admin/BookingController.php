@@ -30,7 +30,8 @@ class BookingController extends Controller
             ->with('partner')
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->latest()
-            ->get();
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         return view('admin.bookings.index', compact('summary', 'bookings', 'status'));
     }

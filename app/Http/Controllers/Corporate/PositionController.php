@@ -14,7 +14,9 @@ class PositionController extends Controller
     public function index(Request $request)
     {
         $company   = $this->company($request);
-        $positions = $company->positions()->withCount('members')->orderBy('booking_limit')->get();
+        $positions = $company->positions()->withCount('members')->orderBy('booking_limit')
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         return view('corporate.positions.index', compact('company', 'positions'));
     }

@@ -16,7 +16,9 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $company   = $this->company($request);
-        $employees = $company->companyUsers()->with(['user', 'position'])->orderBy('full_name')->get();
+        $employees = $company->companyUsers()->with(['user', 'position'])->orderBy('full_name')
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         return view('corporate.employees.index', compact('company', 'employees'));
     }

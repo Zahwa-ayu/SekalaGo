@@ -1241,4 +1241,13 @@ return [
 'calendar_legend_cars_idr' => 'Harga terendah per hari, dalam ribuan Rupiah',
 'calendar_legend_hotels_other' => 'Harga terendah per malam (:currency)',
 'calendar_legend_cars_other' => 'Harga terendah per hari (:currency)',
+
+// pagination
+'pagination_label' => 'Navigasi halaman',
+'pagination_showing' => 'Menampilkan :from-:to dari :total',
+'pagination_previous' => 'Sebelumnya',
+'pagination_next' => 'Berikutnya',
+'pagination_page_of' => 'Halaman :page dari :last',
+'pagination_page' => 'Halaman :page',
+'pagination_go_to' => 'Ke halaman :page',
 ];

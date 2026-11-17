@@ -62,5 +62,7 @@
                 </table>
             </div>
         </div>
+
+        <div class="mt-6">{{ $companies->links() }}</div>
     </section>
 @endsection

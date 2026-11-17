@@ -88,5 +88,7 @@
                 </table>
             </div>
         </div>
+
+        <div class="mt-6">{{ $partners->links() }}</div>
     </section>
 @endsection

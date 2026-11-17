@@ -27,7 +27,8 @@ class PartnerController extends Controller
         $partners = Partner::with(['user', 'latestAgreement'])
             ->when($status !== 'all', fn ($q) => $q->where('verification_status', $status))
             ->latest()
-            ->get();
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         $counts = Partner::selectRaw('verification_status, count(*) as total')
             ->groupBy('verification_status')

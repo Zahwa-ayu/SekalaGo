@@ -36,7 +36,7 @@ class UserController extends Controller
             })
             ->when($request->filled('type'), fn ($query) => $query->where('user_type', $request->query('type')))
             ->orderBy('email')
-            ->paginate(10)
+            ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();
 
         return view('admin.users.index', [

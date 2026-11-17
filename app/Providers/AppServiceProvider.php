@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
@@ -61,11 +62,15 @@ class AppServiceProvider extends ServiceProvider
                 ->line(__('ui.reset_mail_ignore'));
         });
 
-            foreach ([
-                \App\Models\Booking::class, \App\Models\Partner::class, \App\Models\PartnerAgreement::class,
-                \App\Models\Company::class, \App\Models\Hotel::class, \App\Models\Vehicle::class, \App\Models\Payout::class,
-            ] as $model) {
-                $model::observe(\App\Observers\NotificationEvents::class);
-            }
+        foreach ([
+            \App\Models\Booking::class, \App\Models\Partner::class, \App\Models\PartnerAgreement::class,
+            \App\Models\Company::class, \App\Models\Hotel::class, \App\Models\Vehicle::class, \App\Models\Payout::class,
+        ] as $model) {
+            $model::observe(\App\Observers\NotificationEvents::class);
+        }
+
+        // Satu tampilan pagination untuk seluruh aplikasi
+        Paginator::defaultView('vendor.pagination.sekalago');
+        Paginator::defaultSimpleView('vendor.pagination.sekalago-simple');
     }
 }

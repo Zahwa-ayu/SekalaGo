@@ -22,7 +22,9 @@ class VehicleController extends Controller
 
     public function index(Request $request)
     {
-        $vehicles = $this->partner($request)->vehicles()->with('translations', 'photos')->latest()->get();
+        $vehicles = $this->partner($request)->vehicles()->with('translations', 'photos')->latest()
+        ->paginate((int) config('sekalago.per_page', 15))
+        ->withQueryString();
 
         return view('partner.vehicles.index', compact('vehicles'));
     }

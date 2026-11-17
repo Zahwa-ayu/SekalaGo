@@ -24,7 +24,9 @@ class HotelController extends Controller
     public function index(Request $request)
     {
         $partner = $this->partner($request);
-        $hotels  = $partner->hotels()->with('translations')->latest()->get();
+        $hotels  = $partner->hotels()->with('translations')->latest()
+        ->paginate((int) config('sekalago.per_page', 15))
+        ->withQueryString();
 
         return view('partner.hotels.index', compact('partner', 'hotels'));
     }

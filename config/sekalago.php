@@ -11,6 +11,7 @@ return [
     'payout_unmarked_car_days' => 7,        // mobil yang tidak pernah ditandai kembali dicairkan setelah sekian hari
     'approval_hold_hours' => 24,
     'corporate_default_limit' => 2000000,
+    'per_page' => 1,
     // Tampilkan tautan reset password di layar (hanya untuk demo tanpa server email)
     'show_reset_link' => env('SHOW_RESET_LINK', false),
 

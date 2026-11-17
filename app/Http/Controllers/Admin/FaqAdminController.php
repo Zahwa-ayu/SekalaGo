@@ -21,7 +21,8 @@ class FaqAdminController extends Controller
         $faqs = Faq::with('translations')
             ->orderBy('category')
             ->orderBy('sort_order')
-            ->get();
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         return view('admin.faqs.index', compact('faqs'));
     }

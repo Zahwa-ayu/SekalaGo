@@ -17,7 +17,7 @@ class SocialMediaController extends Controller
     {
         $socialMedia = SocialMedia::orderBy('order')
             ->orderByDesc('created_at')
-            ->paginate(10)
+            ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();
 
         $platforms = config('social_platforms');

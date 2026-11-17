@@ -34,7 +34,8 @@ class BookingController extends Controller
         $bookings = (clone $base)
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->latest()
-            ->get();
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         return view('partner.bookings.index', compact('summary', 'bookings', 'status'));
     }

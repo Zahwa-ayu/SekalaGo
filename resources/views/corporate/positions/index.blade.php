@@ -121,5 +121,7 @@
                 </table>
             </div>
         </div>
+
+        <div class="mt-6">{{ $positions->links() }}</div>
     </section>
 @endsection

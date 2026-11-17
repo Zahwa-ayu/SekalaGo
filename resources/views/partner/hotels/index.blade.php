@@ -91,5 +91,7 @@
             </table>
         </div>
     </div>
+
+    <div class="mt-6">{{ $hotels->links() }}</div>
 </section>
 @endsection

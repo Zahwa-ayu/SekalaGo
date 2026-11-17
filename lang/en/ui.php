@@ -1238,4 +1238,13 @@ return [
 'calendar_legend_cars_idr' => 'Lowest price per day, in thousands of Rupiah',
 'calendar_legend_hotels_other' => 'Lowest price per night (:currency)',
 'calendar_legend_cars_other' => 'Lowest price per day (:currency)',
+
+// pagination
+'pagination_label' => 'Page navigation',
+'pagination_showing' => 'Showing :from-:to of :total',
+'pagination_previous' => 'Previous',
+'pagination_next' => 'Next',
+'pagination_page_of' => 'Page :page of :last',
+'pagination_page' => 'Page :page',
+'pagination_go_to' => 'Go to page :page',
 ];
