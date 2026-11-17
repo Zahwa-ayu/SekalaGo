@@ -249,6 +249,13 @@
                         <p class="text-sm text-slate-500">{{ __('ui.pick_dates_hint') }}</p>
                     @endif
 
+                    {{-- Catatan: tanggal yang tampil adalah tanggal bawaan, bukan pilihan user --}}
+                    @if (! empty($datesAreDefault))
+                        <div class="rounded-xl bg-sky-50 border border-sky-100 px-4 py-3 text-xs text-sky-800">
+                            <i class="fa-solid fa-circle-info"></i> {{ __('ui.dates_default_hint') }}
+                        </div>
+                    @endif
+
                     {{-- Ubah tanggal & jumlah tamu --}}
                     <form method="GET" action="{{ route('hotels.show', $hotel) }}" class="grid grid-cols-2 gap-2">
                         @if (! empty($params['city']))

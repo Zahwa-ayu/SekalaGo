@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Vehicle;
 use App\Services\Search\CarSearchService;
 use App\Services\VehicleAvailability;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -49,34 +50,39 @@ class CarSearchController extends Controller
 
         $vehicle->load('translations', 'photos');
 
-        $params     = null;
-        $days       = null;
-        $available  = null;
-        $freeUnits  = null;
-        $passengers = 1;
-        $driver     = null;
+        // Tanpa tanggal di alamat: pakai tanggal contoh agar ketersediaan langsung terlihat dan bisa dipesan
+        $hasDates = $request->filled('pickup_date') && $request->filled('return_date');
+        $input    = $hasDates
+            ? $request->all()
+            : [
+                'city'        => $request->input('city'),
+                'pickup_date' => today()->addDay()->toDateString(),
+                'return_date' => today()->addDays(1 + max(2, (int) $vehicle->min_days))->toDateString(),
+                'driver'      => $request->input('driver'),
+                'passengers'  => $request->input('passengers'),
+            ];
 
-        if ($request->filled('pickup_date') && $request->filled('return_date')) {
-            $params = $request->validate([
-                'city'        => ['nullable', 'string', 'max:100'],
-                'pickup_date' => ['required', 'date', 'after_or_equal:today'],
-                'return_date' => ['required', 'date', 'after:pickup_date'],
-                'driver'      => ['nullable', Rule::in(['with_driver', 'self_drive'])],
-                'passengers'  => ['nullable', 'integer', 'between:1,' . $vehicle->seats],
-            ]);
+        $params = Validator::make($input, [
+            'city'        => ['nullable', 'string', 'max:100'],
+            'pickup_date' => ['required', 'date', 'after_or_equal:today'],
+            'return_date' => ['required', 'date', 'after:pickup_date'],
+            'driver'      => ['nullable', Rule::in(['with_driver', 'self_drive'])],
+            'passengers'  => ['nullable', 'integer', 'between:1,' . $vehicle->seats],
+        ])->validate();
 
-            [$pickup, $return, $days] = $this->service->period($params);
+        [$pickup, $return, $days] = $this->service->period($params);
 
-            $passengers = (int) ($params['passengers'] ?? 1);
-            $driver     = $this->effectiveDriver($vehicle, $params['driver'] ?? null);
-            $freeUnits  = $this->availability->freeUnits($vehicle, $pickup, $return);
+        $passengers = (int) ($params['passengers'] ?? 1);
+        $driver     = $this->effectiveDriver($vehicle, $params['driver'] ?? null);
+        $freeUnits  = $this->availability->freeUnits($vehicle, $pickup, $return);
 
-            $available = $days >= $vehicle->min_days
-                && $freeUnits >= 1
-                && Vehicle::whereKey($vehicle->id)->availableFor($pickup, $return)->exists();
-        }
+        $available = $days >= $vehicle->min_days
+            && $freeUnits >= 1
+            && Vehicle::whereKey($vehicle->id)->availableFor($pickup, $return)->exists();
 
-        return view('cars.show', compact('vehicle', 'params', 'days', 'available', 'freeUnits', 'passengers', 'driver'));
+        $datesAreDefault = ! $hasDates;
+
+        return view('cars.show', compact('vehicle', 'params', 'days', 'available', 'freeUnits', 'passengers', 'driver', 'datesAreDefault'));
     }
 
     /** Opsi supir yang berlaku: pilihan pengguna jika armada menawarkannya, kalau tidak yang tersedia. */

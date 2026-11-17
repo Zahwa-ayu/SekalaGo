@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Hotel;
 use App\Services\Search\HotelSearchService;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class HotelSearchController extends Controller
@@ -34,31 +35,41 @@ class HotelSearchController extends Controller
 
         $hotel->load('translations', 'facilities', 'photos', 'nearbyPlaces');
 
-        $query  = $hotel->roomTypes()->with('translations', 'photos', 'facilities')->orderBy('base_price');
-        $params = null;
-        $nights = null;
+        // Tanpa tanggal di alamat: pakai tanggal contoh (besok, 1 malam) supaya ketersediaan langsung terlihat
+        // dan kamar yang tersedia bisa langsung dipesan. Pengunjung tinggal mengubah tanggalnya.
+        $hasDates = $request->filled('check_in') && $request->filled('check_out');
+        $input    = $hasDates
+            ? $request->all()
+            : [
+                'city'      => $request->input('city'),
+                'check_in'  => today()->addDay()->toDateString(),
+                'check_out' => today()->addDays(2)->toDateString(),
+                'guests'    => $request->input('guests'),
+            ];
 
-        if ($request->filled('check_in') && $request->filled('check_out')) {
-            $params = $request->validate([
-                'city'      => ['nullable', 'string', 'max:100'],
-                'check_in'  => ['required', 'date', 'after_or_equal:today'],
-                'check_out' => ['required', 'date', 'after:check_in'],
-                'guests'    => ['nullable', 'integer', 'between:1,20'],
-            ]);
-            $params['guests'] = $params['guests'] ?? 2;
+        $params = Validator::make($input, [
+            'city'      => ['nullable', 'string', 'max:100'],
+            'check_in'  => ['required', 'date', 'after_or_equal:today'],
+            'check_out' => ['required', 'date', 'after:check_in'],
+            'guests'    => ['nullable', 'integer', 'between:1,20'],
+        ])->validate();
 
-            [$checkIn, $checkOut, $nights] = $this->service->stay($params);
+        $params['guests'] = $params['guests'] ?? 2;
 
-            $query->withOpenNights($checkIn, $checkOut);
-        }
+        [$checkIn, $checkOut, $nights] = $this->service->stay($params);
 
-        $roomTypes = $query->get()->each(function ($roomType) use ($params, $nights) {
-            $roomType->is_open = $params
-                ? ($roomType->open_nights === $nights && $roomType->capacity >= $params['guests'])
-                : null;
-        });
+        $roomTypes = $hotel->roomTypes()
+            ->with('translations', 'photos', 'facilities')
+            ->withOpenNights($checkIn, $checkOut)
+            ->orderBy('base_price')
+            ->get()
+            ->each(function ($roomType) use ($params, $nights) {
+                $roomType->is_open = $roomType->open_nights === $nights && $roomType->capacity >= $params['guests'];
+            });
 
-        return view('hotels.show', compact('hotel', 'roomTypes', 'params', 'nights'));
+        $datesAreDefault = ! $hasDates;
+
+        return view('hotels.show', compact('hotel', 'roomTypes', 'params', 'nights', 'datesAreDefault'));
     }
 
     /** Hotel pilihan beserta harga mulai dari (tanpa pencarian). */
