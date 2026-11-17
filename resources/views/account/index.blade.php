@@ -102,8 +102,13 @@
                 &middot; {{ __('ui.currency') }}: <strong class="text-slate-900">{{ $currentCode }}</strong>
             </div>
         </div>
-        <a href="{{ route('account.preferences') }}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-sky-50 hover:text-sky-600 text-sm font-bold transition">
-            <i class="fa-solid fa-language mr-1"></i> {{ __('ui.language_currency') }}
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('account.notifications') }}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-sky-50 hover:text-sky-600 text-sm font-bold transition">
+                <i class="fa-regular fa-bell mr-1"></i> {{ __('ui.notifications') }}
+            </a>
+            <a href="{{ route('account.preferences') }}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-sky-50 hover:text-sky-600 text-sm font-bold transition">
+                <i class="fa-solid fa-language mr-1"></i> {{ __('ui.language_currency') }}
+            </a>
+        </div>
     </div>
 @endsection
