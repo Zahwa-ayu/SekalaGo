@@ -120,12 +120,13 @@
                                         <a href="{{ route('admin.currencies.edit', $currency) }}" class="text-sm font-bold text-sky-600 hover:underline">{{ __('ui.edit') }}</a>
 
                                         @if (! $currency->isBase() && $currency->bookings_count === 0)
-                                            <form method="POST" action="{{ route('admin.currencies.destroy', $currency) }}"
-                                                  onsubmit="return confirm(@js(__('ui.currency_delete_confirm')))">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="text-sm font-bold text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                            </form>
+                                            @include('partials.delete', [
+                                                'action'  => route('admin.currencies.destroy', $currency),
+                                                'title'   => 'Hapus mata uang ini?',
+                                                'message' => '"' . $currency->code . ' - ' . $currency->name . '" akan dihapus.',
+                                                'label'   => __('ui.delete'),
+                                                'class'   => 'text-sm font-bold text-red-600 hover:underline',
+                                            ])
                                         @endif
                                     </div>
                                 </td>

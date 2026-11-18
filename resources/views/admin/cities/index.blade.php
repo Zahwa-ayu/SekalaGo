@@ -121,12 +121,12 @@
                                         <a href="{{ route('admin.cities.edit', $city) }}" class="text-sagara-blue hover:underline">{{ __('ui.edit') }}</a>
 
                                         @unless ($used)
-                                            <form method="POST" action="{{ route('admin.cities.destroy', $city) }}"
-                                                  onsubmit="return confirm(@js(__('ui.city_delete_confirm')))">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                            </form>
+                                            @include('partials.delete', [
+                                                'action'  => route('admin.cities.destroy', $city),
+                                                'title'   => 'Hapus kota ini?',
+                                                'message' => '"' . $city->name . '" akan dihapus.',
+                                                'label'   => __('ui.delete'),
+                                            ])
                                         @endunless
                                     </div>
                                 </td>

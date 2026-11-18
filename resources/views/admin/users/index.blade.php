@@ -102,12 +102,12 @@
                                             </button>
                                         </form>
 
-                                        <form method="POST" action="{{ route('admin.users.destroy', $u) }}"
-                                              data-confirm="{{ __('ui.confirm_delete', ['name' => $u->display_name]) }}"
-                                              onsubmit="return confirm(this.dataset.confirm)">
-                                            @csrf @method('DELETE')
-                                            <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                        </form>
+                                        @include('partials.delete', [
+                                            'action'  => route('admin.users.destroy', $u),
+                                            'title'   => 'Hapus pengguna ini?',
+                                            'message' => '"' . $u->display_name . '" akan dihapus.',
+                                            'label'   => __('ui.delete'),
+                                        ])
                                     @endunless
                                 </div>
                             </td>

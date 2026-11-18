@@ -17,7 +17,7 @@
             <i class="fa-solid fa-plus mr-1"></i> {{ __('ui.add_vehicle') }}
         </a>
     </div>
-    
+
     {{-- TABEL --}}
     <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
@@ -88,12 +88,12 @@
                                         {{ __('ui.edit') }}
                                     </a>
 
-                                    <form method="POST" action="{{ route('partner.vehicles.destroy', $vehicle) }}"
-                                          onsubmit="return confirm(@js(__('ui.delete_confirm')))">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                    </form>
+                                    @include('partials.delete', [
+                                        'action'  => route('partner.vehicles.destroy', $vehicle),
+                                        'title'   => 'Hapus kendaraan ini?',
+                                        'message' => '"' . $vehicle->name . '" akan dihapus.',
+                                        'label'   => __('ui.delete'),
+                                    ])
                                 </div>
                             </td>
                         </tr>

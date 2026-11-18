@@ -91,12 +91,19 @@
                                     </form>
 
                                     @if ($used === 0)
-                                        <form method="POST" action="{{ route('admin.facilities.destroy', $facility) }}"
+                                        {{-- <form method="POST" action="{{ route('admin.facilities.destroy', $facility) }}"
                                               data-confirm="{{ __('ui.confirm_delete', ['name' => $facility->label]) }}"
                                               onsubmit="return confirm(this.dataset.confirm)">
                                             @csrf @method('DELETE')
                                             <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                        </form>
+                                        </form> --}}
+
+                                    @include('partials.delete', [
+                                        'action'  => route('admin.facilities.destroy', $facility),
+                                        'title'   => 'Hapus data ini?',
+                                        'message' => $facility->title,
+                                        'label'   => __('ui.delete'),
+                                    ])
                                     @endif
                                 </div>
                             </td>

@@ -76,12 +76,19 @@
                                         </button>
                                     </form>
 
-                                    <form method="POST" action="{{ route('admin.social-media.destroy', $sm) }}"
+                                    {{-- <form method="POST" action="{{ route('admin.social-media.destroy', $sm) }}"
                                           data-confirm="{{ __('ui.confirm_delete', ['name' => $sm->platform]) }}"
                                           onsubmit="return confirm(this.dataset.confirm)">
                                         @csrf @method('DELETE')
                                         <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                    </form>
+                                    </form> --}}
+
+                                    @include('partials.delete', [
+                                        'action'  => route('admin.social-media.destroy', $sm),
+                                        'title'   => 'Hapus data ini?',
+                                        'message' => $sm->title,
+                                        'label'   => __('ui.delete'),
+                                    ])
                                 </div>
                             </td>
                         </tr>

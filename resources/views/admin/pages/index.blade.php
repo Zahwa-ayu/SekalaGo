@@ -62,12 +62,12 @@
                                 <div class="flex items-center gap-3">
                                     <a href="{{ route('admin.pages.edit', $page) }}" class="text-sagara-blue hover:underline">{{ __('ui.edit') }}</a>
 
-                                    <form method="POST" action="{{ route('admin.pages.destroy', $page) }}"
-                                          data-confirm="{{ __('ui.confirm_delete', ['name' => $page->title]) }}"
-                                          onsubmit="return confirm(this.dataset.confirm)">
-                                        @csrf @method('DELETE')
-                                        <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                    </form>
+                                    @include('partials.delete', [
+                                        'action'  => route('admin.pages.destroy', $page),
+                                        'title'   => 'Hapus halaman ini?',
+                                        'message' => '"' . $page->title . '" dan semua terjemahannya akan dihapus.',
+                                        'label'   => __('ui.delete'),
+                                    ])
                                 </div>
                             </td>
                         </tr>

@@ -70,12 +70,19 @@
                                         <button class="text-amber-600 hover:underline">{{ $contact->is_active ? __('ui.deactivate') : __('ui.activate') }}</button>
                                     </form>
 
-                                    <form method="POST" action="{{ route('admin.contact-info.destroy', $contact) }}"
+                                    {{-- <form method="POST" action="{{ route('admin.contact-info.destroy', $contact) }}"
                                           data-confirm="{{ __('ui.confirm_delete', ['name' => $contact->type_name]) }}"
                                           onsubmit="return confirm(this.dataset.confirm)">
                                         @csrf @method('DELETE')
                                         <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                    </form>
+                                    </form> --}}
+
+                                    @include('partials.delete', [
+                                        'action'  => route('admin.contact-info.destroy', $contact),
+                                        'title'   => 'Hapus data ini?',
+                                        'message' => $contact->title,
+                                        'label'   => __('ui.delete'),
+                                    ])
                                 </div>
                             </td>
                         </tr>

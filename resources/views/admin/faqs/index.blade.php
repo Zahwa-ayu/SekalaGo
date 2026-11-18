@@ -48,12 +48,19 @@
                                         {{ __('ui.edit') }}
                                     </a>
 
-                                    <form method="POST" action="{{ route('admin.faqs.destroy', $faq) }}"
+                                    {{-- <form method="POST" action="{{ route('admin.faqs.destroy', $faq) }}"
                                           onsubmit="return confirm('Hapus FAQ ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                    </form>
+                                    </form> --}}
+
+                                    @include('partials.delete', [
+                                        'action'  => route('admin.faqs.destroy', $faq),
+                                        'title'   => 'Hapus data ini?',
+                                        'message' => $faq->title,
+                                        'label'   => __('ui.delete'),
+                                    ])
                                 </div>
                             </td>
                         </tr>

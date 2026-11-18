@@ -100,12 +100,13 @@
                                         <a href="{{ route('corporate.positions.edit', $position) }}" class="text-sagara-blue hover:underline">
                                             {{ __('ui.edit') }}
                                         </a>
-                                        <form method="POST" action="{{ route('corporate.positions.destroy', $position) }}"
-                                              onsubmit="return confirm(@js(__('ui.delete_confirm')))">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                        </form>
+
+                                        @include('partials.delete', [
+                                            'action'  => route('corporate.positions.destroy', $position),
+                                            'title'   => 'Hapus jabatan ini?',
+                                            'message' => '"' . $position->name . '" akan dihapus.',
+                                            'label'   => __('ui.delete'),
+                                        ])
                                     </div>
                                 </td>
                             </tr>

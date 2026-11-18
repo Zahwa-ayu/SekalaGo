@@ -64,12 +64,12 @@
                                         {{ __('ui.edit') }}
                                     </a>
 
-                                    <form method="POST" action="{{ route('partner.hotels.destroy', $hotel) }}"
-                                          onsubmit="return confirm(@js(__('ui.delete_confirm')))">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="text-red-600 hover:underline">{{ __('ui.delete') }}</button>
-                                    </form>
+                                    @include('partials.delete', [
+                                        'action'  => route('partner.hotels.destroy', $hotel),
+                                        'title'   => 'Hapus hotel ini?',
+                                        'message' => '"' . $hotel->name . '" akan dihapus.',
+                                        'label'   => __('ui.delete'),
+                                    ])
                                 </div>
                             </td>
                         </tr>
