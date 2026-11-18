@@ -52,6 +52,7 @@ class DashboardMenu
                     'children' => [
                         ['fa-location-dot', 'ui.cities', 'admin.cities.index', ['admin.cities.*']],
                         ['fa-coins', 'ui.currencies', 'admin.currencies.index', ['admin.currencies.*']],
+                        ['fa-list-check', 'ui.facilities', 'admin.facilities.index', ['admin.facilities.*']],
                     ],
                 ],
                 [

@@ -37,7 +37,7 @@ class HotelController extends Controller
 
         return view('partner.hotels.create', [
             'hotel'      => new Hotel(),
-            'facilities' => Facility::forHotel()->orderBy('code')->get(),
+            'facilities' => Facility::choices('hotel'),
         ]);
     }
 
@@ -75,7 +75,7 @@ class HotelController extends Controller
 
         return view('partner.hotels.edit', [
             'hotel'      => $hotel,
-            'facilities' => Facility::forHotel()->orderBy('code')->get(),
+            'facilities' => Facility::choices('hotel', $hotel->facilities()->pluck('facilities.id')->all()),
             'activities' => $hotel->activities()->limit(15)->get()
         ]);
     }

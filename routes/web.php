@@ -15,6 +15,7 @@ use App\Http\Controllers\Corporate\ReportController;
 use App\Http\Controllers\Admin\CurrencyController as AdminCurrencyController;
 use App\Http\Controllers\HotelSearchController;
 use App\Http\Controllers\Partner\AgreementController;
+use App\Http\Controllers\Admin\FacilityController as AdminFacilityController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Partner\PayoutController as PartnerPayoutController;
@@ -231,6 +232,10 @@ Route::middleware(['auth', 'role:admin'])
 
         // Manajemen FAQ (dinamis, tampil di halaman publik)
         Route::resource('faqs', FaqAdminController::class)->except(['show']);
+
+                // Master data: fasilitas hotel dan kamar
+        Route::resource('facilities', AdminFacilityController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::patch('facilities/{facility}/status', [AdminFacilityController::class, 'status'])->name('facilities.status');
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)

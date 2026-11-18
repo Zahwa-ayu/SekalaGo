@@ -133,5 +133,12 @@ return [
         'contact_name' => 'nama penanggung jawab',
         'supporting_document' => 'dokumen pendukung',
         'website' => 'situs web',
+
+        'names' => 'nama fasilitas',
+        'names.id' => 'nama bahasa Indonesia',
+        'names.en' => 'nama bahasa Inggris',
+        'names.ko' => 'nama bahasa Korea',
+        'icon_class' => 'ikon',
+        'scope' => 'jenis',
     ],
 ];
