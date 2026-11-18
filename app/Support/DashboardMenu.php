@@ -62,6 +62,7 @@ class DashboardMenu
                         ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
                         ['fa-circle-question', 'ui.faq_management', 'admin.faqs.index', ['admin.faqs.*']],
                         ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],
+                        ['fa-address-book', 'ui.contact_us', 'admin.contact-info.index', ['admin.contact-info.*']],
                     ],
                 ],
 

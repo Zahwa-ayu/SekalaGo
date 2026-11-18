@@ -20,6 +20,7 @@ use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Partner\PayoutController as PartnerPayoutController;
 use App\Http\Controllers\Partner\HotelController;
+use App\Http\Controllers\Admin\ContactInfoController;
 use App\Http\Controllers\Partner\ProfileController;
 use App\Http\Controllers\Partner\RoomStockController;
 use App\Http\Controllers\CalendarPriceController;
@@ -236,6 +237,14 @@ Route::middleware(['auth', 'role:admin'])
                 // Master data: fasilitas hotel dan kamar
         Route::resource('facilities', AdminFacilityController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::patch('facilities/{facility}/status', [AdminFacilityController::class, 'status'])->name('facilities.status');
+
+        Route::prefix('contact-info')->name('contact-info.')->controller(ContactInfoController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::put('{contactInfo}', 'update')->name('update');
+        Route::patch('{contactInfo}/status', 'updateStatus')->name('status');
+        Route::delete('{contactInfo}', 'destroy')->name('destroy');
+    });
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)

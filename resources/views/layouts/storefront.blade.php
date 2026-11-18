@@ -13,6 +13,9 @@
 
     // Sosmed aktif untuk footer (diatur admin di Admin\SocialMediaController)
     $socialLinks = \App\Models\SocialMedia::where('status', 'aktif')->orderBy('order')->get();
+
+    // Kontak aktif untuk footer (diatur admin di Admin\ContactInfoController)
+    $contacts = \App\Models\ContactInfo::active()->orderBy('order')->orderBy('id')->get();
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" class="scroll-smooth">
@@ -227,7 +230,7 @@
                         </div>
                     @endif
                 </div>
-                <div class="grid grid-cols-2 gap-10">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-10">
                     <div>
                         <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.footer_services') }}</h4>
                         <ul class="space-y-2 text-sky-200/70">
@@ -248,6 +251,32 @@
                             @endif
                         </ul>
                     </div>
+
+                    {{-- HUBUNGI KAMI (dari database, hanya yang berstatus aktif) --}}
+                    @if ($contacts->isNotEmpty())
+                        <div class="col-span-2 md:col-span-1 max-w-xs">
+                            <h4 class="text-white font-bold text-xs mb-3">{{ __('ui.contact_us') }}</h4>
+                            <ul class="space-y-2.5 text-sky-200/70">
+                                @foreach ($contacts as $contact)
+                                    <li class="flex items-start gap-2.5">
+                                        <i class="{{ $contact->icon }} w-4 mt-0.5 text-center text-sky-400 shrink-0"></i>
+                                        <span class="leading-relaxed min-w-0">
+                                            @if ($contact->label)
+                                                <span class="block text-[11px] text-sky-300/60">{{ $contact->label }}</span>
+                                            @endif
+                                            @if ($contact->href)
+                                                <a href="{{ $contact->href }}"
+                                                   @if (str_starts_with($contact->href, 'http')) target="_blank" rel="noopener noreferrer" @endif
+                                                   class="hover:text-white transition break-words">{{ $contact->value }}</a>
+                                            @else
+                                                <span class="break-words">{{ $contact->value }}</span>
+                                            @endif
+                                        </span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="mt-10 pt-5 border-t border-sky-900 text-sky-300/60 flex flex-col sm:flex-row justify-between items-center gap-2">

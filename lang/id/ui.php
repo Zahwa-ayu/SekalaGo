@@ -1377,4 +1377,7 @@ return [
 'facility_deleted' => 'Fasilitas dihapus.',
 'facility_in_use' => 'Fasilitas ini masih dipakai hotel atau kamar, jadi tidak bisa dihapus. Nonaktifkan saja.',
 'facility_scope_in_use' => 'Jenis tidak bisa dipersempit karena fasilitas ini sudah dipakai di hotel atau kamar.',
+
+// bahasa
+'contact_us' => 'Hubungi Kami',   // id
 ];

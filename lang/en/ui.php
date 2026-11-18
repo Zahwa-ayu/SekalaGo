@@ -1373,4 +1373,7 @@ return [
 'facility_deleted' => 'Facility deleted.',
 'facility_in_use' => 'This facility is still used by hotels or rooms, so it cannot be deleted. Deactivate it instead.',
 'facility_scope_in_use' => 'The type cannot be narrowed because this facility is already used in hotels or rooms.',
+
+// bahasa 
+'contact_us' => 'Contact Us',     // en
 ];
