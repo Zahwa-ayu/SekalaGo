@@ -17,13 +17,7 @@
             <i class="fa-solid fa-plus mr-1"></i> {{ __('ui.add_vehicle') }}
         </a>
     </div>
-
-    @if (session('success'))
-        <div class="px-4 py-3 mb-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
-        </div>
-    @endif
-
+    
     {{-- TABEL --}}
     <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
         <div class="overflow-x-auto">
