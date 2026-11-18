@@ -10,11 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class FaqAdminController extends Controller
 {
-    // Bahasa yang bisa diisi admin. Tambah sesuai bahasa di navbar.
-    private array $locales = [
-        'id' => 'Indonesia',
-        'en' => 'English',
-    ];
+    // Bahasa yang wajib diisi. Bahasa lain di config('sekalago.locales') opsional.
+    private const REQUIRED_LOCALES = ['id', 'en'];
 
     public function index()
     {
@@ -29,7 +26,7 @@ class FaqAdminController extends Controller
 
     public function create()
     {
-        return view('admin.faqs.create', ['locales' => $this->locales]);
+        return view('admin.faqs.create', ['locales' => config('sekalago.locales')]);
     }
 
     public function store(Request $request)
@@ -54,7 +51,7 @@ class FaqAdminController extends Controller
 
         return view('admin.faqs.edit', [
             'faq'     => $faq,
-            'locales' => $this->locales,
+            'locales' => config('sekalago.locales'),
         ]);
     }
 
@@ -83,19 +80,28 @@ class FaqAdminController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate([
-            'category'    => 'required|string|max:50',
-            'sort_order'  => 'nullable|integer|min:0',
-            'question.id' => 'required|string|max:255', // Indonesia wajib
-            'answer.id'   => 'required|string',
-            'question.*'  => 'nullable|string|max:255',
-            'answer.*'    => 'nullable|string',
-        ]);
+        $rules = [
+            'category'   => 'required|string|max:50',
+            'sort_order' => 'nullable|integer|min:0',
+        ];
+
+        foreach (array_keys(config('sekalago.locales')) as $code) {
+            if (in_array($code, self::REQUIRED_LOCALES, true)) {
+                $rules["question.$code"] = 'required|string|max:255';
+                $rules["answer.$code"]   = 'required|string';
+            } else {
+                // Opsional, tapi kalau salah satu diisi, pasangannya wajib ikut diisi
+                $rules["question.$code"] = "nullable|required_with:answer.$code|string|max:255";
+                $rules["answer.$code"]   = "nullable|required_with:question.$code|string";
+            }
+        }
+
+        return $request->validate($rules);
     }
 
     private function saveTranslations(Faq $faq, Request $request): void
     {
-        foreach (array_keys($this->locales) as $locale) {
+        foreach (array_keys(config('sekalago.locales')) as $locale) {
             $q = trim((string) $request->input("question.$locale"));
             $a = trim((string) $request->input("answer.$locale"));
 
@@ -104,8 +110,8 @@ class FaqAdminController extends Controller
                     ['faq_id' => $faq->id, 'locale' => $locale],
                     ['question' => $q, 'answer' => $a]
                 );
-            } elseif ($locale !== 'id') {
-                // dikosongkan -> hapus, supaya fallback ke Indonesia
+            } elseif (! in_array($locale, self::REQUIRED_LOCALES, true)) {
+                // dikosongkan -> hapus, supaya fallback ke bahasa wajib
                 $faq->translations()->where('locale', $locale)->delete();
             }
         }

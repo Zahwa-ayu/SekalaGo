@@ -5,15 +5,18 @@
     $input = 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue';
     $chip  = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold transition';
 
-    // Bahasa Indonesia selalu tampil. Bahasa lain tampil hanya jika sudah ada isinya
+    // Indonesia dan English wajib, selalu tampil. Bahasa lain tampil hanya jika sudah ada isinya
     // (data lama / old input); selain itu ditambahkan lewat tombol "Tambahkan bahasa lainnya".
+    $requiredLocales = ['id', 'en'];
+    $isRequired = fn ($code) => in_array($code, $requiredLocales, true);
+
     $filled = [];
     foreach ($locales as $code => $name) {
         $tr = $faq?->translations->firstWhere('locale', $code);
         $filled[$code] = filled(old("question.$code", $tr->question ?? ''))
             || filled(old("answer.$code", $tr->answer ?? ''));
     }
-    $shown = fn ($code) => $code === 'id' || $filled[$code];
+    $shown = fn ($code) => $isRequired($code) || $filled[$code];
     $hasMore = collect($locales)->keys()->contains(fn ($code) => ! $shown($code));
 @endphp
 
@@ -34,14 +37,14 @@
                 <div class="flex items-center justify-between gap-3">
                     <h3 class="font-extrabold text-slate-900">
                         {{ $name }} ({{ strtoupper($code) }})
-                        @if ($code === 'id')
+                        @if ($isRequired($code))
                             <span class="ml-1 text-[11px] font-bold text-red-600">wajib</span>
                         @else
                             <span class="ml-1 text-[11px] font-bold text-slate-400">opsional</span>
                         @endif
                     </h3>
 
-                    @if ($code !== 'id' && ! $filled[$code])
+                    @if (! $isRequired($code) && ! $filled[$code])
                         <button type="button" data-remove-locale="{{ $code }}"
                                 class="text-xs font-bold text-slate-400 hover:text-red-600 transition" aria-label="Tutup {{ $name }}">
                             <i class="fa-solid fa-xmark"></i> Tutup
@@ -52,12 +55,12 @@
                 <div>
                     <label class="{{ $lbl }}">Pertanyaan</label>
                     <input type="text" name="question[{{ $code }}]" value="{{ old("question.$code", $tr->question ?? '') }}"
-                           class="{{ $input }}">
+                           maxlength="255" @required($isRequired($code)) class="{{ $input }}">
                 </div>
 
                 <div>
                     <label class="{{ $lbl }}">Jawaban</label>
-                    <textarea name="answer[{{ $code }}]" rows="4" class="{{ $input }}">{{ old("answer.$code", $tr->answer ?? '') }}</textarea>
+                    <textarea name="answer[{{ $code }}]" rows="4" @required($isRequired($code)) class="{{ $input }}">{{ old("answer.$code", $tr->answer ?? '') }}</textarea>
                 </div>
             </div>
         @endforeach
@@ -72,7 +75,7 @@
             <div id="faq-lang-menu" class="hidden mt-3">
                 <div class="flex flex-wrap gap-2">
                     @foreach ($locales as $code => $name)
-                        @if ($code !== 'id')
+                        @if (! $isRequired($code))
                             <button type="button" data-add-locale="{{ $code }}" class="{{ $chip }} {{ $shown($code) ? 'hidden' : '' }}">
                                 <i class="fa-solid fa-plus"></i> {{ $name }} ({{ strtoupper($code) }})
                             </button>
