@@ -16,6 +16,9 @@
 
     // Kontak aktif untuk footer (diatur admin di Admin\ContactInfoController)
     $contacts = \App\Models\ContactInfo::active()->orderBy('order')->orderBy('id')->get();
+
+    // Halaman statis (Tentang Kami, Syarat, Privasi) yang diberi centang "tampil di footer"
+    $footerPages = \App\Models\Page::footer()->get();
 @endphp
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" class="scroll-smooth">
@@ -283,9 +286,14 @@
                 <div>
                     © {{ date('Y') }} {{ config('app.name') }}. {{ __('ui.footer_rights') }}
                 </div>
-                <div class="flex gap-4 text-xs">
-                    <span class="hover:text-white cursor-pointer">{{ __('ui.footer_terms') }}</span>
-                    <span class="hover:text-white cursor-pointer">{{ __('ui.footer_privacy') }}</span>
+                <div class="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs">
+                    @forelse ($footerPages as $footerPage)
+                        <a href="{{ route('pages.show', $footerPage->slug) }}" class="hover:text-white transition">{{ $footerPage->title }}</a>
+                    @empty
+                        {{-- Cadangan sampai admin membuat halaman pertama --}}
+                        <span class="hover:text-white cursor-pointer">{{ __('ui.footer_terms') }}</span>
+                        <span class="hover:text-white cursor-pointer">{{ __('ui.footer_privacy') }}</span>
+                    @endforelse
                 </div>
             </div>
         </div>

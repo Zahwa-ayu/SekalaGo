@@ -63,6 +63,7 @@ class DashboardMenu
                         ['fa-circle-question', 'ui.faq_management', 'admin.faqs.index', ['admin.faqs.*']],
                         ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],
                         ['fa-address-book', 'ui.contact_us', 'admin.contact-info.index', ['admin.contact-info.*']],
+                        ['fa-file-lines', 'ui.pages', 'admin.pages.index', ['admin.pages.*']],
                     ],
                 ],
 

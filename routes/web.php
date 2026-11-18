@@ -50,6 +50,8 @@ use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\BookingExtensionController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\Partner\StayController as PartnerStayController;
 use Illuminate\Support\Facades\Route;
@@ -63,6 +65,7 @@ Route::get('/cars', [CarSearchController::class, 'home'])->name('cars.home');
 Route::get('/cars/search', [CarSearchController::class, 'legacySearch'])->name('cars.search');;
 Route::get('/cars/{vehicle}', [CarSearchController::class, 'show'])->name('cars.show');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+Route::get('/page/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 // Pilihan bahasa & mata uang (tamu dan user login)
 Route::post('/preferences', [PreferenceController::class, 'update'])->name('preferences.update');
 Route::get('/calendar/prices', [CalendarPriceController::class, 'index'])->middleware('throttle:60,1')->name('calendar.prices');
@@ -233,6 +236,7 @@ Route::middleware(['auth', 'role:admin'])
 
         // Manajemen FAQ (dinamis, tampil di halaman publik)
         Route::resource('faqs', FaqAdminController::class)->except(['show']);
+        Route::resource('pages', PageAdminController::class)->except(['show']);
 
                 // Master data: fasilitas hotel dan kamar
         Route::resource('facilities', AdminFacilityController::class)->only(['index', 'store', 'update', 'destroy']);

@@ -14,6 +14,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             DemoVehicleSeeder::class,
             CitySeeder::class,
+            FaqSeeder::class,
+            PageSeeder::class,
         ]);
     }
 }

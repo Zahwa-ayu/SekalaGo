@@ -1380,4 +1380,6 @@ return [
 
 // bahasa
 'contact_us' => 'Hubungi Kami',   // id
+// pages
+'pages' => 'Halaman'
 ];

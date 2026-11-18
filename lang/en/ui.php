@@ -1376,4 +1376,5 @@ return [
 
 // bahasa 
 'contact_us' => 'Contact Us',     // en
+'pages' => 'Pages'
 ];
