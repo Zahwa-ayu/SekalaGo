@@ -154,6 +154,9 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('partners/{partner}/reject', [AdminPartnerController::class, 'reject'])->name('partners.reject');
         Route::post('partners/{partner}/reopen', [AdminPartnerController::class, 'reopen'])->name('partners.reopen');
 
+        Route::get('partners/{partner}/documents/{type}', [AdminPartnerController::class, 'document'])
+        ->where('type', 'tax|license|supporting')->name('partners.document');
+
         Route::get('hotels', [AdminHotelController::class, 'index'])->name('hotels.index');
         Route::get('hotels/{hotel}', [AdminHotelController::class, 'show'])->name('hotels.show');
         Route::post('hotels/{hotel}/approve', [AdminHotelController::class, 'approve'])->name('hotels.approve');
@@ -288,6 +291,7 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::post('stays/{booking}/arrive', [PartnerStayController::class, 'arrive'])->name('stays.arrive');
             Route::post('stays/{booking}/no-show', [PartnerStayController::class, 'noShow'])->name('stays.noshow');
             Route::post('stays/{booking}/depart', [PartnerStayController::class, 'depart'])->name('stays.depart');
+
         });
     });
 

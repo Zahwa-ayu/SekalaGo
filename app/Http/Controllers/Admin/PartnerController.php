@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Partner;
 use App\Services\AgreementPdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
@@ -128,5 +129,20 @@ class PartnerController extends Controller
         $partner->update(['verification_status' => 'pending', 'verification_note' => null]);
 
         return redirect()->route('admin.partners.show', $partner)->with('success', __('ui.partner_reopened'));
+    }
+
+    /** Dokumen legalitas mitra: tampil di browser (PDF atau gambar). */
+    public function document(Partner $partner, string $type)
+    {
+        $path = match ($type) {
+            'tax'        => $partner->tax_document_path,
+            'license'    => $partner->license_document_path,
+            'supporting' => $partner->supporting_document_path,
+            default      => null,
+        };
+
+        abort_unless($path && Storage::disk('local')->exists($path), 404);
+
+        return Storage::disk('local')->response($path);
     }
 }

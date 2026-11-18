@@ -47,14 +47,26 @@ class PartnerGateTest extends TestCase
 
     public function test_public_partner_registration_creates_a_pending_partner_without_logging_in(): void
     {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $city = \App\Models\City::create(['name' => 'Yogyakarta']);
+
         $this->post(route('register.partner.store'), [
             'company_name'          => 'Hotel Baru Jaya',
+            'legal_form'            => 'PT',
+            'business_type'         => 'hotel',
+            'tax_id'                => '01.234.567.8-901.000',
             'business_license_no'   => 'NIB-998877',
-            'bank_account_no'       => '1234567890',
+            'address'               => 'Jl. Malioboro No. 1',
+            'city_id'               => $city->id,
+            'phone'                 => '0274123456',
+            'tax_document'          => \Illuminate\Http\UploadedFile::fake()->create('npwp.pdf', 100, 'application/pdf'),
+            'license_document'      => \Illuminate\Http\UploadedFile::fake()->create('nib.pdf', 100, 'application/pdf'),
+            'contact_name'          => 'Budi Pemilik',
             'email'                 => 'baru@mitra.test',
             'phone_number'          => '08123456789',
             'password'              => 'RahasiaKu123',
             'password_confirmation' => 'RahasiaKu123',
+            'terms'                 => '1',
         ]);
 
         $this->assertGuest();
@@ -62,6 +74,7 @@ class PartnerGateTest extends TestCase
         $user = User::where('email', 'baru@mitra.test')->firstOrFail();
         $this->assertSame('partner', $user->user_type);
         $this->assertSame('pending', $user->partner->verification_status);
+        $this->assertSame('012345678901000', $user->partner->tax_id);
     }
 
     // -------------------------------------------------------------- MOU

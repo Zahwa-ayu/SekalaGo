@@ -132,6 +132,11 @@
                     @endif
 
                     @if (! $agreement || $agreement->status !== 'signed')
+                        {{-- DATA PENDAFTARAN MITRA --}}
+                        <div class="mt-6">
+                            @include('admin.partners._registration-data')
+                        </div>
+
                         {{-- USULAN KOMISI DARI MITRA --}}
                         @include('admin.partners._commission-proposal')
 

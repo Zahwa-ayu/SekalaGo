@@ -108,7 +108,6 @@ return [
         'decimal_places' => 'jumlah desimal',
         'symbol' => 'simbol',
         'code' => 'kode',
-        'contact_name' => 'nama pemesan',
         'contact_phone' => 'nomor HP',
         'contact_email' => 'email pemesan',
         'arrival_time' => 'jam',
@@ -129,5 +128,10 @@ return [
         'proposed_commission' => 'usulan komisi',
         'commission_proposal_note' => 'catatan usulan',
         'admin_note' => 'catatan untuk mitra',
+
+        'business_type' => 'jenis usaha',
+        'contact_name' => 'nama penanggung jawab',
+        'supporting_document' => 'dokumen pendukung',
+        'website' => 'situs web',
     ],
 ];

@@ -45,7 +45,7 @@
 
     {{-- FORM --}}
     <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8">
-        <form method="POST" action="{{ route('partner.profile.update') }}" class="space-y-4">
+        <form method="POST" action="{{ route('partner.profile.update') }}" enctype="multipart/form-data" class="space-y-4">
             @csrf
             @method('PUT')
 
@@ -59,35 +59,80 @@
                 <input name="business_license_no" value="{{ old('business_license_no', $partner->business_license_no) }}" required class="{{ $input }}">
             </div>
 
-<div class="space-y-4">
-    <div>
-        <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.payout_bank_account') }}</h2>
-        <p class="text-xs text-slate-500 mt-1">{{ __('ui.bank_account_hint') }}</p>
-    </div>
+            {{-- DATA USAHA --}}
+            <div class="space-y-4">
+                <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.partner_business_data') }}</h2>
 
-    <div class="grid sm:grid-cols-3 gap-4">
-        <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_name') }}</label>
-            <input name="bank_name" list="bank-list" maxlength="60" value="{{ old('bank_name', $partner->bank_name) }}"
-                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
-            <datalist id="bank-list">
-                @foreach (config('sekalago.banks') as $bank)
-                    <option value="{{ $bank }}"></option>
-                @endforeach
-            </datalist>
-        </div>
-        <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_account_no') }}</label>
-            <input name="bank_account_no" inputmode="numeric" maxlength="50" value="{{ old('bank_account_no', $partner->bank_account_no) }}"
-                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-sagara-blue">
-        </div>
-        <div>
-            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_account_name') }}</label>
-            <input name="bank_account_name" maxlength="100" value="{{ old('bank_account_name', $partner->bank_account_name) }}"
-                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
-        </div>
-    </div>
-</div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.contact_person') }}</label>
+                        <input name="contact_name" maxlength="255" value="{{ old('contact_name', $partner->contact_name) }}"
+                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.company_phone') }}</label>
+                        <input name="phone" maxlength="20" value="{{ old('phone', $partner->phone) }}"
+                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.company_address') }}</label>
+                        <input name="address" maxlength="255" value="{{ old('address', $partner->address) }}"
+                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.city_name') }}</label>
+                        <select name="city_id" class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                            <option value="">{{ __('ui.choose_city') }}</option>
+                            @foreach (\App\Models\City::optionsFor($partner->city_id) as $city)
+                                <option value="{{ $city->id }}" @selected((int) old('city_id', $partner->city_id) === $city->id)>{{ $city->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.website') }}</label>
+                        <input type="url" name="website" maxlength="255" value="{{ old('website', $partner->website) }}"
+                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.supporting_document') }}</label>
+                        <input type="file" name="supporting_document" accept=".pdf,image/jpeg,image/png,image/webp"
+                               class="block w-full text-sm text-slate-600 file:mr-3 file:px-4 file:py-2.5 file:rounded-xl file:border-0 file:bg-sky-50 file:text-sky-700 file:font-bold hover:file:bg-sky-100">
+                        @if ($partner->supporting_document_path)<p class="text-[11px] text-emerald-600 mt-1"><i class="fa-solid fa-circle-check"></i> {{ __('ui.document_uploaded') }}</p>@endif
+                    </div>
+                </div>
+
+                <p class="text-[11px] text-slate-400">{{ __('ui.partner_legal_locked_hint') }}</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.payout_bank_account') }}</h2>
+                    <p class="text-xs text-slate-500 mt-1">{{ __('ui.bank_account_hint') }}</p>
+                </div>
+
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_name') }}</label>
+                        <input name="bank_name" list="bank-list" maxlength="60" value="{{ old('bank_name', $partner->bank_name) }}"
+                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                        <datalist id="bank-list">
+                            @foreach (config('sekalago.banks') as $bank)
+                                <option value="{{ $bank }}"></option>
+                            @endforeach
+                        </datalist>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_account_no') }}</label>
+                        <input name="bank_account_no" inputmode="numeric" maxlength="50" value="{{ old('bank_account_no', $partner->bank_account_no) }}"
+                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.bank_account_name') }}</label>
+                        <input name="bank_account_name" maxlength="100" value="{{ old('bank_account_name', $partner->bank_account_name) }}"
+                               class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                    </div>
+                </div>
+            </div>
 
             <div class="space-y-3">
                 <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.commission_proposal') }}</h2>

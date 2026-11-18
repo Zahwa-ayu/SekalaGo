@@ -13,6 +13,8 @@ class Partner extends Model
         'user_id', 'company_name', 'business_license_no', 'bank_account_no',
         'verification_status', 'verification_note', 'bank_name', 'bank_account_name',
         'proposed_commission_rate', 'commission_proposal_note', 'commission_proposed_at',
+        'legal_form', 'business_type', 'tax_id', 'address', 'city_id', 'phone', 'website', 'contact_name',
+        'tax_document_path', 'license_document_path', 'supporting_document_path',
     ];
 
      protected function casts(): array
@@ -113,4 +115,6 @@ class Partner extends Model
             'commission_proposed_at'   => $rate === $old ? $this->commission_proposed_at : ($rate === null ? null : now()),
         ];
     }
+
+    public function city() { return $this->belongsTo(City::class); }
 }
