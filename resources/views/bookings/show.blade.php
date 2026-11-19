@@ -165,6 +165,13 @@
                         ({{ $booking->refund_reference }})
                     </div>
                 @endif
+
+                {{-- Refund lewat Midtrans diproses manual oleh admin --}}
+                @if ($booking->refund_reference && str_starts_with($booking->refund_reference, 'MANUAL-'))
+                    <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-4 py-3">
+                        {{ __('ui.refund_manual_customer') }}
+                    </div>
+                @endif
             </div>
         @endif
 

@@ -23,6 +23,9 @@ use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Admin\ContactInfoController;
 use App\Http\Controllers\Partner\ProfileController;
 use App\Http\Controllers\Partner\RoomStockController;
+use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\Webhook\MidtransWebhookController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\CalendarPriceController;
 use App\Http\Controllers\CorporateRegistrationController;
 use App\Http\Controllers\Admin\FaqAdminController;
@@ -62,13 +65,16 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/hotels', [HotelSearchController::class, 'search'])->name('hotels.search');
 Route::get('/hotels/{hotel}', [HotelSearchController::class, 'show'])->name('hotels.show');
 Route::get('/cars', [CarSearchController::class, 'home'])->name('cars.home');
-Route::get('/cars/search', [CarSearchController::class, 'legacySearch'])->name('cars.search');;
+Route::get('/cars/search', [CarSearchController::class, 'legacySearch'])->name('cars.search');
 Route::get('/cars/{vehicle}', [CarSearchController::class, 'show'])->name('cars.show');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/page/{page:slug}', [PageController::class, 'show'])->name('pages.show');
 // Pilihan bahasa & mata uang (tamu dan user login)
 Route::post('/preferences', [PreferenceController::class, 'update'])->name('preferences.update');
 Route::get('/calendar/prices', [CalendarPriceController::class, 'index'])->middleware('throttle:60,1')->name('calendar.prices');
+Route::post('/midtrans/notification', MidtransWebhookController::class)
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class])
+    ->name('midtrans.notification');
 
 // Lupa dan reset password (tamu)
 Route::middleware('guest')->group(function () {
@@ -97,13 +103,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-// Ganti password (semua peran yang sudah login)
-Route::middleware('auth')->group(function () {
-    Route::get('/account/password', [PasswordController::class, 'edit'])->name('account.password.edit');
-    Route::put('/account/password', [PasswordController::class, 'update'])->name('account.password.update');
-});
-
-// Pengaturan akun (semua peran yang sudah login)
+// Pengaturan akun & ganti password (semua peran yang sudah login)
 Route::middleware('auth')->group(function () {
     Route::get('/account', [AccountController::class, 'show'])->name('account.settings');
     Route::get('/account/edit', [AccountController::class, 'edit'])->name('account.edit');
@@ -130,12 +130,15 @@ Route::middleware(['auth', 'role:customer,corporate'])->group(function () {
     Route::get('/bookings/create', [BookingController::class, 'create'])->name('bookings.create');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+
     Route::get('/bookings/{booking}/pay', [BookingController::class, 'pay'])->name('bookings.pay');
     Route::post('/bookings/{booking}/pay', [BookingController::class, 'processPayment'])->name('bookings.pay.process');
+    Route::post('/bookings/{booking}/pay/snap', [MidtransController::class, 'snap'])->middleware('throttle:20,1')->name('bookings.pay.snap');
+    Route::get('/bookings/{booking}/pay/status', [MidtransController::class, 'status'])->middleware('throttle:60,1')->name('bookings.pay.status');
     Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/{booking}/ticket', [BookingController::class, 'ticket'])->name('bookings.ticket');
     Route::get('/bookings/{booking}/extend', [BookingExtensionController::class, 'create'])->name('bookings.extend');
-Route::post('/bookings/{booking}/extend', [BookingExtensionController::class, 'store'])->name('bookings.extend.store');
+    Route::post('/bookings/{booking}/extend', [BookingExtensionController::class, 'store'])->name('bookings.extend.store');
 
     Route::get('/car-bookings/create', [CarBookingController::class, 'create'])->name('car-bookings.create');
     Route::post('/car-bookings', [CarBookingController::class, 'store'])->name('car-bookings.store');
@@ -148,7 +151,7 @@ Route::middleware(['auth', 'role:admin'])
     ->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-                // Analytics & Revenue
+        // Analytics & Revenue
         Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
         Route::get('analytics/csv', [AdminAnalyticsController::class, 'csv'])->name('analytics.csv');
 
@@ -160,7 +163,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('partners/{partner}/reopen', [AdminPartnerController::class, 'reopen'])->name('partners.reopen');
 
         Route::get('partners/{partner}/documents/{type}', [AdminPartnerController::class, 'document'])
-        ->where('type', 'tax|license|supporting')->name('partners.document');
+            ->where('type', 'tax|license|supporting')->name('partners.document');
 
         Route::get('hotels', [AdminHotelController::class, 'index'])->name('hotels.index');
         Route::get('hotels/{hotel}', [AdminHotelController::class, 'show'])->name('hotels.show');
@@ -184,7 +187,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('companies/{company}/audit/csv', [CorporateAuditController::class, 'csv'])->name('companies.audit.csv');
         Route::get('companies/{company}/audit/pdf', [CorporateAuditController::class, 'pdf'])->name('companies.audit.pdf');
 
-                // Pencairan dana mitra
+        // Pencairan dana mitra
         Route::get('payouts', [AdminPayoutController::class, 'index'])->name('payouts.index');
         Route::post('payouts', [AdminPayoutController::class, 'store'])->name('payouts.store');
         Route::post('payouts/generate', [AdminPayoutController::class, 'generate'])->name('payouts.generate');
@@ -194,7 +197,11 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('payouts/{payout}/cancel', [AdminPayoutController::class, 'cancel'])->name('payouts.cancel');
         Route::get('payouts/{payout}/proof', [AdminPayoutController::class, 'proof'])->name('payouts.proof');
 
-                // Master data: mata uang dan kurs
+        // Pembayaran & refund manual
+        Route::get('payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+        Route::post('payments/{payment}/refunded', [AdminPaymentController::class, 'manualRefunded'])->name('payments.refunded');
+
+        // Master data: mata uang dan kurs
         Route::get('currencies', [AdminCurrencyController::class, 'index'])->name('currencies.index');
         Route::post('currencies', [AdminCurrencyController::class, 'store'])->name('currencies.store');
         Route::get('currencies/{currency}/edit', [AdminCurrencyController::class, 'edit'])->name('currencies.edit');
@@ -221,15 +228,15 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::patch('users/{user}/status', [AdminUserController::class, 'updateStatus'])
             ->name('users.status');
+
         // Master data: kota
-        
         Route::resource('cities', AdminCityController::class)->except(['create', 'show']);
 
         // Log aktivitas
         Route::get('activity', [ActivityLogController::class, 'index'])->name('activity.index');
 
         // rental cars
-                Route::get('vehicles', [AdminVehicleController::class, 'index'])->name('vehicles.index');
+        Route::get('vehicles', [AdminVehicleController::class, 'index'])->name('vehicles.index');
         Route::get('vehicles/{vehicle}', [AdminVehicleController::class, 'show'])->name('vehicles.show');
         Route::post('vehicles/{vehicle}/approve', [AdminVehicleController::class, 'approve'])->name('vehicles.approve');
         Route::post('vehicles/{vehicle}/reject', [AdminVehicleController::class, 'reject'])->name('vehicles.reject');
@@ -238,17 +245,18 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('faqs', FaqAdminController::class)->except(['show']);
         Route::resource('pages', PageAdminController::class)->except(['show']);
 
-                // Master data: fasilitas hotel dan kamar
+        // Master data: fasilitas hotel dan kamar
         Route::resource('facilities', AdminFacilityController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::patch('facilities/{facility}/status', [AdminFacilityController::class, 'status'])->name('facilities.status');
 
+        // Info kontak
         Route::prefix('contact-info')->name('contact-info.')->controller(ContactInfoController::class)->group(function () {
-        Route::get('/', 'index')->name('index');
-        Route::post('/', 'store')->name('store');
-        Route::put('{contactInfo}', 'update')->name('update');
-        Route::patch('{contactInfo}/status', 'updateStatus')->name('status');
-        Route::delete('{contactInfo}', 'destroy')->name('destroy');
-    });
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::put('{contactInfo}', 'update')->name('update');
+            Route::patch('{contactInfo}/status', 'updateStatus')->name('status');
+            Route::delete('{contactInfo}', 'destroy')->name('destroy');
+        });
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)
@@ -272,7 +280,7 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::resource('hotels.room-types', RoomTypeController::class)
                 ->shallow()
                 ->except(['show']);
-            
+
             Route::get('payouts', [PartnerPayoutController::class, 'index'])->name('payouts.index');
             Route::get('payouts/{payout}/proof', [PartnerPayoutController::class, 'proof'])->name('payouts.proof');
 
@@ -309,7 +317,6 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::post('stays/{booking}/arrive', [PartnerStayController::class, 'arrive'])->name('stays.arrive');
             Route::post('stays/{booking}/no-show', [PartnerStayController::class, 'noShow'])->name('stays.noshow');
             Route::post('stays/{booking}/depart', [PartnerStayController::class, 'depart'])->name('stays.depart');
-
         });
     });
 

@@ -136,8 +136,6 @@ return [
     'booking_status_cancelled' => 'Dibatalkan',
     'booking_status_expired' => 'Kedaluwarsa',
     'payment_status_unpaid' => 'Belum dibayar',
-    'payment_status_paid' => 'Lunas',
-    'payment_status_failed' => 'Gagal',
     'payment_status_refunded' => 'Dikembalikan',
 
     // bookings ui partner & admin
@@ -1381,5 +1379,30 @@ return [
 // bahasa
 'contact_us' => 'Hubungi Kami',   // id
 // pages
-'pages' => 'Halaman'
+'pages' => 'Halaman',
+
+// midtrans
+'pay_with_midtrans' => 'Bayar :amount',
+'pay_methods_note' => 'Pilih metode di jendela berikutnya: virtual account, QRIS, e-wallet, atau kartu. Pembayaran selalu dalam Rupiah dan diproses aman oleh Midtrans.',
+'pay_verifying' => 'Memverifikasi pembayaran Anda...',
+'pay_failed' => 'Pembayaran gagal. Silakan coba lagi atau pilih metode lain.',
+'payment_gateway_error' => 'Layanan pembayaran sedang bermasalah. Silakan coba beberapa saat lagi.',
+'payment_not_payable' => 'Pesanan ini tidak bisa dibayar lagi.',
+'payment_time_over' => 'Batas waktu pembayaran sudah habis. Silakan buat pesanan baru.',
+'refund_manual_customer' => 'Refund untuk metode pembayaran Anda diproses manual oleh admin dan biasanya masuk dalam 1 sampai 3 hari kerja.',
+'payments' => 'Pembayaran',
+'payments_hint' => 'Semua transaksi pembayaran online dan refund yang perlu diproses manual.',
+'payments_mock_mode' => 'Mode simulasi aktif (PAYMENT_DRIVER=mock). Transaksi di bawah hanya berasal dari Midtrans.',
+'payments_tab_refund' => 'Refund manual',
+'payments_tab_failed' => 'Gagal / kedaluwarsa',
+'payment_order' => 'Nomor order',
+'payment_method' => 'Metode',
+'payment_status_pending' => 'Menunggu',
+'payment_status_paid' => 'Dibayar',
+'payment_status_failed' => 'Gagal',
+'payment_status_expired' => 'Kedaluwarsa',
+'refund_manual_pending' => 'Perlu refund manual',
+'refund_reference_placeholder' => 'Referensi / bukti transfer',
+'refund_mark_done' => 'Tandai selesai',
+'refund_marked_done' => 'Refund manual dicatat selesai.',
 ];

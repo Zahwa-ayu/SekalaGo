@@ -19,14 +19,19 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(\App\Services\CurrencyService::class);
+
         $this->app->bind(
-    \App\Services\Translation\TranslationProvider::class,
-    \App\Services\Translation\MockTranslationProvider::class
-    );
-    $this->app->bind(
-    \App\Services\Payment\PaymentGateway::class,
-    \App\Services\Payment\MockPaymentGateway::class
-    );
+            \App\Services\Translation\TranslationProvider::class,
+            \App\Services\Translation\MockTranslationProvider::class
+        );
+
+        // Pilih gateway pembayaran: Midtrans (Sandbox) atau simulasi (mock)
+        $this->app->bind(
+            \App\Services\Payment\PaymentGateway::class,
+            fn ($app) => config('sekalago.payment_driver') === 'midtrans'
+                ? $app->make(\App\Services\Payment\MidtransGateway::class)
+                : $app->make(\App\Services\Payment\MockPaymentGateway::class)
+        );
     }
 
     /**

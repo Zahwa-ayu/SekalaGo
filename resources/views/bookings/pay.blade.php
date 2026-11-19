@@ -25,24 +25,28 @@
             </div>
         </div>
 
-        <p class="text-[11px] text-slate-500 text-center"><i class="fa-solid fa-flask"></i> {{ __('ui.sandbox_notice') }}</p>
+        @if (config('sekalago.payment_driver') === 'midtrans')
+            @include('bookings._pay-midtrans')
+        @else
+            <p class="text-[11px] text-slate-500 text-center"><i class="fa-solid fa-flask"></i> {{ __('ui.sandbox_notice') }}</p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <form method="POST" action="{{ route('bookings.pay.process', $booking) }}">
-                @csrf
-                <input type="hidden" name="outcome" value="success">
-                <button class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-check"></i> {{ __('ui.pay_success_btn') }}
-                </button>
-            </form>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <form method="POST" action="{{ route('bookings.pay.process', $booking) }}">
+                    @csrf
+                    <input type="hidden" name="outcome" value="success">
+                    <button class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> {{ __('ui.pay_success_btn') }}
+                    </button>
+                </form>
 
-            <form method="POST" action="{{ route('bookings.pay.process', $booking) }}">
-                @csrf
-                <input type="hidden" name="outcome" value="fail">
-                <button class="w-full py-3.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 font-bold rounded-xl transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-circle-xmark"></i> {{ __('ui.pay_fail_btn') }}
-                </button>
-            </form>
-        </div>
+                <form method="POST" action="{{ route('bookings.pay.process', $booking) }}">
+                    @csrf
+                    <input type="hidden" name="outcome" value="fail">
+                    <button class="w-full py-3.5 bg-white border border-red-200 text-red-600 hover:bg-red-50 font-bold rounded-xl transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-xmark"></i> {{ __('ui.pay_fail_btn') }}
+                    </button>
+                </form>
+            </div>
+        @endif
     </section>
 @endsection

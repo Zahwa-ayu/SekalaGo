@@ -38,6 +38,7 @@ class DashboardMenu
                     ],
                 ],
                 ['fa-receipt', 'ui.all_bookings', 'admin.bookings.index', ['admin.bookings.*']],
+                ['fa-credit-card', 'ui.payments', 'admin.payments.index', ['admin.payments.*']],
                 ['fa-building', 'ui.corporate_management', 'admin.companies.index', ['admin.companies.*']],
 
                 // Uang

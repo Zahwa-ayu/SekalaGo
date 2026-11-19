@@ -11,9 +11,12 @@ return [
     'payout_unmarked_car_days' => 7,        // mobil yang tidak pernah ditandai kembali dicairkan setelah sekian hari
     'approval_hold_hours' => 24,
     'corporate_default_limit' => 2000000,
-    'per_page' => 1,
+    'per_page' => 15,
     // Tampilkan tautan reset password di layar (hanya untuk demo tanpa server email)
     'show_reset_link' => env('SHOW_RESET_LINK', false),
+
+    // Pembayaran pelanggan: mock (simulasi, hanya untuk pengembangan) atau midtrans
+    'payment_driver' => env('PAYMENT_DRIVER', 'mock'),
 
     'locales' => [
         'id' => 'Bahasa Indonesia',
@@ -29,4 +32,5 @@ return [
         'BCA', 'BRI', 'BNI', 'Mandiri', 'BSI', 'CIMB Niaga', 'Permata', 'Danamon', 'BTN',
         'OCBC', 'Maybank', 'Panin', 'Mega', 'Bank Jago', 'SeaBank', 'Jenius (BTPN)',
     ],
+    
 ];

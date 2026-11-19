@@ -191,4 +191,6 @@ public function stayStage(): ?string
         default                        => 'upcoming',
     };
 }
+
+public function payments() { return $this->hasMany(Payment::class); }
 }

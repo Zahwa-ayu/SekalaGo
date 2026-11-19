@@ -38,4 +38,8 @@ return [
     'partner_registered' => ['title' => 'Mitra baru mendaftar', 'body' => ':company menunggu verifikasi.'],
     'mou_signed' => ['title' => 'MOU ditandatangani', 'body' => ':company menandatangani MOU dengan komisi :commission%.'],
     'company_registered' => ['title' => 'Perusahaan baru mendaftar', 'body' => ':company menunggu verifikasi.'],
+
+    'refund_manual' => ['title' => 'Refund manual diperlukan: :code', 'body' => 'Refund :amount (metode :method) tidak bisa diproses otomatis. Transfer manual lalu catat di halaman Pembayaran.'],
+    'payment_orphan' => ['title' => 'Pembayaran masuk untuk pesanan tidak aktif', 'body' => 'Order :order sebesar :amount sudah dibayar, tetapi pesanannya kedaluwarsa atau dibatalkan. Kembalikan dana ke pelanggan.'],
+    'payment_mismatch' => ['title' => 'Jumlah pembayaran tidak cocok', 'body' => 'Order :order dibayar dengan jumlah berbeda dari tagihan. Periksa di dashboard Midtrans.'],
 ];

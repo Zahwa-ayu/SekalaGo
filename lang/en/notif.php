@@ -34,4 +34,8 @@ return [
     'partner_registered' => ['title' => 'New partner registered', 'body' => ':company is awaiting verification.'],
     'mou_signed' => ['title' => 'MOU signed', 'body' => ':company signed the MOU with a :commission% commission.'],
     'company_registered' => ['title' => 'New company registered', 'body' => ':company is awaiting verification.'],
+
+    'refund_manual' => ['title' => 'Manual refund needed: :code', 'body' => 'The :amount refund (method :method) cannot be processed automatically. Transfer it manually, then record it on the Payments page.'],
+    'payment_orphan' => ['title' => 'Payment received for an inactive booking', 'body' => 'Order :order for :amount was paid, but its booking expired or was cancelled. Refund the customer.'],
+    'payment_mismatch' => ['title' => 'Payment amount mismatch', 'body' => 'Order :order was paid with an amount that differs from the bill. Check the Midtrans dashboard.'],
 ];

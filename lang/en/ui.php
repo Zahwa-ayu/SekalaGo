@@ -1376,5 +1376,28 @@ return [
 
 // bahasa 
 'contact_us' => 'Contact Us',     // en
-'pages' => 'Pages'
+'pages' => 'Pages',
+
+// midtrans
+'pay_with_midtrans' => 'Pay :amount',
+'pay_methods_note' => 'Choose a method in the next window: virtual account, QRIS, e-wallet or card. Payments are always in Rupiah and processed securely by Midtrans.',
+'pay_verifying' => 'Verifying your payment...',
+'pay_failed' => 'The payment failed. Please try again or choose another method.',
+'payment_gateway_error' => 'The payment service is having trouble. Please try again in a moment.',
+'payment_not_payable' => 'This booking can no longer be paid.',
+'payment_time_over' => 'The payment deadline has passed. Please create a new booking.',
+'refund_manual_customer' => 'The refund for your payment method is processed manually by an admin and usually arrives within 1 to 3 business days.',
+'payments' => 'Payments',
+'payments_hint' => 'All online payment transactions and refunds that need manual processing.',
+'payments_mock_mode' => 'Simulation mode is active (PAYMENT_DRIVER=mock). The transactions below only come from Midtrans.',
+'payments_tab_refund' => 'Manual refunds',
+'payments_tab_failed' => 'Failed / expired',
+'payment_order' => 'Order number',
+'payment_method' => 'Method',
+'payment_status_pending' => 'Pending',
+'payment_status_expired' => 'Expired',
+'refund_manual_pending' => 'Manual refund needed',
+'refund_reference_placeholder' => 'Reference / transfer proof',
+'refund_mark_done' => 'Mark as done',
+'refund_marked_done' => 'Manual refund recorded as done.',
 ];

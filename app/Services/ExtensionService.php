@@ -25,12 +25,16 @@ class ExtensionService
     ) {
     }
 
-    /** Hanya mobil yang sedang di tangan penyewa dan belum lewat batas kembali. */
+    /**
+     * Hanya mobil yang sedang di tangan penyewa dan belum lewat batas kembali.
+     * Pelanggan umum (non-deposit) belum bisa memperpanjang saat mode Midtrans aktif.
+     */
     public function canExtend(Booking $booking): bool
     {
         return $booking->isCar()
             && $booking->rentalStage() === 'ongoing'
-            && $booking->nights < self::MAX_TOTAL_DAYS;
+            && $booking->nights < self::MAX_TOTAL_DAYS
+            && ! ($booking->payment_method !== 'deposit' && config('sekalago.payment_driver') === 'midtrans');
     }
 
     /** @return array{days: int, amount: int, new_check_out: Carbon, new_due_at: Carbon, available: bool} */

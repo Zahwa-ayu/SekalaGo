@@ -39,7 +39,6 @@ class BookingController extends Controller
     }
 
     /** Ringkasan pesanan sebelum dikonfirmasi. */
-/** Ringkasan pesanan sebelum dikonfirmasi. */
     public function create(Request $request)
     {
         [$roomType, $checkIn, $checkOut, $guests, $nights] = $this->resolveStay($request);
@@ -121,6 +120,10 @@ class BookingController extends Controller
 
     public function processPayment(Request $request, Booking $booking)
     {
+        // Simulasi bayar hanya boleh di mode mock dan bukan di production.
+        // Tanpa ini, pesanan bisa dikonfirmasi tanpa membayar saat mode Midtrans aktif.
+        abort_if(config('sekalago.payment_driver') !== 'mock' || app()->isProduction(), 404);
+
         $data = $request->validate(['outcome' => ['required', 'in:success,fail']]);
 
         $this->own($booking);
