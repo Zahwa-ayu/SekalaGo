@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Booking;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use App\Models\Payment;
 use Illuminate\Support\Collection;
 
 class RevenueAnalytics
@@ -61,21 +62,30 @@ class RevenueAnalytics
             ->selectRaw('COUNT(*) AS refunds, COALESCE(SUM(bookings.refund_amount), 0) AS refunded')
             ->first();
 
-        $orders  = (int) $paid->orders;
-        $gmv     = (int) $paid->gmv;
-        $fee     = (int) $paid->fee;
-        $refunds = (int) $refund->refunds;
+        $gateway = $this->gatewayQuery($start, $end, $product)
+            ->selectRaw("COALESCE(SUM(payments.gateway_fee), 0) AS fee, COALESCE(SUM(CASE WHEN payments.gateway_fee_source = 'estimate' THEN 1 ELSE 0 END), 0) AS estimated")
+            ->first();
+
+        $orders     = (int) $paid->orders;
+        $gmv        = (int) $paid->gmv;
+        $fee        = (int) $paid->fee;
+        $refunds    = (int) $refund->refunds;
+        $gatewayFee = (int) $gateway->fee;
 
         return [
-            'orders'      => $orders,
-            'gmv'         => $gmv,
-            'fee'         => $fee,
-            'vendor'      => (int) $paid->vendor,
-            'average'     => $orders > 0 ? (int) round($gmv / $orders) : 0,
-            'take_rate'   => $gmv > 0 ? round($fee / $gmv * 100, 1) : 0.0,
-            'refunds'     => $refunds,
-            'refunded'    => (int) $refund->refunded,
-            'cancel_rate' => ($orders + $refunds) > 0 ? round($refunds / ($orders + $refunds) * 100, 1) : 0.0,
+            'orders'        => $orders,
+            'gmv'           => $gmv,
+            'fee'           => $fee,
+            'vendor'        => (int) $paid->vendor,
+            'average'       => $orders > 0 ? (int) round($gmv / $orders) : 0,
+            'take_rate'     => $gmv > 0 ? round($fee / $gmv * 100, 1) : 0.0,
+            'refunds'       => $refunds,
+            'refunded'      => (int) $refund->refunded,
+            'cancel_rate'   => ($orders + $refunds) > 0 ? round($refunds / ($orders + $refunds) * 100, 1) : 0.0,
+            // Biaya gateway semua pembayaran lunas pada periode (termasuk yang kemudian di-refund)
+            'gateway_fee'   => $gatewayFee,
+            'fee_estimated' => (int) $gateway->estimated,
+            'net_revenue'   => $fee - $gatewayFee,
         ];
     }
 
@@ -94,17 +104,30 @@ class RevenueAnalytics
             ->get()
             ->keyBy('bucket');
 
-        $series = ['labels' => [], 'gmv' => [], 'fee' => [], 'orders' => [], 'monthly' => $monthly];
+        $paymentBucket = $monthly ? "DATE_FORMAT(payments.paid_at, '%Y-%m')" : 'DATE(payments.paid_at)';
+
+        $gateway = $this->gatewayQuery($start, $end, $product)
+            ->selectRaw("{$paymentBucket} AS bucket, SUM(payments.gateway_fee) AS fee")
+            ->groupBy('bucket')
+            ->pluck('fee', 'bucket');
+
+        $series = ['labels' => [], 'gmv' => [], 'fee' => [], 'gateway' => [], 'net' => [], 'orders' => [], 'monthly' => $monthly];
 
         $cursor = $monthly ? $start->copy()->startOfMonth() : $start->copy()->startOfDay();
 
         while ($cursor->lte($end)) {
-            $row = $rows->get($monthly ? $cursor->format('Y-m') : $cursor->toDateString());
+            $key = $monthly ? $cursor->format('Y-m') : $cursor->toDateString();
+            $row = $rows->get($key);
 
-            $series['labels'][] = $monthly ? $cursor->translatedFormat('M Y') : $cursor->format('d/m');
-            $series['gmv'][]    = (int) ($row->gmv ?? 0);
-            $series['fee'][]    = (int) ($row->fee ?? 0);
-            $series['orders'][] = (int) ($row->orders ?? 0);
+            $commission = (int) ($row->fee ?? 0);
+            $cost       = (int) ($gateway[$key] ?? 0);
+
+            $series['labels'][]  = $monthly ? $cursor->translatedFormat('M Y') : $cursor->format('d/m');
+            $series['gmv'][]     = (int) ($row->gmv ?? 0);
+            $series['fee'][]     = $commission;
+            $series['gateway'][] = $cost;
+            $series['net'][]     = $commission - $cost;
+            $series['orders'][]  = (int) ($row->orders ?? 0);
 
             $cursor = $monthly ? $cursor->copy()->addMonthNoOverflow() : $cursor->copy()->addDay();
         }
@@ -176,13 +199,17 @@ class RevenueAnalytics
     }
 
     /** Rincian pesanan untuk CSV, dibaca bertahap agar hemat memori. */
+/** Rincian pesanan untuk CSV, dibaca bertahap agar hemat memori. */
     public function detailRows(Carbon $start, Carbon $end, ?string $product): \Generator
     {
         $query = $this->confirmed($start, $end, $product)
             ->join('partners', 'partners.id', '=', 'bookings.partner_id')
             ->leftJoin('hotels', 'hotels.id', '=', 'bookings.hotel_id')
             ->leftJoin('vehicles', 'vehicles.id', '=', 'bookings.vehicle_id')
-            ->selectRaw(self::PAID_AT . ' AS paid_on, bookings.booking_code, bookings.product_type, partners.company_name AS partner, COALESCE(hotels.city, vehicles.city) AS city, bookings.company_id, bookings.total_price, bookings.platform_fee, bookings.vendor_revenue')
+            ->leftJoin('payments', fn ($join) => $join
+                ->on('payments.booking_id', '=', 'bookings.id')
+                ->whereIn('payments.status', ['paid', 'refunded']))
+            ->selectRaw(self::PAID_AT . ' AS paid_on, bookings.booking_code, bookings.product_type, partners.company_name AS partner, COALESCE(hotels.city, vehicles.city) AS city, bookings.company_id, bookings.total_price, bookings.platform_fee, bookings.vendor_revenue, COALESCE(payments.gateway_fee, 0) AS gateway_fee')
             ->orderByRaw(self::PAID_AT);
 
         foreach ($query->cursor() as $row) {
@@ -209,5 +236,14 @@ class RevenueAnalytics
             'gmv'    => (int) $row->gmv,
             'fee'    => (int) $row->fee,
         ];
+    }
+
+    /** Pembayaran online yang lunas pada periode (termasuk yang kemudian di-refund). */
+    private function gatewayQuery(Carbon $start, Carbon $end, ?string $product): Builder
+    {
+        return Payment::query()
+            ->whereIn('payments.status', ['paid', 'refunded'])
+            ->whereBetween('payments.paid_at', [$start, $end])
+            ->when($product, fn ($q, $type) => $q->whereHas('booking', fn ($b) => $b->where('bookings.product_type', $type)));
     }
 }

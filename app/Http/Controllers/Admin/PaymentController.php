@@ -28,6 +28,10 @@ class PaymentController extends Controller
             'view'        => $view,
             'manualCount' => Payment::where('refund_status', 'manual_pending')->count(),
             'driver'      => config('sekalago.payment_driver'),
+            'fees' => [
+                        'month'     => (int) Payment::whereIn('status', ['paid', 'refunded'])->where('paid_at', '>=', now()->startOfMonth())->sum('gateway_fee'),
+                        'estimated' => Payment::whereIn('status', ['paid', 'refunded'])->where('gateway_fee_source', 'estimate')->count(),
+                    ],
         ]);
     }
 
@@ -50,5 +54,19 @@ class PaymentController extends Controller
         });
 
         return back()->with('success', __('ui.refund_marked_done'));
+    }
+
+        /** Admin mengoreksi biaya gateway dengan angka aktual dari laporan Midtrans. */
+    public function correctFee(Request $request, Payment $payment)
+    {
+        abort_unless(in_array($payment->status, ['paid', 'refunded'], true), 404);
+
+        $data = $request->validate([
+            'gateway_fee' => ['required', 'integer', 'min:0', 'max:' . (int) $payment->amount],
+        ]);
+
+        $payment->update(['gateway_fee' => $data['gateway_fee'], 'gateway_fee_source' => 'actual']);
+
+        return back()->with('success', __('ui.gateway_fee_saved'));
     }
 }

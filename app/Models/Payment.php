@@ -10,6 +10,7 @@ class Payment extends Model
         'booking_id', 'provider', 'order_id', 'amount', 'status', 'payment_type', 'transaction_id',
         'snap_token', 'redirect_url', 'expires_at', 'paid_at',
         'refund_status', 'refund_amount', 'refund_reference', 'refunded_at', 'last_payload',
+        'gateway_fee', 'gateway_fee_source',
     ];
 
     protected function casts(): array

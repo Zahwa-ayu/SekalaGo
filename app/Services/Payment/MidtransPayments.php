@@ -212,7 +212,12 @@ class MidtransPayments
             return;
         }
 
-        $p->fill(['status' => 'paid', 'paid_at' => now()]);
+        $p->fill([
+            'status'             => 'paid',
+            'paid_at'            => now(),
+            'gateway_fee'        => app(GatewayFee::class)->estimate($p->payment_type, (int) $p->amount),
+            'gateway_fee_source' => 'estimate',
+        ]);
 
         $booking = Booking::lockForUpdate()->find($p->booking_id);
 

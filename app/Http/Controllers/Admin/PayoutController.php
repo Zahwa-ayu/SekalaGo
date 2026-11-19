@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Partner;
 use App\Models\Payout;
+use App\Models\Payment;
 use App\Services\PayoutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -73,6 +74,9 @@ class PayoutController extends Controller
         return view('admin.payouts.show', [
             'payout'   => $payout,
             'bookings' => $payout->bookings()->orderBy('check_out')->get(),
+            'gatewayFees' => (int) Payment::whereIn('booking_id', $payout->bookings()->pluck('id'))
+            ->whereIn('status', ['paid', 'refunded'])
+            ->sum('gateway_fee'),
         ]);
     }
 

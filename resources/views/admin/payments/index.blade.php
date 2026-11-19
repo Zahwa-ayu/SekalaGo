@@ -31,6 +31,19 @@
             </ul>
         @endif
 
+        {{-- BIAYA GATEWAY --}}
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-md p-4">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.gateway_fee_month') }}</div>
+                <div class="text-xl font-black text-slate-900 mt-1">{{ $money($fees['month']) }}</div>
+            </div>
+            <div class="bg-white rounded-2xl border {{ $fees['estimated'] > 0 ? 'border-amber-200' : 'border-slate-100' }} shadow-md p-4">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.gateway_fee_estimated') }}</div>
+                <div class="text-xl font-black {{ $fees['estimated'] > 0 ? 'text-amber-600' : 'text-emerald-600' }} mt-1">{{ $fees['estimated'] }}</div>
+                <div class="text-[11px] text-slate-500">{{ __('ui.gateway_fee_estimated_hint') }}</div>
+            </div>
+        </div>
+
         <div class="flex flex-wrap gap-2">
             @foreach ($tabs as $value => $label)
                 <a href="{{ route('admin.payments.index', $value ? ['view' => $value] : []) }}"
@@ -51,6 +64,7 @@
                             <th class="text-left px-6 py-3">{{ __('ui.payment_order') }}</th>
                             <th class="text-left px-3 py-3">{{ __('ui.payment_method') }}</th>
                             <th class="text-right px-3 py-3">{{ __('ui.payout_amount') }}</th>
+                            <th class="text-left px-3 py-3">{{ __('ui.kpi_gateway') }}</th>
                             <th class="text-left px-3 py-3">{{ __('ui.account_status') }}</th>
                             <th class="text-left px-3 py-3">{{ __('ui.payout_created_on') }}</th>
                             <th class="px-6 py-3"></th>
@@ -58,6 +72,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse ($payments as $payment)
+                            @php $settled = in_array($payment->status, ['paid', 'refunded'], true); @endphp
                             <tr class="hover:bg-slate-50/60 align-top">
                                 <td class="px-6 py-3">
                                     <div class="font-mono text-xs font-bold text-slate-800">{{ $payment->order_id }}</div>
@@ -65,6 +80,23 @@
                                 </td>
                                 <td class="px-3 py-3 text-slate-600 text-xs">{{ $payment->payment_type ?: '-' }}</td>
                                 <td class="px-3 py-3 text-right font-bold text-slate-900">{{ $money($payment->amount) }}</td>
+
+                                <td class="px-3 py-3">
+                                    @if ($settled)
+                                        <form method="POST" action="{{ route('admin.payments.fee', $payment) }}" class="flex items-center gap-1.5">
+                                            @csrf
+                                            <input type="number" name="gateway_fee" min="0" max="{{ $payment->amount }}" required value="{{ $payment->gateway_fee }}"
+                                                   class="w-24 rounded-lg border border-slate-200 px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                                            <button class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-sky-100 hover:text-sky-700 text-slate-700 text-[11px] font-bold transition">{{ __('ui.gateway_fee_save') }}</button>
+                                        </form>
+                                        <div class="mt-1 text-[10px] font-bold {{ $payment->gateway_fee_source === 'actual' ? 'text-emerald-600' : 'text-amber-600' }}">
+                                            {{ $payment->gateway_fee_source === 'actual' ? __('ui.gateway_fee_actual') : __('ui.gateway_fee_estimate') }}
+                                        </div>
+                                    @else
+                                        <span class="text-slate-300">-</span>
+                                    @endif
+                                </td>
+
                                 <td class="px-3 py-3">
                                     <span class="px-2.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap {{ $statusStyle[$payment->status] ?? 'bg-slate-100 text-slate-600' }}">{{ __('ui.payment_status_' . $payment->status) }}</span>
                                     @if ($payment->refund_status === 'manual_pending')
@@ -86,7 +118,7 @@
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 text-sm">{{ __('ui.no_results') }}</td></tr>
+                            <tr><td colspan="7" class="px-6 py-10 text-center text-slate-400 text-sm">{{ __('ui.no_results') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

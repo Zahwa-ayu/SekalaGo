@@ -1419,4 +1419,21 @@ return [
 'partner_created_admin' => 'Partner created and awaiting the MOU. Send the MOU on this page so the partner can log in.',
 'partner_added_by_admin' => 'Added by admin',
 'partner_created_by' => 'Added by :name on :date.',
+
+// keuangan
+'kpi_gateway' => 'Gateway fees',
+'kpi_gateway_hint' => 'Midtrans fees, borne by the platform',
+'kpi_net' => 'Net revenue',
+'kpi_net_hint' => 'Commission minus gateway fees',
+'gateway_estimated_note' => ':count payment(s) still use an estimated fee. Match them with the Midtrans settlement report, then correct them on the page',
+'note_gateway' => 'Midtrans fees for all online payments settled in the period (including those later refunded). Borne by the platform, so it does not reduce the partner share. Net revenue = commission minus this fee.',
+'csv_gateway_period' => 'Gateway fees for the period (all payments) and net revenue',
+'gateway_fee_month' => 'Gateway fees this month',
+'gateway_fee_estimated' => 'Payments with an estimated fee',
+'gateway_fee_estimated_hint' => 'Correct them with the figure from the Midtrans report',
+'gateway_fee_estimate' => 'estimate',
+'gateway_fee_actual' => 'actual',
+'gateway_fee_save' => 'Save',
+'gateway_fee_saved' => 'Gateway fee corrected with the actual figure.',
+'payout_gateway_info' => 'The gateway fee for these bookings is :fee, so the platform net revenue is :net (it does not affect the transfer amount).',
 ];

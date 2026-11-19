@@ -31,6 +31,8 @@
             ['fa-scale-balanced', 'kpi_average', null, $money($summary['average']), $delta($deltas['average']), 'bg-amber-100 text-amber-600'],
             ['fa-chart-pie', 'kpi_take_rate', 'kpi_take_rate_hint', number_format($summary['take_rate'], 1, ',', '.') . '%', '', 'bg-teal-100 text-teal-600'],
             ['fa-rotate-left', 'kpi_refunds', null, $money($summary['refunded']), $delta($deltas['refunded'], true), 'bg-red-100 text-red-600'],
+            ['fa-credit-card', 'kpi_gateway', 'kpi_gateway_hint', $money($summary['gateway_fee']), $delta($deltas['gateway_fee'], true), 'bg-orange-100 text-orange-600'],
+            ['fa-wallet', 'kpi_net', 'kpi_net_hint', $money($summary['net_revenue']), $delta($deltas['net_revenue']), 'bg-violet-100 text-violet-600'],
         ];
 
         $segmentLabels = ['b2c' => __('ui.segment_b2c'), 'b2b' => __('ui.segment_b2b')];
@@ -102,7 +104,7 @@
         </div>
 
         {{-- KARTU ANGKA --}}
-        <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
             @foreach ($cards as [$icon, $label, $hint, $value, $change, $tone])
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-md p-4 flex flex-col gap-2">
                     <div class="flex items-center gap-2">
@@ -125,6 +127,14 @@
                 <i class="fa-solid fa-circle-info text-sky-500"></i>
                 {{ __('ui.kpi_refunds_hint', ['count' => $summary['refunds']]) }}
                 &middot; {{ __('ui.cancel_rate') }}: <strong>{{ number_format($summary['cancel_rate'], 1, ',', '.') }}%</strong>
+            </p>
+        @endif
+
+        @if ($summary['fee_estimated'] > 0)
+            <p class="text-xs text-amber-700">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                {{ __('ui.gateway_estimated_note', ['count' => $summary['fee_estimated']]) }}
+                <a href="{{ route('admin.payments.index') }}" class="font-bold hover:underline">{{ __('ui.payments') }}</a>
             </p>
         @endif
 
@@ -241,6 +251,7 @@
             <p><strong>{{ __('ui.kpi_commission') }}</strong>: {{ __('ui.note_commission') }}</p>
             <p><strong>{{ __('ui.note_date_title') }}</strong>: {{ __('ui.note_date') }}</p>
             <p><strong>Refund</strong>: {{ __('ui.note_refund') }}</p>
+            <p><strong>{{ __('ui.kpi_gateway') }}</strong>: {{ __('ui.note_gateway') }}</p>
         </div>
     </section>
 @endsection
@@ -267,7 +278,7 @@
         (function () {
             const series = @json($series);
             const products = @json($byProduct->map(fn ($row) => ['label' => $productLabels[$row['key']] ?? $row['key'], 'gmv' => $row['gmv']])->values());
-            const labels = { gmv: @json('GMV'), fee: @json(__('ui.kpi_commission')) };
+            const labels = { gmv: @json('GMV'), fee: @json(__('ui.kpi_commission')), net: @json(__('ui.kpi_net')) };
 
             const rupiah  = (value) => 'Rp' + new Intl.NumberFormat('id-ID').format(value);
             const compact = (value) => new Intl.NumberFormat('id-ID', { notation: 'compact' }).format(value);
@@ -278,6 +289,7 @@
                     datasets: [
                         { type: 'bar', label: labels.gmv, data: series.gmv, backgroundColor: 'rgba(14,165,233,.35)', borderColor: 'rgba(14,165,233,.9)', borderWidth: 1, borderRadius: 6, yAxisID: 'y' },
                         { type: 'line', label: labels.fee, data: series.fee, borderColor: '#10b981', backgroundColor: '#10b981', tension: .3, pointRadius: series.labels.length > 40 ? 0 : 3, yAxisID: 'y1' },
+                        { type: 'line', label: labels.net, data: series.net, borderColor: '#7c3aed', backgroundColor: '#7c3aed', borderDash: [5, 4], tension: .3, pointRadius: series.labels.length > 40 ? 0 : 3, yAxisID: 'y1' },
                     ],
                 },
                 options: {

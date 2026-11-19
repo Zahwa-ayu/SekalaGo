@@ -67,6 +67,12 @@
                     &middot; {{ __('ui.kpi_commission') }}: {{ $money($payout->platform_fee_total) }}
                 </div>
 
+                @if ($gatewayFees > 0)
+                    <div class="text-xs text-slate-500">
+                        {{ __('ui.payout_gateway_info', ['fee' => $money($gatewayFees), 'net' => $money($payout->platform_fee_total - $gatewayFees)]) }}
+                    </div>
+                @endif
+
                 @if ($payout->status === 'paid')
                     <div class="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-xs text-emerald-800 space-y-2">
                         <div>{{ $payout->paid_at->format('d/m/Y H:i') }} &middot; {{ $payout->payer?->email }}</div>

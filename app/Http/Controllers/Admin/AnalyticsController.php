@@ -47,8 +47,9 @@ class AnalyticsController extends Controller
         $product = $filters['product'];
 
         $filename = 'Analytics-' . $start->format('Ymd') . '-' . $end->format('Ymd') . '.csv';
+        $summary  = $this->analytics->summary($start, $end, $product);
 
-        return response()->streamDownload(function () use ($start, $end, $product) {
+        return response()->streamDownload(function () use ($start, $end, $product, $summary) {
             $out = fopen('php://output', 'w');
 
             // BOM agar Excel membaca UTF-8; pemisah titik koma cocok dengan Excel berbahasa Indonesia
@@ -57,9 +58,10 @@ class AnalyticsController extends Controller
             fputcsv($out, [
                 __('ui.csv_paid_on'), __('ui.booking_code'), __('ui.product'), __('ui.col_partner'),
                 __('ui.city_name'), __('ui.csv_segment'), 'GMV (IDR)', __('ui.kpi_commission') . ' (IDR)', __('ui.csv_vendor') . ' (IDR)',
+                __('ui.kpi_gateway') . ' (IDR)', __('ui.kpi_net') . ' (IDR)',
             ], ';', '"', '\\');
 
-            $gmv = $fee = $vendor = 0;
+            $gmv = $fee = $vendor = $gateway = 0;
 
             foreach ($this->analytics->detailRows($start, $end, $product) as $row) {
                 fputcsv($out, [
@@ -72,14 +74,21 @@ class AnalyticsController extends Controller
                     $row->total_price,
                     $row->platform_fee,
                     $row->vendor_revenue,
+                    $row->gateway_fee,
+                    $row->platform_fee - $row->gateway_fee,
                 ], ';', '"', '\\');
 
-                $gmv    += $row->total_price;
-                $fee    += $row->platform_fee;
-                $vendor += $row->vendor_revenue;
+                $gmv     += $row->total_price;
+                $fee     += $row->platform_fee;
+                $vendor  += $row->vendor_revenue;
+                $gateway += $row->gateway_fee;
             }
 
-            fputcsv($out, ['', '', '', '', '', 'TOTAL', $gmv, $fee, $vendor], ';', '"', '\\');
+            fputcsv($out, ['', '', '', '', '', 'TOTAL', $gmv, $fee, $vendor, $gateway, $fee - $gateway], ';', '"', '\\');
+
+            // Angka kartu Analytics: biaya gateway mencakup semua pembayaran lunas pada periode, termasuk yang di-refund
+            fputcsv($out, [], ';', '"', '\\');
+            fputcsv($out, ['', '', '', '', '', __('ui.csv_gateway_period'), '', '', '', $summary['gateway_fee'], $summary['net_revenue']], ';', '"', '\\');
 
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
@@ -118,7 +127,7 @@ class AnalyticsController extends Controller
     /** Perubahan persen dibanding periode sebelumnya; null jika pembandingnya nol. */
     private function deltas(array $now, array $before): array
     {
-        return collect(['gmv', 'fee', 'orders', 'average', 'refunded'])
+        return collect(['gmv', 'fee', 'orders', 'average', 'refunded', 'gateway_fee', 'net_revenue'])
             ->mapWithKeys(fn ($key) => [
                 $key => $before[$key] > 0 ? round(($now[$key] - $before[$key]) / $before[$key] * 100, 1) : null,
             ])

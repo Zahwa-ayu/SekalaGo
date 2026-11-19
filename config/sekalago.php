@@ -32,5 +32,21 @@ return [
         'BCA', 'BRI', 'BNI', 'Mandiri', 'BSI', 'CIMB Niaga', 'Permata', 'Danamon', 'BTN',
         'OCBC', 'Maybank', 'Panin', 'Mega', 'Bank Jago', 'SeaBank', 'Jenius (BTPN)',
     ],
+
+        // Perkiraan biaya Midtrans per metode: persen dari jumlah + biaya tetap (IDR).
+    // Kunci mengikuti payment_type dari Midtrans. Metode yang tidak terdaftar memakai 'default'.
+    'gateway_fees' => [
+        'default'       => ['percent' => 0.0, 'fixed' => 4000],
+        'bank_transfer' => ['percent' => 0.0, 'fixed' => 4000],   // virtual account BCA, BNI, BRI, Permata
+        'echannel'      => ['percent' => 0.0, 'fixed' => 4000],   // Mandiri Bill
+        'gopay'         => ['percent' => 2.0, 'fixed' => 0],
+        'shopeepay'     => ['percent' => 2.0, 'fixed' => 0],
+        'qris'          => ['percent' => 0.7, 'fixed' => 0],
+        'credit_card'   => ['percent' => 2.9, 'fixed' => 2000],
+        'cstore'        => ['percent' => 0.0, 'fixed' => 5000],   // Indomaret, Alfamart
+    ],
+
+    // PPN atas biaya gateway (persen). Isi 0 jika tarif di atas sudah termasuk PPN.
+    'gateway_vat_percent' => 11,
     
 ];

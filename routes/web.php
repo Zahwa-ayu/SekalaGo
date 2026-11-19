@@ -203,6 +203,7 @@ Route::middleware(['auth', 'role:admin'])
         // Pembayaran & refund manual
         Route::get('payments', [AdminPaymentController::class, 'index'])->name('payments.index');
         Route::post('payments/{payment}/refunded', [AdminPaymentController::class, 'manualRefunded'])->name('payments.refunded');
+        Route::post('payments/{payment}/fee', [AdminPaymentController::class, 'correctFee'])->name('payments.fee');
 
         // Master data: mata uang dan kurs
         Route::get('currencies', [AdminCurrencyController::class, 'index'])->name('currencies.index');

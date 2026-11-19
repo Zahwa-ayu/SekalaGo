@@ -1424,4 +1424,21 @@ return [
 'partner_created_admin' => 'Mitra dibuat dan menunggu MOU. Kirim MOU di halaman ini agar mitra bisa masuk.',
 'partner_added_by_admin' => 'Ditambahkan admin',
 'partner_created_by' => 'Ditambahkan oleh :name pada :date.',
+
+// keunagan
+'kpi_gateway' => 'Biaya gateway',
+'kpi_gateway_hint' => 'Biaya Midtrans, ditanggung platform',
+'kpi_net' => 'Pendapatan bersih',
+'kpi_net_hint' => 'Komisi dikurangi biaya gateway',
+'gateway_estimated_note' => ':count pembayaran masih memakai perkiraan biaya. Cocokkan dengan laporan settlement Midtrans lalu koreksi di halaman',
+'note_gateway' => 'biaya Midtrans untuk semua pembayaran online yang lunas pada periode (termasuk yang kemudian di-refund). Ditanggung platform, jadi tidak mengurangi hak mitra. Pendapatan bersih = komisi dikurangi biaya ini.',
+'csv_gateway_period' => 'Biaya gateway periode (semua pembayaran) dan pendapatan bersih',
+'gateway_fee_month' => 'Biaya gateway bulan ini',
+'gateway_fee_estimated' => 'Pembayaran dengan biaya perkiraan',
+'gateway_fee_estimated_hint' => 'Koreksi dengan angka dari laporan Midtrans',
+'gateway_fee_estimate' => 'perkiraan',
+'gateway_fee_actual' => 'aktual',
+'gateway_fee_save' => 'Simpan',
+'gateway_fee_saved' => 'Biaya gateway dikoreksi dengan angka aktual.',
+'payout_gateway_info' => 'Biaya gateway pesanan ini :fee, jadi pendapatan bersih platform :net (tidak memengaruhi jumlah transfer).',
 ];
