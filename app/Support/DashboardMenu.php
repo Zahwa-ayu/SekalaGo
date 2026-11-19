@@ -40,6 +40,7 @@ class DashboardMenu
                 ['fa-receipt', 'ui.all_bookings', 'admin.bookings.index', ['admin.bookings.*']],
                 ['fa-credit-card', 'ui.payments', 'admin.payments.index', ['admin.payments.*']],
                 ['fa-building', 'ui.corporate_management', 'admin.companies.index', ['admin.companies.*']],
+                ['fa-hand-holding-dollar', 'ui.topup_requests', 'admin.topups.index', ['admin.topups.*']],
 
                 // Uang
                 ['section' => 'ui.menu_finance'],
@@ -54,6 +55,7 @@ class DashboardMenu
                         ['fa-location-dot', 'ui.cities', 'admin.cities.index', ['admin.cities.*']],
                         ['fa-coins', 'ui.currencies', 'admin.currencies.index', ['admin.currencies.*']],
                         ['fa-list-check', 'ui.facilities', 'admin.facilities.index', ['admin.facilities.*']],
+                        ['fa-building-columns', 'ui.bank_accounts', 'admin.bank-accounts.index', ['admin.bank-accounts.*']],
                     ],
                 ],
                 [
@@ -111,6 +113,7 @@ class DashboardMenu
                 ? [
                     // Ringkasan (tanpa judul, selalu paling atas)
                     ['fa-gauge', 'ui.dashboard', 'corporate.dashboard', ['corporate.dashboard']],
+                    ['fa-wallet', 'ui.topup_balance', 'corporate.topups.index', ['corporate.topups.*']],
 
                     // Karyawan dan aturan perusahaan
                     ['section' => 'ui.menu_company'],

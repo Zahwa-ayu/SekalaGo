@@ -38,4 +38,8 @@ return [
     'refund_manual' => ['title' => 'Manual refund needed: :code', 'body' => 'The :amount refund (method :method) cannot be processed automatically. Transfer it manually, then record it on the Payments page.'],
     'payment_orphan' => ['title' => 'Payment received for an inactive booking', 'body' => 'Order :order for :amount was paid, but its booking expired or was cancelled. Refund the customer.'],
     'payment_mismatch' => ['title' => 'Payment amount mismatch', 'body' => 'Order :order was paid with an amount that differs from the bill. Check the Midtrans dashboard.'],
+
+    'topup_requested' => ['title' => 'Top-up request: :company', 'body' => ':company requested a top-up of :amount. Check the proof of transfer and the bank statement, then approve or reject.'],
+    'topup_approved' => ['title' => 'Top-up approved: :code', 'body' => 'The company balance increased by :amount.'],
+    'topup_rejected' => ['title' => 'Top-up rejected: :code', 'body' => 'The top-up request of :amount was rejected. Reason: :reason'],
 ];

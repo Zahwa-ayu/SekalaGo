@@ -96,12 +96,18 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-                        <div class="rounded-2xl bg-white border border-slate-200/80 hover:border-sky-400 p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
+                        <div class="rounded-2xl bg-white border border-slate-200/80 hover:border-sky-400 p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group flex flex-col">
                             <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 group-hover:bg-sky-500 group-hover:text-white flex items-center justify-center mb-3 border border-sky-100 transition duration-300">
                                 <i class="fa-solid fa-vault"></i>
                             </div>
                             <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.deposit_balance') }}</div>
                             <div class="text-xl font-black text-slate-900 mt-0.5">{{ format_price($company->deposit_balance, 'IDR') }}</div>
+
+                            {{-- TOMBOL TOP UP (hanya Finance: blok ini sudah berada di dalam @if isFinance) --}}
+                            <a href="{{ route('corporate.topups.index') }}"
+                               class="mt-3 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold shadow-md shadow-sky-500/20 transition">
+                                <i class="fa-solid fa-wallet"></i> {{ __('ui.topup_balance') }}
+                            </a>
                         </div>
 
                         <div class="rounded-2xl bg-white border border-slate-200/80 hover:border-sky-400 p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">

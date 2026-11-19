@@ -42,4 +42,8 @@ return [
     'refund_manual' => ['title' => 'Refund manual diperlukan: :code', 'body' => 'Refund :amount (metode :method) tidak bisa diproses otomatis. Transfer manual lalu catat di halaman Pembayaran.'],
     'payment_orphan' => ['title' => 'Pembayaran masuk untuk pesanan tidak aktif', 'body' => 'Order :order sebesar :amount sudah dibayar, tetapi pesanannya kedaluwarsa atau dibatalkan. Kembalikan dana ke pelanggan.'],
     'payment_mismatch' => ['title' => 'Jumlah pembayaran tidak cocok', 'body' => 'Order :order dibayar dengan jumlah berbeda dari tagihan. Periksa di dashboard Midtrans.'],
+
+    'topup_requested' => ['title' => 'Permintaan top-up: :company', 'body' => ':company mengajukan top-up :amount. Periksa bukti transfer dan mutasi rekening bank, lalu setujui atau tolak.'],
+    'topup_approved' => ['title' => 'Top-up disetujui: :code', 'body' => 'Saldo perusahaan bertambah :amount.'],
+    'topup_rejected' => ['title' => 'Top-up ditolak: :code', 'body' => 'Permintaan top-up :amount ditolak. Alasan: :reason'],
 ];

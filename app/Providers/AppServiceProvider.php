@@ -70,6 +70,7 @@ class AppServiceProvider extends ServiceProvider
         foreach ([
             \App\Models\Booking::class, \App\Models\Partner::class, \App\Models\PartnerAgreement::class,
             \App\Models\Company::class, \App\Models\Hotel::class, \App\Models\Vehicle::class, \App\Models\Payout::class,
+            \App\Models\TopupRequest::class,
         ] as $model) {
             $model::observe(\App\Observers\NotificationEvents::class);
         }

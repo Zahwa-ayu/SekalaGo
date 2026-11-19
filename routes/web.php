@@ -53,6 +53,9 @@ use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\BookingExtensionController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\PlatformBankAccountController as AdminBankAccountController;
+use App\Http\Controllers\Admin\TopupController as AdminTopupController;
+use App\Http\Controllers\Corporate\TopupController as CorporateTopupController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\FaqController;
@@ -252,6 +255,13 @@ Route::middleware(['auth', 'role:admin'])
         // Master data: fasilitas hotel dan kamar
         Route::resource('facilities', AdminFacilityController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::patch('facilities/{facility}/status', [AdminFacilityController::class, 'status'])->name('facilities.status');
+        
+        // Rekening bisnis SekalaGo dan permintaan top-up saldo
+        Route::resource('bank-accounts', AdminBankAccountController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+        Route::get('topups', [AdminTopupController::class, 'index'])->name('topups.index');
+        Route::post('topups/{topup}/approve', [AdminTopupController::class, 'approve'])->name('topups.approve');
+        Route::post('topups/{topup}/reject', [AdminTopupController::class, 'reject'])->name('topups.reject');
+        Route::get('topups/{topup}/proof', [AdminTopupController::class, 'proof'])->name('topups.proof');
 
         // Info kontak
         Route::prefix('contact-info')->name('contact-info.')->controller(ContactInfoController::class)->group(function () {
@@ -344,6 +354,11 @@ Route::middleware(['auth', 'role:corporate'])
             Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
             Route::get('reports/csv', [ReportController::class, 'csv'])->name('reports.csv');
             Route::get('reports/pdf', [ReportController::class, 'pdf'])->name('reports.pdf');
+            Route::get('topups', [CorporateTopupController::class, 'index'])->name('topups.index');
+
+            Route::post('topups', [CorporateTopupController::class, 'store'])->name('topups.store');
+            Route::post('topups/{topup}/cancel', [CorporateTopupController::class, 'cancel'])->name('topups.cancel');
+            Route::get('topups/{topup}/proof', [CorporateTopupController::class, 'proof'])->name('topups.proof');
 
             Route::get('audit', [CorporateAuditController::class, 'index'])->name('audit.index');
             Route::get('audit/csv', [CorporateAuditController::class, 'csv'])->name('audit.csv');

@@ -140,5 +140,12 @@ return [
         'names.ko' => 'nama bahasa Korea',
         'icon_class' => 'ikon',
         'scope' => 'jenis',
+
+        'account_number' => 'nomor rekening',
+        'account_name' => 'nama pemilik rekening',
+        'platform_bank_account_id' => 'rekening tujuan',
+        'transfer_date' => 'tanggal transfer',
+        'sender_name' => 'nama pengirim',
+        'approved_amount' => 'jumlah yang diterima',
     ],
 ];
