@@ -8,6 +8,9 @@ use App\Services\AgreementPdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\PartnerRegistrationController;
+use App\Models\City;
+use App\Models\User;
 use Illuminate\Validation\Rule;
 
 class PartnerController extends Controller
@@ -36,6 +39,104 @@ class PartnerController extends Controller
             ->pluck('total', 'verification_status');
 
         return view('admin.partners.index', compact('partners', 'status', 'counts'));
+    }
+
+    public function create()
+    {
+        return view('admin.partners.create', [
+            'cities'        => City::optionsFor(),
+            'legalForms'    => PartnerRegistrationController::LEGAL_FORMS,
+            'businessTypes' => PartnerRegistrationController::BUSINESS_TYPES,
+        ]);
+    }
+
+/** Admin mendaftarkan mitra: statusnya menunggu MOU, jadi alur verifikasi dan MOU yang ada tetap berlaku. */
+    public function store(Request $request)
+    {
+        $request->merge(['tax_id' => preg_replace('/\D/', '', (string) $request->input('tax_id'))]);
+
+        $phone = ['required', 'string', 'regex:/^\+?[0-9\s\-]{8,20}$/'];
+        $file  = ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png,webp', 'max:4096'];
+
+        $data = $request->validate([
+            'company_name'        => ['required', 'string', 'max:255', Rule::unique('partners', 'company_name')],
+            'legal_form'          => ['required', Rule::in(PartnerRegistrationController::LEGAL_FORMS)],
+            'business_type'       => ['required', Rule::in(PartnerRegistrationController::BUSINESS_TYPES)],
+            'tax_id'              => ['required', 'digits_between:15,16', Rule::unique('partners', 'tax_id')],
+            'business_license_no' => ['required', 'string', 'regex:/^[0-9A-Za-z.\-\/]{8,30}$/'],
+            'address'             => ['required', 'string', 'max:255'],
+            'city_id'             => ['required', 'integer', Rule::exists('cities', 'id')->where('is_active', true)],
+            'phone'               => $phone,
+            'website'             => ['nullable', 'url', 'max:255'],
+
+            'tax_document'        => $file,
+            'license_document'    => $file,
+            'supporting_document' => $file,
+
+            'contact_name'        => ['required', 'string', 'max:255'],
+            'email'               => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'phone_number'        => $phone,
+            'password'            => ['required', 'string', 'min:8'],
+
+            'bank_name'           => ['nullable', 'string', 'max:60', 'required_with:bank_account_no,bank_account_name'],
+            'bank_account_no'     => ['nullable', 'string', 'max:50', 'regex:/^[0-9\s\-]+$/', 'required_with:bank_name,bank_account_name'],
+            'bank_account_name'   => ['nullable', 'string', 'max:100', 'required_with:bank_name,bank_account_no'],
+        ]);
+
+        $paths = [];
+
+        try {
+            $partner = DB::transaction(function () use ($data, $request, &$paths) {
+                $user = User::create([
+                    'email'                => $data['email'],
+                    'password'             => $data['password'],
+                    'phone_number'         => $data['phone_number'],
+                    'user_type'            => 'partner',
+                    'must_change_password' => true,
+                ]);
+
+                $partner = Partner::create([
+                    'user_id'             => $user->id,
+                    'company_name'        => $data['company_name'],
+                    'legal_form'          => $data['legal_form'],
+                    'business_type'       => $data['business_type'],
+                    'tax_id'              => $data['tax_id'],
+                    'business_license_no' => $data['business_license_no'],
+                    'address'             => $data['address'],
+                    'city_id'             => $data['city_id'],
+                    'phone'               => $data['phone'],
+                    'website'             => $data['website'] ?? null,
+                    'contact_name'        => $data['contact_name'],
+                    'bank_name'           => $data['bank_name'] ?? null,
+                    'bank_account_no'     => $data['bank_account_no'] ?? null,
+                    'bank_account_name'   => $data['bank_account_name'] ?? null,
+                    'verification_status' => 'pending',   // menunggu MOU: langkah verifikasi yang sama dengan mitra yang mendaftar sendiri
+                    'source'              => 'admin',
+                    'created_by'          => $request->user()->id,
+                ]);
+
+                $columns = ['tax_document' => 'tax_document_path', 'license_document' => 'license_document_path', 'supporting_document' => 'supporting_document_path'];
+
+                foreach ($columns as $input => $column) {
+                    if ($request->hasFile($input)) {
+                        $paths[$input] = $request->file($input)->store("partner-documents/{$partner->id}", 'local');
+                        $partner->{$column} = $paths[$input];
+                    }
+                }
+
+                $partner->save();
+
+                return $partner;
+            });
+        } catch (\Throwable $e) {
+            foreach ($paths as $path) {
+                Storage::disk('local')->delete($path);
+            }
+
+            throw $e;
+        }
+
+        return redirect()->route('admin.partners.show', $partner)->with('success', __('ui.partner_created_admin'));
     }
 
     public function show(Partner $partner)

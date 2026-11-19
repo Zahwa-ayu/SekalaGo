@@ -9,6 +9,13 @@
 <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 space-y-3">
     <h2 class="font-extrabold text-slate-900">{{ __('ui.partner_registration_data') }}</h2>
 
+    @if ($partner->source === 'admin')
+        <p class="text-xs text-violet-700 font-semibold">
+            <i class="fa-solid fa-user-shield"></i>
+            {{ __('ui.partner_created_by', ['name' => $partner->creator?->email ?? '-', 'date' => $partner->created_at->format('d/m/Y')]) }}
+        </p>
+    @endif
+
     @if ($partner->tax_id || $partner->address)
         <div class="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
             <div><span class="text-slate-500">{{ __('ui.legal_form') }}:</span> <strong>{{ $partner->legal_form ?: '-' }}</strong></div>

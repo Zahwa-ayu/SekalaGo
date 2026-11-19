@@ -15,6 +15,7 @@ class Partner extends Model
         'proposed_commission_rate', 'commission_proposal_note', 'commission_proposed_at',
         'legal_form', 'business_type', 'tax_id', 'address', 'city_id', 'phone', 'website', 'contact_name',
         'tax_document_path', 'license_document_path', 'supporting_document_path',
+        'source', 'created_by',
     ];
 
      protected function casts(): array
@@ -117,4 +118,6 @@ class Partner extends Model
     }
 
     public function city() { return $this->belongsTo(City::class); }
+
+    public function creator() { return $this->belongsTo(User::class, 'created_by'); }
 }

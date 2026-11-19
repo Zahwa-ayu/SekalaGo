@@ -24,7 +24,7 @@ class NotificationEvents implements ShouldHandleEventsAfterCommit
     {
         match (true) {
             $model instanceof Booking => $this->bookingCreated($model),
-            $model instanceof Partner => $this->notifier->to(
+            $model instanceof Partner => $model->source === 'admin' ? null : $this->notifier->to(
                 $this->notifier->admins(), 'partner_registered', ['company' => $model->company_name],
                 route('admin.partners.show', $model), 'fa-handshake'
             ),

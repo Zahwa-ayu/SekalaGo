@@ -155,7 +155,10 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
         Route::get('analytics/csv', [AdminAnalyticsController::class, 'csv'])->name('analytics.csv');
 
+        // PENTING: partners/create harus di atas partners/{partner}, kalau tidak "create" dianggap ID mitra (404)
         Route::get('partners', [AdminPartnerController::class, 'index'])->name('partners.index');
+        Route::get('partners/create', [AdminPartnerController::class, 'create'])->name('partners.create');
+        Route::post('partners', [AdminPartnerController::class, 'store'])->name('partners.store');
         Route::get('partners/{partner}', [AdminPartnerController::class, 'show'])->name('partners.show');
         Route::get('partners/{partner}/agreement/download', [AdminPartnerController::class, 'downloadAgreement'])->name('partners.agreement.download');
         Route::post('partners/{partner}/agreement', [AdminPartnerController::class, 'sendAgreement'])->name('partners.agreement');

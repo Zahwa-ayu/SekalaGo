@@ -1411,4 +1411,17 @@ return [
 'search_change' => 'Ubah pencarian',
 'back_to_results' => 'Kembali ke hasil pencarian',
 'hotels_found' => ':count hotel ditemukan',
+
+// create mitra
+'partner_add' => 'Tambah mitra',
+'partner_add_hint' => 'Daftarkan hotel atau penyedia mobil atas nama mereka. Setelah dibuat, kirim MOU agar mitra bisa masuk dan berjualan.',
+'partner_add_documents_hint' => 'Boleh dikosongkan jika dokumen diterima di luar sistem. Halaman detail mitra akan menandai dokumen yang belum ada.',
+'partner_add_next_title' => 'Langkah berikutnya',
+'partner_add_next_steps' => 'Mitra dibuat dengan status menunggu MOU. Di halaman detail mitra, tetapkan komisi, jadwal pencairan, dan masa batal gratis lalu kirim MOU. Mitra baru bisa masuk setelah itu dan wajib mengganti password sementara.',
+'partner_temp_password' => 'Password sementara',
+'partner_temp_password_hint' => 'Berikan ke mitra secara langsung. Wajib diganti saat masuk pertama kali.',
+'generate_password' => 'Buat acak',
+'partner_created_admin' => 'Mitra dibuat dan menunggu MOU. Kirim MOU di halaman ini agar mitra bisa masuk.',
+'partner_added_by_admin' => 'Ditambahkan admin',
+'partner_created_by' => 'Ditambahkan oleh :name pada :date.',
 ];

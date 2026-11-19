@@ -2,7 +2,14 @@
 
 @section('content')
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-6">{{ __('ui.verify_partners') }}</h1>
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.verify_partners') }}</h1>
+
+            <a href="{{ route('admin.partners.create') }}"
+               class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
+                <i class="fa-solid fa-plus mr-1"></i> {{ __('ui.partner_add') }}
+            </a>
+        </div>
 
         {{-- FILTER STATUS --}}
         <div class="flex flex-wrap gap-2 mb-6">
@@ -50,6 +57,9 @@
                             <tr class="hover:bg-sky-50/50 transition">
                                 <td class="px-6 py-4 font-bold text-slate-900">
                                     {{ $partner->company_name }}
+                                    @if ($partner->source === 'admin')
+                                        <span class="ml-1 px-2 py-0.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-bold">{{ __('ui.partner_added_by_admin') }}</span>
+                                    @endif
                                     @if ($partner->proposedPercent() !== null && ! $partner->hasSignedAgreement())
                                         <span class="ml-1 px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[10px] font-bold">{{ __('ui.proposes_short', ['percent' => rtrim(rtrim(number_format($partner->proposedPercent(), 2, '.', ''), '0'), '.')]) }}</span>
                                     @endif

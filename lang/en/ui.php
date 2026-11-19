@@ -1406,4 +1406,17 @@ return [
 'search_change' => 'Change search',
 'back_to_results' => 'Back to search results',
 'hotels_found' => ':count hotel(s) found',
+
+// create partner by admin
+'partner_add' => 'Add partner',
+'partner_add_hint' => 'Register a hotel or car rental provider on their behalf. After it is created, send the MOU so the partner can log in and start selling.',
+'partner_add_documents_hint' => 'May be left empty if the documents were received outside the system. The partner detail page flags missing documents.',
+'partner_add_next_title' => 'Next steps',
+'partner_add_next_steps' => 'The partner is created with the status awaiting MOU. On the partner detail page, set the commission, payout schedule and free-cancellation period, then send the MOU. The partner can only log in after that and must change the temporary password.',
+'partner_temp_password' => 'Temporary password',
+'partner_temp_password_hint' => 'Give it to the partner in person. It must be changed on the first login.',
+'generate_password' => 'Generate',
+'partner_created_admin' => 'Partner created and awaiting the MOU. Send the MOU on this page so the partner can log in.',
+'partner_added_by_admin' => 'Added by admin',
+'partner_created_by' => 'Added by :name on :date.',
 ];
