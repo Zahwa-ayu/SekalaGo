@@ -1405,4 +1405,10 @@ return [
 'refund_reference_placeholder' => 'Referensi / bukti transfer',
 'refund_mark_done' => 'Tandai selesai',
 'refund_marked_done' => 'Refund manual dicatat selesai.',
+
+// cancel pencarian
+'search_back' => 'Kembali',
+'search_change' => 'Ubah pencarian',
+'back_to_results' => 'Kembali ke hasil pencarian',
+'hotels_found' => ':count hotel ditemukan',
 ];

@@ -19,8 +19,8 @@
     @endphp
 
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:text-sky-800 transition">
-            <i class="fa-solid fa-arrow-left"></i> {{ __('ui.search_results') }}
+        <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:underline">
+            <i class="fa-solid fa-arrow-left"></i> {{ __('ui.back_to_results') }}
         </a>
 
         {{-- items-start: kolom kanan tidak ditarik setinggi kolom kiri, supaya sticky bekerja --}}

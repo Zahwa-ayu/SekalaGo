@@ -1400,4 +1400,10 @@ return [
 'refund_reference_placeholder' => 'Reference / transfer proof',
 'refund_mark_done' => 'Mark as done',
 'refund_marked_done' => 'Manual refund recorded as done.',
+
+// cancel pencarian
+'search_back' => 'Back',
+'search_change' => 'Change search',
+'back_to_results' => 'Back to search results',
+'hotels_found' => ':count hotel(s) found',
 ];

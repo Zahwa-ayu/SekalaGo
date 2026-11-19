@@ -5,6 +5,8 @@ namespace App\Services\Search;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 
@@ -12,10 +14,12 @@ class HotelSearchService
 {
     private const MAX_NIGHTS = 30;
 
+    private const PER_PAGE = 10;
+
     /**
      * Cari hotel yang punya tipe kamar tersedia untuk setiap malam di rentang tanggal.
      *
-     * @return array{results: \Illuminate\Support\Collection, nights: int, params: array}
+     * @return array{results: \Illuminate\Pagination\LengthAwarePaginator, total: int, nights: int, params: array}
      */
     public function search(Request $request): array
     {
@@ -47,8 +51,21 @@ class HotelSearchService
             ->sortBy('min_price')
             ->values();
 
+        $page      = Paginator::resolveCurrentPage();
+        $paginator = new LengthAwarePaginator(
+            $results->forPage($page, self::PER_PAGE)->values(),
+            $results->count(),
+            self::PER_PAGE,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        // Tautan halaman berikutnya membawa pengunjung kembali ke bagian hasil
+        $paginator->fragment('results');
+
         return [
-            'results' => $results,
+            'results' => $paginator,
+            'total'   => $results->count(),
             'nights'  => $nights,
             'params'  => Arr::only($data, ['city', 'check_in', 'check_out', 'guests']),
         ];

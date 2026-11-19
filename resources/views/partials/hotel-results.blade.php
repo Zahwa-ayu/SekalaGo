@@ -5,8 +5,13 @@
 @endphp
 
 <div class="space-y-5">
+    @include('partials.results-toolbar', ['kind' => 'hotels', 'params' => $params, 'count' => $nights])
+
     <div class="bg-white rounded-2xl border border-slate-100 shadow-md px-5 py-4 flex flex-wrap items-center justify-between gap-2">
-        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">{{ __('ui.search_results') }}</h2>
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">
+            {{ __('ui.search_results') }}
+            <span class="text-sm font-semibold text-slate-400">{{ __('ui.hotels_found', ['count' => $search['total']]) }}</span>
+        </h2>
         <p class="text-xs sm:text-sm text-slate-500 flex items-center gap-2">
             <i class="fa-solid fa-calendar-days text-sagara-blue"></i>
             {{ __('ui.stay_summary', [
@@ -73,4 +78,6 @@
             {{ __('ui.no_results') }}
         </div>
     @endforelse
+
+    <div>{{ $results->links() }}</div>
 </div>

@@ -36,7 +36,7 @@
         </div>
 
         <div class="max-w-6xl mx-auto w-full relative z-20">
-            <div class="bg-white rounded-3xl p-5 sm:p-7 text-slate-800 shadow-2xl border border-slate-100/90 ring-1 ring-slate-900/5">
+            <div id="booking" class="bg-white rounded-3xl p-5 sm:p-7 text-slate-800 shadow-2xl border border-slate-100/90 ring-1 ring-slate-900/5">
                 @include('partials.car-search-form')
             </div>
         </div>

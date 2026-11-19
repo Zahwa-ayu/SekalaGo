@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Vehicle;
 use App\Services\Search\CarSearchService;
 use App\Services\VehicleAvailability;
+use App\Support\BackLink;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -82,7 +83,13 @@ class CarSearchController extends Controller
 
         $datesAreDefault = ! $hasDates;
 
-        return view('cars.show', compact('vehicle', 'params', 'days', 'available', 'freeUnits', 'passengers', 'driver', 'datesAreDefault'));
+        $backUrl = BackLink::toListing(
+    $request,
+    'cars.home',
+    $hasDates ? \Illuminate\Support\Arr::only($params, ['city', 'pickup_date', 'return_date', 'driver']) : []
+    );
+
+    return view('cars.show', compact('vehicle', 'params', 'days', 'available', 'freeUnits', 'passengers', 'driver', 'datesAreDefault', 'backUrl'));
     }
 
     /** Opsi supir yang berlaku: pilihan pengguna jika armada menawarkannya, kalau tidak yang tersedia. */

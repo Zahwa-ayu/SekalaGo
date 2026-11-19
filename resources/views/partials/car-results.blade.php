@@ -13,6 +13,8 @@
 @endphp
 
 <div class="space-y-5">
+    @include('partials.results-toolbar', ['kind' => 'cars', 'params' => $params, 'count' => $days])
+
     <div class="bg-white rounded-2xl border border-slate-100 shadow-md px-5 py-4 flex flex-wrap items-center justify-between gap-2">
         <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900">{{ __('ui.car_results') }}</h2>
         <p class="text-xs sm:text-sm text-slate-500 flex items-center gap-2">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Hotel;
 use App\Services\Search\HotelSearchService;
+use App\Support\BackLink;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
@@ -69,7 +70,13 @@ class HotelSearchController extends Controller
 
         $datesAreDefault = ! $hasDates;
 
-        return view('hotels.show', compact('hotel', 'roomTypes', 'params', 'nights', 'datesAreDefault'));
+        $backUrl = BackLink::toListing(
+    $request,
+    'hotels.search',
+    $hasDates ? \Illuminate\Support\Arr::only($params, ['city', 'check_in', 'check_out', 'guests']) : []
+    );
+
+    return view('hotels.show', compact('hotel', 'roomTypes', 'params', 'nights', 'datesAreDefault', 'backUrl'));
     }
 
     /** Hotel pilihan beserta harga mulai dari (tanpa pencarian). */
