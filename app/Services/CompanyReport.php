@@ -22,6 +22,9 @@ class CompanyReport
 
         $confirmed = $bookings->where('status', 'confirmed')->values();
         $total     = (int) $confirmed->sum('total_price');
+        // Pesanan yang dibatalkan dengan denda: denda dipotong dari saldo, jadi dilaporkan terpisah dari belanja
+        $penalized  = $bookings->where('status', 'cancelled')->where('cancel_fee', '>', 0)->sortBy('cancelled_at')->values();
+        $cancelFees = (int) $penalized->sum('cancel_fee');
 
         $summary = [
             'orders'    => $confirmed->count(),
@@ -33,6 +36,9 @@ class CompanyReport
             'rejected'  => $bookings->where('status', 'rejected')->count(),
             'pending'   => $bookings->where('status', 'pending_approval')->count(),
             'late_fees' => (int) $confirmed->sum('late_fee'),   // dibayar langsung ke vendor, tidak masuk total belanja
+            'cancel_fees'      => $cancelFees,
+            'cancel_fee_count' => $penalized->count(),
+            'total_with_fees'  => $total + $cancelFees,
         ];
 
         $byProduct = collect(['hotel', 'car'])
@@ -83,6 +89,7 @@ class CompanyReport
             'byDepartment' => $byDepartment,
             'byEmployee'   => $byEmployee,
             'rows'         => $confirmed,
+            'penalized'    => $penalized,
         ];
     }
 }

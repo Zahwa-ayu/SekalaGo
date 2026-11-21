@@ -1513,4 +1513,12 @@ return [
 'cancel_fee_policy' => 'Setelah batas gratis sampai sehari sebelum tanggal mulai, pembatalan dikenai denda :percent% dari total. Pada hari mulai tidak bisa dibatalkan.',
 'booking_cancelled_with_fee' => 'Pesanan dibatalkan. Denda :fee ditahan dan :amount dikembalikan.',
 'analytics_cancel_fees' => 'Termasuk denda pembatalan dari :count pesanan: total :total, bagian platform :platform (masuk pendapatan bersih).',
+
+// 
+'late_cancel_fee_label' => 'Denda pembatalan setelah batas gratis',
+'late_cancel_fee_hint' => 'Persen dari total (10 sampai 90). Dikosongkan = memakai angka bawaan sistem.',
+'cancel_fee_report_count' => ':count pesanan dibatalkan dengan denda',
+'cancel_fee_report_note' => 'Denda dipotong dari saldo perusahaan (sisanya sudah dikembalikan ke saldo). Tidak termasuk dalam total belanja pesanan terkonfirmasi.',
+'cancel_fee_report_cancelled_on' => 'Tanggal batal',
+'total_with_fees' => 'Total belanja + denda',
 ];

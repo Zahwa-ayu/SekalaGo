@@ -147,5 +147,6 @@ return [
         'transfer_date' => 'tanggal transfer',
         'sender_name' => 'nama pengirim',
         'approved_amount' => 'jumlah yang diterima',
+        'late_cancel_fee_percent' => 'denda pembatalan',
     ],
 ];

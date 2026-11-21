@@ -32,6 +32,27 @@
         <tr><td>{{ __('ui.booking_status_rejected') }}</td><td class="num">{{ $summary['rejected'] }}</td></tr>
     </table>
 
+    @if ($summary['cancel_fee_count'] > 0)
+        <h2>{{ __('ui.cancel_fee_amount') }}</h2>
+        <table>
+            <tr>
+                <th>{{ __('ui.booking_code') }}</th><th>{{ __('ui.employee') }}</th><th>{{ __('ui.item_name') }}</th>
+                <th>{{ __('ui.cancel_fee_report_cancelled_on') }}</th><th class="num">{{ __('ui.cancel_fee_amount') }}</th>
+            </tr>
+            @foreach ($penalized as $booking)
+                <tr>
+                    <td>{{ $booking->booking_code }}</td>
+                    <td>{{ $booking->user?->companyUser?->displayName() ?? $booking->user?->email }}</td>
+                    <td>{{ $booking->hotel_name }}</td>
+                    <td>{{ $booking->cancelled_at?->format('d/m/Y') }}</td>
+                    <td class="num">{{ format_price($booking->cancel_fee, 'IDR') }}</td>
+                </tr>
+            @endforeach
+            <tr><th colspan="4">{{ __('ui.cancel_fee_amount') }}</th><th class="num">{{ format_price($summary['cancel_fees'], 'IDR') }}</th></tr>
+            <tr><th colspan="4">{{ __('ui.total_with_fees') }}</th><th class="num">{{ format_price($summary['total_with_fees'], 'IDR') }}</th></tr>
+        </table>
+    @endif
+
     @if ($summary['orders'] === 0)
         <p>{{ __('ui.no_report_data') }}</p>
     @else

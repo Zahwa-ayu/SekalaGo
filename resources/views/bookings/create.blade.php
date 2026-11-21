@@ -37,6 +37,9 @@
 
                         @include('partials.booking-details-fields', ['type' => 'hotel', 'isCorporate' => $isCorporate])
 
+                        {{-- KEBIJAKAN DENDA PEMBATALAN (sesuai mitra) --}}
+                        <p class="text-xs text-slate-500">{{ __('ui.cancel_fee_policy', ['percent' => $roomType->hotel->partner->lateCancelFeePercent()]) }}</p>
+
                         <button type="submit"
                                 class="w-full px-5 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white text-sm font-bold shadow-lg shadow-sky-500/20 transition">
                             @if ($isCorporate)

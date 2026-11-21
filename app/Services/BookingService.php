@@ -95,7 +95,7 @@ class BookingService
             ];
 
             // Salin aturan denda pembatalan saat memesan, supaya perubahan config tidak mengubah pesanan lama
-            $attributes['late_cancel_fee_percent'] = (int) config('sekalago.late_cancel_fee_percent', 50);
+            $attributes['late_cancel_fee_percent'] = $partner->lateCancelFeePercent();
 
             $attributes += $details;
 
@@ -444,7 +444,7 @@ class BookingService
             ];
 
             // Salin aturan denda pembatalan saat memesan, supaya perubahan config tidak mengubah pesanan lama
-            $attributes['late_cancel_fee_percent'] = (int) config('sekalago.late_cancel_fee_percent', 50);
+            $attributes['late_cancel_fee_percent'] = $partner->lateCancelFeePercent();
 
             if ($member) {
                 return $this->createCorporateBooking($user, $member, $attributes, $total);

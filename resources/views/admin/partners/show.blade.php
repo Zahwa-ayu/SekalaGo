@@ -145,7 +145,7 @@
 
                             <form method="POST" action="{{ route('admin.partners.agreement', $partner) }}" class="space-y-4">
                                 @csrf
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                     <div class="{{ $box }}">
                                         <label class="{{ $label }}"><i class="fa-solid fa-percent text-sagara-blue"></i> {{ __('ui.commission_rate') }} (10 - 25)</label>
                                         <input type="number" name="commission_percent" min="10" max="25" step="0.5" required class="{{ $input }}"
@@ -166,6 +166,16 @@
                                         <label class="{{ $label }}"><i class="fa-solid fa-calendar-xmark text-sagara-blue"></i> {{ __('ui.free_cancel_days') }}</label>
                                         <input type="number" name="free_cancel_days" min="0" max="30" required class="{{ $input }}"
                                                value="{{ old('free_cancel_days', $agreement?->free_cancel_days ?? 3) }}">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.late_cancel_fee_label') }}</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" name="late_cancel_fee_percent" min="10" max="90"
+                                                   value="{{ old('late_cancel_fee_percent', $partner->latestAgreement?->late_cancel_fee_percent ?? config('sekalago.late_cancel_fee_percent', 50)) }}"
+                                                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                                            <span class="text-sm font-bold text-slate-500">%</span>
+                                        </div>
+                                        <p class="text-[11px] text-slate-400 mt-1">{{ __('ui.late_cancel_fee_hint') }}</p>
                                     </div>
                                 </div>
                                 <div>

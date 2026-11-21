@@ -11,7 +11,7 @@ class PartnerAgreement extends Model
     protected $fillable = [
         'partner_id', 'version', 'commission_rate', 'payout_schedule', 'free_cancel_days',
         'content', 'status', 'sent_at', 'signed_at', 'signed_name', 'signed_ip',
-        'signature_hash', 'pdf_path', 'proposed_rate', 'admin_note', 
+        'signature_hash', 'pdf_path', 'proposed_rate', 'admin_note', 'late_cancel_fee_percent',
     ];
 
     protected function casts(): array

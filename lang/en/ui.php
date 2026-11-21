@@ -1507,4 +1507,12 @@ return [
 'cancel_fee_policy' => 'After the free period until the day before the start date, cancellation carries a :percent% fee of the total. It cannot be cancelled on the start day.',
 'booking_cancelled_with_fee' => 'Booking cancelled. A fee of :fee was withheld and :amount refunded.',
 'analytics_cancel_fees' => 'Includes cancellation fees from :count booking(s): :total in total, platform share :platform (part of net revenue).',
+
+// 
+'late_cancel_fee_label' => 'Cancellation fee after the free period',
+'late_cancel_fee_hint' => 'Percent of the total (10 to 90). Empty = use the system default.',
+'cancel_fee_report_count' => ':count booking(s) cancelled with a fee',
+'cancel_fee_report_note' => 'The fee is deducted from the company balance (the remainder was refunded to the balance). It is not part of the confirmed bookings total.',
+'cancel_fee_report_cancelled_on' => 'Cancelled on',
+'total_with_fees' => 'Total spending + fees',
 ];

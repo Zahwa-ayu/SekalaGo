@@ -105,6 +105,9 @@
             </div>
         @endif
 
+        {{-- DENDA PEMBATALAN --}}
+        @include('corporate.reports._cancel-fees')
+
         @if ($summary['orders'] === 0)
             <div class="bg-white rounded-3xl border border-slate-100 shadow-md px-6 py-10 text-center text-slate-400">
                 <i class="fa-solid fa-chart-column text-3xl mb-2 block"></i>

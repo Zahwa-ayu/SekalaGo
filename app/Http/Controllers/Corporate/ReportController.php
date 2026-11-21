@@ -67,6 +67,24 @@ class ReportController extends Controller
 
             fputcsv($out, ['', '', '', '', '', '', '', '', '', 'TOTAL', $report['summary']['total'], $report['summary']['late_fees'], ''], ';', '"', '\\');
 
+                if ($report['penalized']->isNotEmpty()) {
+                fputcsv($out, [], ';', '"', '\\');
+                fputcsv($out, [__('ui.cancel_fee_amount')], ';', '"', '\\');
+
+                foreach ($report['penalized'] as $booking) {
+                    fputcsv($out, [
+                        $booking->booking_code,
+                        $booking->user?->companyUser?->displayName() ?? $booking->user?->email,
+                        $booking->hotel_name,
+                        $booking->cancelled_at?->format('Y-m-d'),
+                        $booking->cancel_fee,
+                    ], ';', '"', '\\');
+                }
+
+                fputcsv($out, ['TOTAL', '', '', '', $report['summary']['cancel_fees']], ';', '"', '\\');
+                fputcsv($out, [__('ui.total_with_fees'), '', '', '', $report['summary']['total_with_fees']], ';', '"', '\\');
+            }
+
             fclose($out);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }

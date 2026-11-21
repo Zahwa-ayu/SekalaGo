@@ -33,6 +33,11 @@
                         <dd class="font-bold">{{ $agreement->free_cancel_days }}</dd>
                     </div>
                 </dl>
+
+                <div class="flex justify-between gap-4 text-sm mt-5 pt-4 border-t border-white/15">
+                    <span class="text-sky-200">{{ __('ui.late_cancel_fee_label') }}</span>
+                    <span class="font-bold text-white">{{ $agreement->late_cancel_fee_percent }}%</span>
+                </div>
             </div>
 
             {{-- ISI MOU --}}

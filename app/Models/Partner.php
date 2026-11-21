@@ -122,4 +122,12 @@ class Partner extends Model
     public function city() { return $this->belongsTo(City::class); }
 
     public function creator() { return $this->belongsTo(User::class, 'created_by'); }
+
+        /** Denda pembatalan setelah batas gratis (persen) dari MOU yang ditandatangani; cadangan: angka bawaan di config. */
+    public function lateCancelFeePercent(): int
+    {
+        $agreement = $this->agreements()->where('status', 'signed')->latest('signed_at')->first();
+
+        return (int) ($agreement->late_cancel_fee_percent ?? config('sekalago.late_cancel_fee_percent', 50));
+    }
 }

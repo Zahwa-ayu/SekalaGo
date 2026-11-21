@@ -165,6 +165,7 @@ class PartnerController extends Controller
             'payout_schedule'    => ['required', Rule::in(array_keys(self::PAYOUT_LABELS))],
             'free_cancel_days'   => ['required', 'integer', 'between:0,30'],
             'admin_note' => ['nullable', 'string', 'max:300'],
+            'late_cancel_fee_percent' => ['nullable', 'integer', 'between:10,90'],
         ]);
 
         if ($partner->agreements()->where('status', 'signed')->exists()) {
@@ -177,6 +178,7 @@ class PartnerController extends Controller
 
             $version = ((int) $partner->agreements()->max('version')) + 1;
             $rate    = round($data['commission_percent'] / 100, 4);
+            $lateFee = (int) ($data['late_cancel_fee_percent'] ?? config('sekalago.late_cancel_fee_percent', 50));
 
             $content = view('agreements.standard', [
                 'platform'       => config('app.name'),
@@ -190,6 +192,7 @@ class PartnerController extends Controller
                 'exampleNet'     => number_format(500000 - 500000 * $rate, 0, ',', '.'),
                 'payout'         => self::PAYOUT_LABELS[$data['payout_schedule']],
                 'freeCancelDays' => $data['free_cancel_days'],
+                'lateCancelFeePercent' => $lateFee,
             ])->render();
 
             $partner->agreements()->create([
@@ -197,6 +200,7 @@ class PartnerController extends Controller
                 'commission_rate'  => $rate,
                 'payout_schedule'  => $data['payout_schedule'],
                 'free_cancel_days' => $data['free_cancel_days'],
+                'late_cancel_fee_percent' => $lateFee,
                 'content'          => $content,
                 'status'           => 'sent',
                 'sent_at'          => now(),
