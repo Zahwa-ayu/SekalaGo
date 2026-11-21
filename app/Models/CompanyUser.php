@@ -9,8 +9,15 @@ class CompanyUser extends Model
 {
     protected $fillable = [
         'company_id', 'user_id', 'full_name', 'role_in_company', 'department', 'position_id',
+        'removed_at', 'removed_by',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'removed_at' => 'datetime'
+        ];
+    }
     public function user()     { return $this->belongsTo(User::class); }
     public function company()  { return $this->belongsTo(Company::class); }
     public function position() { return $this->belongsTo(CompanyPosition::class, 'position_id'); }
@@ -79,5 +86,10 @@ class CompanyUser extends Model
                 default                   => null,
             },
         ];
+    }
+
+    public function isRemoved(): bool
+    {
+        return $this->removed_at !== null;
     }
 }

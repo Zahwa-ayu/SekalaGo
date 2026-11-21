@@ -1490,4 +1490,15 @@ return [
 'topup_approved_done' => 'Top-up disetujui dan saldo perusahaan bertambah.',
 'topup_rejected_done' => 'Pengajuan top-up ditolak.',
 'topup_decided' => 'Diputuskan oleh :name pada :date',
+
+// delete employess
+'employees_removed' => 'Karyawan dihapus',
+'employee_restore' => 'Pulihkan',
+'employee_remove_confirm' => 'Hapus :name? Ia tidak bisa masuk lagi, tetapi riwayat pesanannya tetap tersimpan dan bisa dipulihkan.',
+'employee_removed' => 'Karyawan dihapus. Akunnya dinonaktifkan.',
+'employee_restored' => 'Karyawan dipulihkan dan akunnya aktif lagi.',
+'employee_remove_self' => 'Anda tidak bisa menghapus akun Anda sendiri.',
+'employee_remove_last_finance' => 'Ini satu-satunya Finance perusahaan. Jadikan karyawan lain sebagai Finance terlebih dahulu.',
+'employee_remove_pending' => 'Karyawan ini masih punya pesanan yang menunggu persetujuan. Setujui atau tolak dulu.',
+'session_ended_inactive' => 'Akun Anda sudah dinonaktifkan. Hubungi admin perusahaan Anda.',
 ];

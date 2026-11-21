@@ -13,6 +13,15 @@ class EnsureCompanyVerified
     {
         $user = $request->user();
 
+                // Akun yang dinonaktifkan (misalnya karyawan yang dihapus) langsung dikeluarkan
+        if ($user && ! $user->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->with('error', __('ui.session_ended_inactive'));
+        }
+
         if ($user && $user->user_type === 'corporate') {
             $company = $user->companyUser?->company;
 

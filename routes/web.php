@@ -344,6 +344,8 @@ Route::middleware(['auth', 'role:corporate'])
         // Hanya untuk Finance perusahaan
         Route::middleware('corporate.finance')->group(function () {
             Route::resource('employees', EmployeeController::class)->except(['show', 'destroy']);
+            Route::delete('employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+            Route::post('employees/{employee}/restore', [EmployeeController::class, 'restore'])->name('employees.restore');
             Route::resource('positions', PositionController::class)->except(['show', 'create']);
             Route::put('policy', [PositionController::class, 'updatePolicy'])->name('policy.update');
 

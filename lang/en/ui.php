@@ -1484,4 +1484,15 @@ return [
 'topup_approved_done' => 'Top-up approved and the company balance increased.',
 'topup_rejected_done' => 'Top-up submission rejected.',
 'topup_decided' => 'Decided by :name on :date',
+
+// remove employees 
+'employees_removed' => 'Removed employees',
+'employee_restore' => 'Restore',
+'employee_remove_confirm' => 'Remove :name? They can no longer log in, but their booking history is kept and they can be restored.',
+'employee_removed' => 'Employee removed. Their account was deactivated.',
+'employee_restored' => 'Employee restored and their account is active again.',
+'employee_remove_self' => 'You cannot remove your own account.',
+'employee_remove_last_finance' => 'This is the only Finance user of the company. Make another employee Finance first.',
+'employee_remove_pending' => 'This employee still has bookings awaiting approval. Approve or reject them first.',
+'session_ended_inactive' => 'Your account has been deactivated. Contact your company admin.',
 ];

@@ -24,7 +24,7 @@ class DashboardController extends Controller
         ];
 
         if ($member->isFinance()) {
-            $data['employeeCount']    = $company->companyUsers()->count();
+            $data['employeeCount']    = $company->companyUsers()->whereNull('removed_at')->count();
             $data['transactions']     = $company->transactions()->latest()->limit(10)->get();
             $data['pendingApprovals'] = Booking::where('company_id', $company->id)
                 ->where('status', 'pending_approval')

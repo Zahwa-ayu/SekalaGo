@@ -11,6 +11,14 @@
             </a>
         </div>
 
+        {{-- Pengalih tampilan --}}
+        <div class="flex gap-2 mb-4">
+            <a href="{{ route('corporate.employees.index') }}"
+               class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ ! $showRemoved ? 'bg-sagara-navy text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">{{ __('ui.employees') }}</a>
+            <a href="{{ route('corporate.employees.index', ['removed' => 1]) }}"
+               class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $showRemoved ? 'bg-sagara-navy text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">{{ __('ui.employees_removed') }}</a>
+        </div>
+
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
@@ -43,9 +51,25 @@
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-xs font-bold">
-                                    <a href="{{ route('corporate.employees.edit', $employee) }}" class="text-sagara-blue hover:underline">
-                                        {{ __('ui.edit') }}
-                                    </a>
+                                    <div class="flex items-center gap-3">
+                                        <a href="{{ route('corporate.employees.edit', $employee) }}" class="text-sagara-blue hover:underline">
+                                            {{ __('ui.edit') }}
+                                        </a>
+
+                                        @if ($employee->isRemoved())
+                                            <form method="POST" action="{{ route('corporate.employees.restore', $employee) }}">
+                                                @csrf
+                                                <button class="text-xs font-bold text-emerald-600 hover:underline">{{ __('ui.employee_restore') }}</button>
+                                            </form>
+                                        @elseif ($employee->user_id !== auth()->id())
+                                            @include('partials.delete', [
+                                                'action'  => route('corporate.employees.destroy', $employee),
+                                                'title'   => 'Hapus karyawan ini?',
+                                                'message' => __('ui.employee_remove_confirm', ['name' => $employee->full_name]),
+                                                'label'   => __('ui.delete'),
+                                            ])
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
