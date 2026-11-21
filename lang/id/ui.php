@@ -1501,4 +1501,16 @@ return [
 'employee_remove_last_finance' => 'Ini satu-satunya Finance perusahaan. Jadikan karyawan lain sebagai Finance terlebih dahulu.',
 'employee_remove_pending' => 'Karyawan ini masih punya pesanan yang menunggu persetujuan. Setujui atau tolak dulu.',
 'session_ended_inactive' => 'Akun Anda sudah dinonaktifkan. Hubungi admin perusahaan Anda.',
+
+// 
+'cancel_fee_title' => 'Pembatalan berdenda',
+'cancel_fee_explain' => 'Masa batal gratis sudah lewat. Sampai sehari sebelum tanggal mulai, pesanan masih bisa dibatalkan dengan denda :percent% dari total. Sisanya dikembalikan.',
+'cancel_fee_amount' => 'Denda pembatalan',
+'cancel_fee_confirm' => 'Denda :fee akan ditahan dan :amount dikembalikan. Batalkan pesanan?',
+'cancel_fee_accept' => 'Saya memahami denda ini dan tetap ingin membatalkan.',
+'cancel_fee_accept_required' => 'Centang persetujuan denda pembatalan terlebih dahulu.',
+'cancel_booking_with_fee' => 'Batalkan dengan denda',
+'cancel_fee_policy' => 'Setelah batas gratis sampai sehari sebelum tanggal mulai, pembatalan dikenai denda :percent% dari total. Pada hari mulai tidak bisa dibatalkan.',
+'booking_cancelled_with_fee' => 'Pesanan dibatalkan. Denda :fee ditahan dan :amount dikembalikan.',
+'analytics_cancel_fees' => 'Termasuk denda pembatalan dari :count pesanan: total :total, bagian platform :platform (masuk pendapatan bersih).',
 ];

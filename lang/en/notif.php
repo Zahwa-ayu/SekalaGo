@@ -10,7 +10,6 @@ return [
     'reason_limit' => 'it exceeds the position limit', 'reason_budget' => 'it exceeds the monthly budget', 'reason_limit_budget' => 'it exceeds the position limit and the monthly budget',
 
     'booking_confirmed' => ['title' => 'Booking confirmed: :code', 'body' => ':name (:period) is confirmed. Total :amount.'],
-    'booking_cancelled' => ['title' => 'Booking cancelled: :code', 'body' => 'Your booking for :name was cancelled by :by. :refund'],
     'booking_expired' => ['title' => 'Booking expired: :code', 'body' => 'Your booking for :name was not processed because the deadline passed. Please book again if you still want it.'],
     'approval_approved' => ['title' => 'Booking approved: :code', 'body' => 'Finance approved your booking for :name. It is now confirmed.'],
     'approval_rejected' => ['title' => 'Booking rejected: :code', 'body' => 'Finance rejected your booking for :name. Note: :note'],
@@ -18,7 +17,6 @@ return [
     'no_show_recorded' => ['title' => 'Arrival not recorded: :code', 'body' => 'The hotel recorded that you did not show up for :name. Think this is a mistake? Contact the hotel or SekalaGo admin.'],
 
     'new_booking' => ['title' => 'New booking: :code', 'body' => ':guest booked :name (:period). Partner share :amount.'],
-    'booking_cancelled_partner' => ['title' => 'Booking cancelled: :code', 'body' => 'The booking for :name by :guest was cancelled (:by). The stock has been released.'],
     'extension_done' => ['title' => 'Rental extended: :code', 'body' => 'The rental of :name was extended until :date (additional :amount).'],
     'payout_created' => ['title' => 'Payout created: :code', 'body' => 'A payout of :amount to :bank is being processed by the admin.'],
     'payout_paid' => ['title' => 'Funds transferred: :code', 'body' => 'The payout of :amount has been transferred. The proof of transfer is on the Payouts page.'],
@@ -42,4 +40,9 @@ return [
     'topup_requested' => ['title' => 'Top-up request: :company', 'body' => ':company requested a top-up of :amount. Check the proof of transfer and the bank statement, then approve or reject.'],
     'topup_approved' => ['title' => 'Top-up approved: :code', 'body' => 'The company balance increased by :amount.'],
     'topup_rejected' => ['title' => 'Top-up rejected: :code', 'body' => 'The top-up request of :amount was rejected. Reason: :reason'],
+
+    'fee_line' => 'A cancellation fee of :amount was withheld.',
+    'partner_share_line' => 'Your share of the fee: :amount (included in your payouts).',
+    'booking_cancelled' => ['title' => 'Booking cancelled: :code', 'body' => 'Your booking for :name was cancelled by :by. :fee :refund'],
+    'booking_cancelled_partner' => ['title' => 'Booking cancelled: :code', 'body' => 'The booking for :name by :guest was cancelled (:by). The stock has been released. :share'],
 ];

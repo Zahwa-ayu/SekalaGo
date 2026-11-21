@@ -182,7 +182,10 @@
                                     <span class="text-[11px] text-slate-500">/ {{ $booking->room_name }}</span>
                                 </td>
                                 <td class="px-3 py-2.5 text-xs text-slate-500">{{ $booking->check_in->format('d/m') }} - {{ $booking->check_out->format('d/m/Y') }}</td>
-                                <td class="px-3 py-2.5 text-right text-slate-600">{{ $money($booking->total_price) }}</td>
+                                <td class="px-3 py-2.5 text-right text-slate-600">
+                                    {{ $money($booking->status === 'cancelled' ? $booking->cancel_fee : $booking->total_price) }}
+                                    @if ($booking->status === 'cancelled')<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 text-[10px] font-bold">{{ __('ui.cancel_fee_amount') }}</span>@endif
+                                </td>
                                 <td class="px-3 py-2.5 text-right text-slate-500">{{ $money($booking->platform_fee) }}</td>
                                 <td class="px-6 py-2.5 text-right font-bold text-slate-900">{{ $money($booking->vendor_revenue) }}</td>
                             </tr>

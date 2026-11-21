@@ -23,7 +23,7 @@ class Booking extends Model
         'picked_up_at', 'returned_at', 'late_minutes', 'late_fee_computed', 'late_fee', 'payout_id',
         'contact_name', 'contact_email', 'contact_phone', 'arrival_time', 'special_requests',
         'destination', 'license_confirmed', 'trip_purpose', 'cost_center',
-        'checked_in_at', 'checked_out_at', 'no_show_at',
+        'checked_in_at', 'checked_out_at', 'no_show_at', 'late_cancel_fee_percent', 'cancel_fee',
     ];
 
     protected function casts(): array
@@ -193,4 +193,36 @@ public function stayStage(): ?string
 }
 
 public function payments() { return $this->hasMany(Payment::class); }
+/**
+ * Keadaan pembatalan sekarang: free (gratis), fee (berdenda), atau none (tidak bisa).
+ *
+ * @return array{type: string, percent: int, fee: int, refund: int}
+ */
+public function cancellationQuote(): array
+{
+    $total = (int) $this->total_price;
+
+    if (in_array($this->status, ['pending_payment', 'pending_approval'], true)) {
+        return ['type' => 'free', 'percent' => 0, 'fee' => 0, 'refund' => 0];
+    }
+
+    if ($this->status !== 'confirmed') {
+        return ['type' => 'none', 'percent' => 0, 'fee' => 0, 'refund' => 0];
+    }
+
+    if (today()->lte($this->freeCancelDeadline())) {
+        return ['type' => 'free', 'percent' => 0, 'fee' => 0, 'refund' => $total];
+    }
+
+    $percent = max(1, min(99, (int) $this->late_cancel_fee_percent));
+
+    // Berdenda hanya sampai sehari sebelum check-in; pada hari check-in dan sesudahnya tidak bisa
+    if (today()->lt($this->check_in->copy()->startOfDay())) {
+        $fee = (int) round($total * $percent / 100);
+
+        return ['type' => 'fee', 'percent' => $percent, 'fee' => $fee, 'refund' => $total - $fee];
+    }
+
+    return ['type' => 'none', 'percent' => 0, 'fee' => 0, 'refund' => 0];
+}
 }

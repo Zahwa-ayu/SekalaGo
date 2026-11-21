@@ -138,6 +138,15 @@
             </p>
         @endif
 
+        @if ($summary['cancel_fees'] > 0)
+            <p class="text-xs text-slate-500">
+                <i class="fa-solid fa-circle-info text-sky-500"></i>
+                {{ __('ui.analytics_cancel_fees', [
+                    'count' => $summary['cancel_fee_count'], 'total' => $money($summary['cancel_fees']), 'platform' => $money($summary['cancel_fee_platform']),
+                ]) }}
+            </p>
+        @endif
+
         @if ($summary['orders'] === 0)
             <div class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center text-slate-400">
                 <i class="fa-solid fa-chart-line text-3xl mb-2 block"></i>

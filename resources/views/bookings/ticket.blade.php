@@ -66,6 +66,11 @@
             <td class="label">Gratis sampai / Free until</td>
             <td>{{ $booking->freeCancelDeadline()->format('d/m/Y') }}</td>
         </tr>
+        <tr>
+            <td class="label">Setelah batas gratis / After the free period</td>
+            <td>Denda {{ $booking->late_cancel_fee_percent }}% dari total sampai sehari sebelum check-in; pada hari check-in tidak dapat dibatalkan.<br>
+                A {{ $booking->late_cancel_fee_percent }}% fee applies until the day before check-in; no cancellation on the check-in day.</td>
+        </tr>
     </table>
 
     <p class="note">

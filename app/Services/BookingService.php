@@ -94,6 +94,9 @@ class BookingService
                 'free_cancel_days'    => $partner->freeCancelDays(),
             ];
 
+            // Salin aturan denda pembatalan saat memesan, supaya perubahan config tidak mengubah pesanan lama
+            $attributes['late_cancel_fee_percent'] = (int) config('sekalago.late_cancel_fee_percent', 50);
+
             $attributes += $details;
 
             if ($member) {
@@ -239,15 +242,15 @@ class BookingService
     }
 
     /**
-     * Batalkan pesanan. Belum dibayar / menunggu persetujuan: kamar dilepas saja.
-     * Sudah dikonfirmasi: dana dikembalikan penuh (ke gateway, atau ke saldo kantor untuk
-     * pesanan corporate), lalu kamar dilepas. Jika refund gagal, pembatalan tidak dilakukan.
+     * Batalkan pesanan. Pesanan terkonfirmasi: dana dikembalikan ke gateway atau saldo kantor, lalu kamar dilepas.
+     * $applyFee hanya dipakai pembatalan oleh pelanggan: setelah batas gratis, denda ditahan dari refund.
+     * Jika refund gagal, pembatalan tidak dilakukan.
      *
-     * @param  string  $by  'customer' atau 'admin'
+     * @param  string  $by  'customer', 'admin', atau 'partner'
      */
-    public function cancel(Booking $booking, string $by, ?string $reason = null): void
+    public function cancel(Booking $booking, string $by, ?string $reason = null, bool $applyFee = false): void
     {
-        DB::transaction(function () use ($booking, $by, $reason) {
+        DB::transaction(function () use ($booking, $by, $reason, $applyFee) {
             $fresh = Booking::lockForUpdate()->find($booking->id);
 
             if (! $fresh || ! in_array($fresh->status, [...self::HOLDING, 'confirmed'], true)) {
@@ -262,31 +265,51 @@ class BookingService
             ];
 
             if ($fresh->status === 'confirmed') {
-                if ($fresh->payment_method === 'deposit') {
-                    $tx = $this->deposits->credit(
-                        Company::findOrFail($fresh->company_id),
-                        $fresh->total_price,
-                        'refund',
-                        'Pembatalan ' . $fresh->booking_code,
-                        $fresh->booking_code
-                    );
-                    $reference = 'DEP-RF-' . $tx->id;
-                } else {
-                    $result = $this->gateway->refund($fresh);
+                $fee       = $applyFee ? $fresh->cancellationQuote()['fee'] : 0;
+                $refund    = (int) $fresh->total_price - $fee;
+                $reference = null;
 
-                    if (! $result['success']) {
-                        throw ValidationException::withMessages(['refund' => __('ui.refund_failed')]);
+                if ($refund > 0) {
+                    if ($fresh->payment_method === 'deposit') {
+                        $tx = $this->deposits->credit(
+                            Company::findOrFail($fresh->company_id),
+                            $refund,
+                            'refund',
+                            'Pembatalan ' . $fresh->booking_code . ($fee > 0 ? ' (denda ' . $fee . ')' : ''),
+                            $fresh->booking_code
+                        );
+                        $reference = 'DEP-RF-' . $tx->id;
+                    } else {
+                        // Gateway membaca jumlah refund dari pesanan (belum disimpan) supaya refund sebagian benar
+                        $fresh->refund_amount = $refund;
+                        $result = $this->gateway->refund($fresh);
+
+                        if (! $result['success']) {
+                            throw ValidationException::withMessages(['refund' => __('ui.refund_failed')]);
+                        }
+
+                        $reference = $result['reference'];
                     }
-
-                    $reference = $result['reference'];
                 }
 
                 $changes += [
-                    'payment_status'   => 'refunded',
-                    'refund_amount'    => $fresh->total_price,
-                    'refunded_at'      => now(),
+                    'payment_status'   => $refund > 0 ? 'refunded' : 'paid',
+                    'refund_amount'    => $refund,
+                    'refunded_at'      => $refund > 0 ? now() : null,
                     'refund_reference' => $reference,
                 ];
+
+                if ($fee > 0) {
+                    // Denda dibagi dengan rasio komisi pesanan ini. Kolom komisi dan hak mitra kini
+                    // menyimpan bagian dari denda yang ditahan, bukan lagi bagian dari harga penuh.
+                    $platform = (int) round($fee * $fresh->platform_fee / max(1, (int) $fresh->total_price));
+
+                    $changes += [
+                        'cancel_fee'     => $fee,
+                        'platform_fee'   => $platform,
+                        'vendor_revenue' => $fee - $platform,
+                    ];
+                }
             }
 
             $this->releaseStock($fresh);
@@ -354,83 +377,84 @@ class BookingService
     }
 
     /**
- * Pesanan rental mobil. Tanpa $member: alur pelanggan (bayar lewat gateway).
- * Dengan $member: alur corporate (limit jabatan, anggaran bulanan, persetujuan Finance, saldo kantor).
- */
-public function createForVehicle(
-    User $user,
-    Vehicle $vehicle,
-    Carbon $pickup,
-    Carbon $return,
-    int $passengers,
-    string $renterName,
-    bool $withDriver,
-    ?CompanyUser $member = null,
-    array $details = [],
-): Booking {
-    $vehicle->loadMissing('partner', 'translations');
+     * Pesanan rental mobil. Tanpa $member: alur pelanggan (bayar lewat gateway).
+     * Dengan $member: alur corporate (limit jabatan, anggaran bulanan, persetujuan Finance, saldo kantor).
+     */
+    public function createForVehicle(
+        User $user,
+        Vehicle $vehicle,
+        Carbon $pickup,
+        Carbon $return,
+        int $passengers,
+        string $renterName,
+        bool $withDriver,
+        ?CompanyUser $member = null,
+        array $details = [],
+    ): Booking {
+        $vehicle->loadMissing('partner', 'translations');
 
-    $days = (int) $pickup->diffInDays($return);
+        $days = (int) $pickup->diffInDays($return);
 
-    return DB::transaction(function () use ($user, $vehicle, $pickup, $return, $passengers, $renterName, $withDriver, $member, $days, $details) {
-        // Kunci baris armada: pemesanan untuk armada yang sama diproses bergantian
-        $locked = Vehicle::lockForUpdate()->findOrFail($vehicle->id);
+        return DB::transaction(function () use ($user, $vehicle, $pickup, $return, $passengers, $renterName, $withDriver, $member, $days, $details) {
+            // Kunci baris armada: pemesanan untuk armada yang sama diproses bergantian
+            $locked = Vehicle::lockForUpdate()->findOrFail($vehicle->id);
 
-        $open = $locked->status === 'approved'
-            && $days >= $locked->min_days
-            && $passengers <= $locked->seats
-            && Vehicle::whereKey($locked->id)->availableFor($pickup, $return)->exists()
-            && $this->availability->freeUnits($locked, $pickup, $return) >= 1;
+            $open = $locked->status === 'approved'
+                && $days >= $locked->min_days
+                && $passengers <= $locked->seats
+                && Vehicle::whereKey($locked->id)->availableFor($pickup, $return)->exists()
+                && $this->availability->freeUnits($locked, $pickup, $return) >= 1;
 
-        if (! $open) {
-            throw ValidationException::withMessages(['vehicle' => __('ui.car_unavailable_now')]);
-        }
+            if (! $open) {
+                throw ValidationException::withMessages(['vehicle' => __('ui.car_unavailable_now')]);
+            }
 
-        $partner  = $vehicle->partner;
-        $currency = $this->currencies->current();
-        $total    = $locked->price_per_day * $days;      // harga dasar sewa; biaya supir dibayar langsung ke vendor
-        $fee      = (int) round($total * $partner->commissionRate());
+            $partner  = $vehicle->partner;
+            $currency = $this->currencies->current();
+            $total    = $locked->price_per_day * $days;      // harga dasar sewa; biaya supir dibayar langsung ke vendor
+            $fee      = (int) round($total * $partner->commissionRate());
 
-        $attributes = [
-            'booking_code'        => 'SG-' . strtoupper(Str::random(8)),
-            'user_id'             => $user->id,
-            'partner_id'          => $partner->id,
-            'product_type'        => 'car',
-            'vehicle_id'          => $locked->id,
-            'hotel_name'          => $vehicle->name,
-            'room_name'           => $withDriver ? __('ui.with_driver_label') : __('ui.self_drive_label'),
-            'check_in'            => $pickup->toDateString(),
-            'check_out'           => $return->toDateString(),
-            'nights'              => $days,
-            'guests'              => $passengers,
-            'guest_name'          => $renterName,
-            'price_per_night'     => $locked->price_per_day,
-            'total_price'         => $total,
-            'platform_fee'        => $fee,
-            'vendor_revenue'      => $total - $fee,
-            'currency_code'       => $currency->code,
-            'exchange_rate'       => $currency->rate_to_base,
-            'total_price_display' => round($total / $currency->rate_to_base, $currency->decimal_places),
-            'free_cancel_days'    => $partner->freeCancelDays(),
-            'with_driver'         => $withDriver,
-            'driver_fee_per_day'  => $withDriver ? $locked->driver_fee_per_day : null,
-            'pickup_location'     => collect([$locked->address, $locked->area, $locked->city])->filter()->join(', '),
-            'due_at'             => $return->copy()->setTimeFromTimeString((string) $locked->return_time),
-            'late_grace_minutes' => $locked->late_grace_minutes,
-            'late_fee_percent'   => $locked->late_fee_percent,
-        ];
+            $attributes = [
+                'booking_code'        => 'SG-' . strtoupper(Str::random(8)),
+                'user_id'             => $user->id,
+                'partner_id'          => $partner->id,
+                'product_type'        => 'car',
+                'vehicle_id'          => $locked->id,
+                'hotel_name'          => $vehicle->name,
+                'room_name'           => $withDriver ? __('ui.with_driver_label') : __('ui.self_drive_label'),
+                'check_in'            => $pickup->toDateString(),
+                'check_out'           => $return->toDateString(),
+                'nights'              => $days,
+                'guests'              => $passengers,
+                'guest_name'          => $renterName,
+                'price_per_night'     => $locked->price_per_day,
+                'total_price'         => $total,
+                'platform_fee'        => $fee,
+                'vendor_revenue'      => $total - $fee,
+                'currency_code'       => $currency->code,
+                'exchange_rate'       => $currency->rate_to_base,
+                'total_price_display' => round($total / $currency->rate_to_base, $currency->decimal_places),
+                'free_cancel_days'    => $partner->freeCancelDays(),
+                'with_driver'         => $withDriver,
+                'driver_fee_per_day'  => $withDriver ? $locked->driver_fee_per_day : null,
+                'pickup_location'     => collect([$locked->address, $locked->area, $locked->city])->filter()->join(', '),
+                'due_at'              => $return->copy()->setTimeFromTimeString((string) $locked->return_time),
+                'late_grace_minutes'  => $locked->late_grace_minutes,
+                'late_fee_percent'    => $locked->late_fee_percent,
+            ];
 
-        
+            // Salin aturan denda pembatalan saat memesan, supaya perubahan config tidak mengubah pesanan lama
+            $attributes['late_cancel_fee_percent'] = (int) config('sekalago.late_cancel_fee_percent', 50);
 
-        if ($member) {
-            return $this->createCorporateBooking($user, $member, $attributes, $total);
-        }
+            if ($member) {
+                return $this->createCorporateBooking($user, $member, $attributes, $total);
+            }
 
-        return Booking::create($attributes + [
-            'status'         => 'pending_payment',
-            'payment_status' => 'unpaid',
-            'expires_at'     => now()->addMinutes((int) config('sekalago.booking_hold_minutes')),
-        ]);
-    });
-}
+            return Booking::create($attributes + [
+                'status'         => 'pending_payment',
+                'payment_status' => 'unpaid',
+                'expires_at'     => now()->addMinutes((int) config('sekalago.booking_hold_minutes')),
+            ]);
+        });
+    }
 }

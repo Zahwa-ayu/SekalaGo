@@ -144,11 +144,16 @@ class NotificationEvents implements ShouldHandleEventsAfterCommit
             'name'   => $booking->hotel_name,
             'by'     => $byText,
             'refund' => $booking->refund_amount > 0 ? __('notif.refund_line', ['amount' => $this->idr($booking->refund_amount)]) : '',
+            'fee'    => $booking->cancel_fee > 0 ? __('notif.fee_line', ['amount' => $this->idr($booking->cancel_fee)]) : '',
         ], route('bookings.show', $booking), 'fa-ban');
 
         if ($by !== 'partner') {
             $this->notifier->to($booking->partner->user, 'booking_cancelled_partner', [
-                'code' => $booking->booking_code, 'name' => $booking->hotel_name, 'guest' => $booking->guest_name, 'by' => $byText,
+                'code'  => $booking->booking_code,
+                'name'  => $booking->hotel_name,
+                'guest' => $booking->guest_name,
+                'by'    => $byText,
+                'share' => $booking->cancel_fee > 0 ? __('notif.partner_share_line', ['amount' => $this->idr($booking->vendor_revenue)]) : '',
             ], route('partner.bookings.index', ['status' => 'cancelled']), 'fa-ban');
         }
     }

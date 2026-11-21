@@ -11,7 +11,6 @@ return [
 
     // Pelanggan dan karyawan
     'booking_confirmed' => ['title' => 'Pesanan terkonfirmasi: :code', 'body' => ':name (:period) sudah terkonfirmasi. Total :amount.'],
-    'booking_cancelled' => ['title' => 'Pesanan dibatalkan: :code', 'body' => 'Pesanan :name dibatalkan oleh :by. :refund'],
     'booking_expired' => ['title' => 'Pesanan kedaluwarsa: :code', 'body' => 'Pesanan :name tidak diproses karena batas waktunya lewat. Silakan pesan lagi jika masih ingin.'],
     'approval_approved' => ['title' => 'Pesanan disetujui: :code', 'body' => 'Finance menyetujui pesanan :name. Pesanan sudah terkonfirmasi.'],
     'approval_rejected' => ['title' => 'Pesanan ditolak: :code', 'body' => 'Finance menolak pesanan :name. Catatan: :note'],
@@ -20,7 +19,6 @@ return [
 
     // Mitra
     'new_booking' => ['title' => 'Pesanan baru: :code', 'body' => ':guest memesan :name (:period). Hak mitra :amount.'],
-    'booking_cancelled_partner' => ['title' => 'Pesanan dibatalkan: :code', 'body' => 'Pesanan :name atas nama :guest dibatalkan (:by). Stok sudah dikembalikan.'],
     'extension_done' => ['title' => 'Sewa diperpanjang: :code', 'body' => 'Sewa :name diperpanjang sampai :date (tambahan :amount).'],
     'payout_created' => ['title' => 'Pencairan dibuat: :code', 'body' => 'Pencairan :amount ke :bank sedang diproses admin.'],
     'payout_paid' => ['title' => 'Dana ditransfer: :code', 'body' => 'Pencairan :amount sudah ditransfer. Bukti transfer ada di halaman Pencairan Dana.'],
@@ -46,4 +44,9 @@ return [
     'topup_requested' => ['title' => 'Permintaan top-up: :company', 'body' => ':company mengajukan top-up :amount. Periksa bukti transfer dan mutasi rekening bank, lalu setujui atau tolak.'],
     'topup_approved' => ['title' => 'Top-up disetujui: :code', 'body' => 'Saldo perusahaan bertambah :amount.'],
     'topup_rejected' => ['title' => 'Top-up ditolak: :code', 'body' => 'Permintaan top-up :amount ditolak. Alasan: :reason'],
+
+    'fee_line' => 'Denda pembatalan :amount ditahan.',
+    'partner_share_line' => 'Bagian Anda dari denda: :amount (masuk pencairan dana).',
+    'booking_cancelled' => ['title' => 'Pesanan dibatalkan: :code', 'body' => 'Pesanan :name dibatalkan oleh :by. :fee :refund'],
+    'booking_cancelled_partner' => ['title' => 'Pesanan dibatalkan: :code', 'body' => 'Pesanan :name atas nama :guest dibatalkan (:by). Stok sudah dikembalikan. :share'],
 ];

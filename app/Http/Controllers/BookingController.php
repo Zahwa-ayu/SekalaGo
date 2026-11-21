@@ -156,19 +156,32 @@ class BookingController extends Controller
 
         $data = $request->validate([
             'cancellation_reason' => ['nullable', 'string', 'max:500'],
+            'accept_fee'          => ['nullable', 'boolean'],
         ]);
 
-        if (! $booking->canBeCancelledByCustomer()) {
+        $quote = $booking->cancellationQuote();
+
+        if ($quote['type'] === 'none') {
             return back()->with('error', __('ui.cancel_not_allowed'));
+        }
+
+        // Pembatalan berdenda butuh persetujuan eksplisit supaya tidak terjadi tanpa sengaja
+        if ($quote['type'] === 'fee' && ! $request->boolean('accept_fee')) {
+            return back()->with('error', __('ui.cancel_fee_accept_required'));
         }
 
         $wasPaid = $booking->status === 'confirmed';
 
-        $this->bookings->cancel($booking, 'customer', $data['cancellation_reason'] ?? null);
+        $this->bookings->cancel($booking, 'customer', $data['cancellation_reason'] ?? null, applyFee: true);
 
-        $message = $wasPaid
-            ? __('ui.booking_cancelled_refunded', ['amount' => format_price($booking->refund_amount, 'IDR')])
-            : __('ui.booking_cancelled');
+        $message = match (true) {
+            $wasPaid && $booking->cancel_fee > 0 => __('ui.booking_cancelled_with_fee', [
+                'fee'    => format_price($booking->cancel_fee, 'IDR'),
+                'amount' => format_price($booking->refund_amount, 'IDR'),
+            ]),
+            $wasPaid => __('ui.booking_cancelled_refunded', ['amount' => format_price($booking->refund_amount, 'IDR')]),
+            default  => __('ui.booking_cancelled'),
+        };
 
         return redirect()->route('bookings.show', $booking)->with('success', $message);
     }

@@ -65,6 +65,14 @@ class RevenueAnalytics
         $gateway = $this->gatewayQuery($start, $end, $product)
             ->selectRaw("COALESCE(SUM(payments.gateway_fee), 0) AS fee, COALESCE(SUM(CASE WHEN payments.gateway_fee_source = 'estimate' THEN 1 ELSE 0 END), 0) AS estimated")
             ->first();
+        
+        $cancel = Booking::query()
+        ->where('bookings.status', 'cancelled')
+        ->where('bookings.cancel_fee', '>', 0)
+        ->whereBetween('bookings.cancelled_at', [$start, $end])
+        ->when($product, fn ($q, $type) => $q->where('bookings.product_type', $type))
+        ->selectRaw('COUNT(*) AS n, COALESCE(SUM(bookings.cancel_fee), 0) AS fee, COALESCE(SUM(bookings.platform_fee), 0) AS platform')
+        ->first();
 
         $orders     = (int) $paid->orders;
         $gmv        = (int) $paid->gmv;
@@ -85,7 +93,11 @@ class RevenueAnalytics
             // Biaya gateway semua pembayaran lunas pada periode (termasuk yang kemudian di-refund)
             'gateway_fee'   => $gatewayFee,
             'fee_estimated' => (int) $gateway->estimated,
-            'net_revenue'   => $fee - $gatewayFee,
+            'cancel_fee_count'    => (int) $cancel->n,
+            'cancel_fees'         => (int) $cancel->fee,
+            'cancel_fee_platform' => (int) $cancel->platform,
+            'net_revenue'         => $fee + (int) $cancel->platform - $gatewayFee,
+
         ];
     }
 

@@ -1495,4 +1495,16 @@ return [
 'employee_remove_last_finance' => 'This is the only Finance user of the company. Make another employee Finance first.',
 'employee_remove_pending' => 'This employee still has bookings awaiting approval. Approve or reject them first.',
 'session_ended_inactive' => 'Your account has been deactivated. Contact your company admin.',
+
+///
+'cancel_fee_title' => 'Cancellation with a fee',
+'cancel_fee_explain' => 'The free cancellation period has passed. Until the day before the start date the booking can still be cancelled with a :percent% fee of the total. The rest is refunded.',
+'cancel_fee_amount' => 'Cancellation fee',
+'cancel_fee_confirm' => 'A fee of :fee will be withheld and :amount refunded. Cancel the booking?',
+'cancel_fee_accept' => 'I understand this fee and still want to cancel.',
+'cancel_fee_accept_required' => 'Please tick the cancellation fee acknowledgement first.',
+'cancel_booking_with_fee' => 'Cancel with a fee',
+'cancel_fee_policy' => 'After the free period until the day before the start date, cancellation carries a :percent% fee of the total. It cannot be cancelled on the start day.',
+'booking_cancelled_with_fee' => 'Booking cancelled. A fee of :fee was withheld and :amount refunded.',
+'analytics_cancel_fees' => 'Includes cancellation fees from :count booking(s): :total in total, platform share :platform (part of net revenue).',
 ];

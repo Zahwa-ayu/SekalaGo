@@ -166,6 +166,10 @@
                     </div>
                 @endif
 
+                @if ($booking->cancel_fee > 0)
+                    <div class="text-slate-600">{{ __('ui.cancel_fee_amount') }}: <strong class="text-red-600">{{ format_price($booking->cancel_fee, 'IDR') }}</strong></div>
+                @endif
+
                 {{-- Refund lewat Midtrans diproses manual oleh admin --}}
                 @if ($booking->refund_reference && str_starts_with($booking->refund_reference, 'MANUAL-'))
                     <div class="rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold px-4 py-3">
@@ -242,19 +246,41 @@
                         {{ __('ui.free_cancel_until', ['date' => $booking->freeCancelDeadline()->format('d/m/Y')]) }}
                     </p>
 
-                    @if ($booking->canBeCancelledByCustomer())
+                    @php $quote = $booking->cancellationQuote(); @endphp
+
+                    @if ($quote['type'] === 'free')
                         <p class="text-sm text-slate-600">{{ __('ui.refund_full_notice', ['amount' => format_price($booking->total_price, 'IDR')]) }}</p>
 
                         <form method="POST" action="{{ route('bookings.cancel', $booking) }}"
                               onsubmit="return confirm(@js(__('ui.cancel_confirm')))" class="space-y-3">
                             @csrf
-                            <textarea name="cancellation_reason" rows="2" maxlength="500"
-                                      placeholder="{{ __('ui.cancel_reason') }}"
+                            <textarea name="cancellation_reason" rows="2" maxlength="500" placeholder="{{ __('ui.cancel_reason') }}"
                                       class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500"></textarea>
-                            <button class="px-5 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">
-                                {{ __('ui.cancel_booking') }}
-                            </button>
+                            <button class="px-5 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">{{ __('ui.cancel_booking') }}</button>
                         </form>
+
+                    @elseif ($quote['type'] === 'fee')
+                        <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-900 space-y-1">
+                            <div class="font-extrabold">{{ __('ui.cancel_fee_title') }}</div>
+                            <div>{{ __('ui.cancel_fee_explain', ['percent' => $quote['percent']]) }}</div>
+                            <div class="flex flex-wrap gap-x-6 gap-y-1 pt-1 font-semibold">
+                                <span>{{ __('ui.cancel_fee_amount') }}: <strong class="text-red-600">{{ format_price($quote['fee'], 'IDR') }}</strong></span>
+                                <span>{{ __('ui.refund_amount') }}: <strong class="text-emerald-700">{{ format_price($quote['refund'], 'IDR') }}</strong></span>
+                            </div>
+                        </div>
+
+                        <form method="POST" action="{{ route('bookings.cancel', $booking) }}"
+                              onsubmit="return confirm(@js(__('ui.cancel_fee_confirm', ['fee' => format_price($quote['fee'], 'IDR'), 'amount' => format_price($quote['refund'], 'IDR')])))" class="space-y-3">
+                            @csrf
+                            <textarea name="cancellation_reason" rows="2" maxlength="500" placeholder="{{ __('ui.cancel_reason') }}"
+                                      class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500"></textarea>
+                            <label class="flex items-start gap-2 text-sm text-slate-700">
+                                <input type="checkbox" name="accept_fee" value="1" required class="mt-0.5 rounded border-slate-300 text-red-500">
+                                <span>{{ __('ui.cancel_fee_accept') }}</span>
+                            </label>
+                            <button class="px-5 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">{{ __('ui.cancel_booking_with_fee') }}</button>
+                        </form>
+
                     @else
                         <p class="text-sm font-semibold text-red-600">{{ __('ui.cancel_not_allowed') }}</p>
                     @endif

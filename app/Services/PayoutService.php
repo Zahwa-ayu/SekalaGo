@@ -28,22 +28,30 @@ class PayoutService
         $stale  = today()->subDays((int) config('sekalago.payout_unmarked_car_days', 7))->toDateString();
 
         return Booking::query()
-            ->where('bookings.status', 'confirmed')
             ->whereNull('bookings.payout_id')
             ->where('bookings.vendor_revenue', '>', 0)
             ->where(function (Builder $q) use ($cutoff, $stale) {
-                $q->where(fn ($hotel) => $hotel
-                        ->where('bookings.product_type', 'hotel')
-                        ->where('bookings.check_out', '<=', $cutoff))
-                  ->orWhere(fn ($car) => $car
-                        ->where('bookings.product_type', 'car')
-                        ->where(fn ($w) => $w
-                            ->where(fn ($returned) => $returned
-                                ->whereNotNull('bookings.returned_at')
-                                ->whereRaw('DATE(bookings.returned_at) <= ?', [$cutoff]))
-                            ->orWhere(fn ($unmarked) => $unmarked
-                                ->whereNull('bookings.returned_at')
-                                ->where('bookings.check_out', '<=', $stale))));
+                // Pesanan yang layanannya selesai
+                $q->where(fn ($done) => $done
+                    ->where('bookings.status', 'confirmed')
+                    ->where(fn ($kind) => $kind
+                        ->where(fn ($hotel) => $hotel
+                            ->where('bookings.product_type', 'hotel')
+                            ->where('bookings.check_out', '<=', $cutoff))
+                        ->orWhere(fn ($car) => $car
+                            ->where('bookings.product_type', 'car')
+                            ->where(fn ($w) => $w
+                                ->where(fn ($returned) => $returned
+                                    ->whereNotNull('bookings.returned_at')
+                                    ->whereRaw('DATE(bookings.returned_at) <= ?', [$cutoff]))
+                                ->orWhere(fn ($unmarked) => $unmarked
+                                    ->whereNull('bookings.returned_at')
+                                    ->where('bookings.check_out', '<=', $stale))))))
+                // Bagian mitra dari denda pembatalan: setelah tanggal check-in terlewati
+                ->orWhere(fn ($fee) => $fee
+                    ->where('bookings.status', 'cancelled')
+                    ->where('bookings.cancel_fee', '>', 0)
+                    ->where('bookings.check_in', '<=', $cutoff));
             });
     }
 
@@ -57,13 +65,13 @@ class PayoutService
         $eligible = $this->eligibleQuery()
             ->when($partnerId, fn ($q, $id) => $q->where('bookings.partner_id', $id))
             ->selectRaw("bookings.partner_id, COUNT(*) AS n, SUM(bookings.vendor_revenue) AS amount, SUM(bookings.platform_fee) AS fee,
-                         MIN(CASE WHEN bookings.product_type = 'hotel' THEN bookings.check_out ELSE COALESCE(DATE(bookings.returned_at), bookings.check_out) END) AS first_date")
+                         MIN(CASE WHEN bookings.status = 'cancelled' THEN bookings.check_in WHEN bookings.product_type = 'hotel' THEN bookings.check_out ELSE COALESCE(DATE(bookings.returned_at), bookings.check_out) END) AS first_date")
             ->groupBy('bookings.partner_id')
             ->get()
             ->keyBy('partner_id');
 
         $unpaid = Booking::query()
-            ->where('status', 'confirmed')
+            ->where(fn ($q) => $q->where('status', 'confirmed')->orWhere(fn ($c) => $c->where('status', 'cancelled')->where('cancel_fee', '>', 0)))
             ->whereNull('payout_id')
             ->where('vendor_revenue', '>', 0)
             ->when($partnerId, fn ($q, $id) => $q->where('partner_id', $id))

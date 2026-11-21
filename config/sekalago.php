@@ -17,6 +17,9 @@ return [
     // Tampilkan tautan reset password di layar (hanya untuk demo tanpa server email)
     'show_reset_link' => env('SHOW_RESET_LINK', false),
 
+    // Denda pembatalan setelah batas gratis, sampai sehari sebelum check-in (persen dari total, 1 sampai 99)
+    'late_cancel_fee_percent' => 25,
+
     // Pembayaran pelanggan: mock (simulasi, hanya untuk pengembangan) atau midtrans
     'payment_driver' => env('PAYMENT_DRIVER', 'mock'),
 
