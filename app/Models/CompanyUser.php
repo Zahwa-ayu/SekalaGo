@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\Searchable;
 use Illuminate\Support\Carbon;
 
 class CompanyUser extends Model
 {
+    use Searchable;
+    
     protected $fillable = [
         'company_id', 'user_id', 'full_name', 'role_in_company', 'department', 'position_id',
         'removed_at', 'removed_by',

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Concerns\Searchable;
 
 class User extends Authenticatable
 {
-    use Notifiable; 
+    use Notifiable,  Searchable;
     protected $fillable = [
         'email', 'password', 'phone_number', 'user_type',
         'is_active', 'preferred_locale', 'preferred_currency', 'must_change_password', 'notify_email',

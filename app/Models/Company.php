@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\Searchable;
 
 class Company extends Model
 {
+    use Searchable;
     protected $fillable = [
         'company_name', 'corporate_code', 'deposit_balance',
         'travel_policy_limit', 'default_monthly_budget',

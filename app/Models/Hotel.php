@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\LogsActivity;
+use App\Models\Concerns\Searchable;
 use App\Models\Concerns\SearchesByCity;
 
 class Hotel extends Model
 {
-    use HasTranslations, LogsActivity, SearchesByCity;
+    use HasTranslations, LogsActivity, SearchesByCity, Searchable;
     
     protected $fillable = [
         'partner_id', 'city', 'area', 'address', 'latitude', 'longitude', 'star_rating',

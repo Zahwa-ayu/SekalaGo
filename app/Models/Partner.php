@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\LogsActivity;
+use App\Models\Concerns\Searchable;
 
 class Partner extends Model
 {
     use LogsActivity;
+    use Searchable;
     
     protected $fillable = [
         'user_id', 'company_name', 'business_license_no', 'bank_account_no',

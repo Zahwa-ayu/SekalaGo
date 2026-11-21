@@ -6,12 +6,13 @@ use App\Models\Concerns\HasTranslations;
 use App\Models\Concerns\LogsActivity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
+use App\Models\Concerns\Searchable;
 use App\Models\Concerns\SearchesByCity;
 use Illuminate\Database\Eloquent\Model;
 
 class Vehicle extends Model
 {
-use HasTranslations, LogsActivity, SearchesByCity;
+use HasTranslations, LogsActivity, SearchesByCity, Searchable;
 
     public const TYPES         = ['city_car', 'sedan', 'mpv', 'suv', 'van', 'minibus', 'luxury'];
     public const TRANSMISSIONS = ['manual', 'automatic'];
