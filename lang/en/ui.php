@@ -1515,4 +1515,21 @@ return [
 'cancel_fee_report_note' => 'The fee is deducted from the company balance (the remainder was refunded to the balance). It is not part of the confirmed bookings total.',
 'cancel_fee_report_cancelled_on' => 'Cancelled on',
 'total_with_fees' => 'Total spending + fees',
+
+// new role
+'staff_team' => 'Internal Team',
+'staff_hint' => 'SekalaGo staff and their access rights. Only a Super Admin can manage the team.',
+'staff_add' => 'Add staff',
+'staff_role' => 'Role',
+'staff_created' => 'Staff added. Give the temporary password to the person directly.',
+'staff_saved' => 'Staff changes saved.',
+'staff_cannot_self' => 'You cannot change your own role or deactivate your own account.',
+'staff_last_super' => 'This is the last active Super Admin. Make another staff member a Super Admin first.',
+'admin_forbidden' => 'Your role does not have access to this page.',
+'you' => 'You',
+'role_super_admin' => 'Super Admin',
+'role_admin_ops' => 'Operations Admin',
+'role_super_admin_desc' => 'Full control: all menus, analytics, audit, activity log and team management.',
+'role_admin_ops_desc' => 'Daily work: verify partners and companies, review hotels and vehicles, manage bookings, content and master data. Cannot disburse funds or manage the team.',
+'role_admin_finance_desc' => 'Cash flow: payments and refunds, balance top-ups, payouts, bank accounts and rates, and analytics. Cannot verify partners or cancel bookings.',
 ];

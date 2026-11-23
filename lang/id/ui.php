@@ -1521,4 +1521,21 @@ return [
 'cancel_fee_report_note' => 'Denda dipotong dari saldo perusahaan (sisanya sudah dikembalikan ke saldo). Tidak termasuk dalam total belanja pesanan terkonfirmasi.',
 'cancel_fee_report_cancelled_on' => 'Tanggal batal',
 'total_with_fees' => 'Total belanja + denda',
+
+// per role
+'staff_team' => 'Tim Internal',
+'staff_hint' => 'Staf SekalaGo dan hak aksesnya. Hanya Super Admin yang dapat mengelola tim.',
+'staff_add' => 'Tambah staf',
+'staff_role' => 'Peran',
+'staff_created' => 'Staf ditambahkan. Berikan password sementaranya langsung kepada yang bersangkutan.',
+'staff_saved' => 'Perubahan staf disimpan.',
+'staff_cannot_self' => 'Anda tidak bisa mengubah peran atau menonaktifkan akun Anda sendiri.',
+'staff_last_super' => 'Ini Super Admin aktif terakhir. Jadikan staf lain sebagai Super Admin terlebih dahulu.',
+'admin_forbidden' => 'Peran Anda tidak memiliki akses ke halaman ini.',
+'you' => 'Anda',
+'role_super_admin' => 'Super Admin',
+'role_admin_ops' => 'Admin Operasional',
+'role_super_admin_desc' => 'Kontrol penuh: semua menu, analytics, audit, log aktivitas, dan manajemen tim.',
+'role_admin_ops_desc' => 'Pekerjaan harian: verifikasi mitra dan perusahaan, tinjau hotel dan armada, kelola pesanan, serta konten dan master data. Tidak bisa mencairkan dana atau mengelola tim.',
+'role_admin_finance_desc' => 'Arus kas: pembayaran dan refund, top-up saldo, pencairan dana, rekening dan kurs, serta analytics. Tidak bisa memverifikasi mitra atau membatalkan pesanan.',
 ];

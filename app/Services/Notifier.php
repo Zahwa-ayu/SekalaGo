@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\CompanyUser;
 use App\Models\User;
 use App\Notifications\EventNotification;
+use App\Support\AdminAbilities;
 use Illuminate\Support\Collection;
 
 class Notifier
@@ -28,9 +29,15 @@ class Notifier
         }
     }
 
-    public function admins(): Collection
+    /** Admin aktif; dengan $ability hanya yang punya kemampuan itu (super admin selalu termasuk). */
+    public function admins(?string $ability = null): Collection
     {
-        return User::where('user_type', 'admin')->where('is_active', true)->get();
+        return User::where('user_type', 'admin')
+            ->where('is_active', true)
+            ->with('adminStaff')
+            ->get()
+            ->filter(fn (User $user) => $ability === null || AdminAbilities::can($user, $ability))
+            ->values();
     }
 
     /** Pengguna Finance sebuah perusahaan. */

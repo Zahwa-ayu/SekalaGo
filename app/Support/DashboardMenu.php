@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Support\AdminAbilities;
 
 class DashboardMenu
 {
@@ -20,6 +21,11 @@ class DashboardMenu
      */
     public static function for(User $user): array
     {
+        // Admin: menu hanya memuat halaman yang boleh dibuka sub-role-nya (aturan yang sama dengan pagar rute)
+        $visible = $user->user_type === 'admin'
+            ? fn (string $route) => AdminAbilities::allowsRoute($user, $route)
+            : null;
+
         return self::filter(match ($user->user_type) {
             'admin' => [
                 // Ringkasan (tanpa judul, selalu paling atas)
@@ -38,8 +44,8 @@ class DashboardMenu
                     ],
                 ],
                 ['fa-receipt', 'ui.all_bookings', 'admin.bookings.index', ['admin.bookings.*']],
-                ['fa-credit-card', 'ui.payments', 'admin.payments.index', ['admin.payments.*']],
                 ['fa-building', 'ui.corporate_management', 'admin.companies.index', ['admin.companies.*']],
+                ['fa-credit-card', 'ui.payments', 'admin.payments.index', ['admin.payments.*']],
                 ['fa-hand-holding-dollar', 'ui.topup_requests', 'admin.topups.index', ['admin.topups.*']],
 
                 // Uang
@@ -53,8 +59,8 @@ class DashboardMenu
                     'label'    => 'ui.master_data',
                     'children' => [
                         ['fa-location-dot', 'ui.cities', 'admin.cities.index', ['admin.cities.*']],
-                        ['fa-coins', 'ui.currencies', 'admin.currencies.index', ['admin.currencies.*']],
                         ['fa-list-check', 'ui.facilities', 'admin.facilities.index', ['admin.facilities.*']],
+                        ['fa-coins', 'ui.currencies', 'admin.currencies.index', ['admin.currencies.*']],
                         ['fa-building-columns', 'ui.bank_accounts', 'admin.bank-accounts.index', ['admin.bank-accounts.*']],
                     ],
                 ],
@@ -65,13 +71,12 @@ class DashboardMenu
                         ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
                         ['fa-circle-question', 'ui.faq_management', 'admin.faqs.index', ['admin.faqs.*']],
                         ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],
-                        ['fa-address-book', 'ui.contact_us', 'admin.contact-info.index', ['admin.contact-info.*']],
-                        ['fa-file-lines', 'ui.pages', 'admin.pages.index', ['admin.pages.*']],
                     ],
                 ],
 
-                // Pengguna admin, log, dan akun sendiri
+                // Tim, pengguna admin, log, dan akun sendiri
                 ['section' => 'ui.menu_system'],
+                ['fa-people-group', 'ui.staff_team', 'admin.staff.index', ['admin.staff.*']],
                 ['fa-users', 'ui.admin_users', 'admin.users.index', ['admin.users.*']],
                 ['fa-clock-rotate-left', 'ui.activity_log', 'admin.activity.index', ['admin.activity.*']],
                 self::ACCOUNT_SETTINGS,
@@ -133,7 +138,7 @@ class DashboardMenu
                 : [],
 
             default => [],
-        });
+        }, $visible);
     }
 
     /**
@@ -149,14 +154,14 @@ class DashboardMenu
     }
 
     /**
-     * Ubah baris mentah menjadi struktur siap tampil. Item tanpa rute dibuang;
-     * grup tanpa isi dibuang; grup dianggap aktif jika salah satu anaknya aktif;
-     * judul kelompok (section) dibuang jika tidak ada menu di bawahnya.
+     * Ubah baris mentah menjadi struktur siap tampil. Item tanpa rute atau yang tidak boleh dibuka dibuang;
+     * grup tanpa isi dibuang; grup dianggap aktif jika salah satu anaknya aktif.
      */
-    private static function filter(array $rows): array
+    private static function filter(array $rows, ?\Closure $visible = null): array
     {
         $items = collect($rows)
-            ->map(function ($row) {
+            ->map(function ($row) use ($visible) {
+                // Judul kelompok
                 if (isset($row['section'])) {
                     return [
                         'type'  => 'section',
@@ -165,7 +170,7 @@ class DashboardMenu
                 }
 
                 if (isset($row['children'])) {
-                    $children = self::filter($row['children']);
+                    $children = self::filter($row['children'], $visible);
 
                     if ($children === []) {
                         return null;
@@ -180,7 +185,7 @@ class DashboardMenu
                     ];
                 }
 
-                if (! Route::has($row[2])) {
+                if (! Route::has($row[2]) || ($visible && ! $visible($row[2]))) {
                     return null;
                 }
 
@@ -199,7 +204,7 @@ class DashboardMenu
         return self::dropEmptySections($items);
     }
 
-    /** Buang judul kelompok yang tidak diikuti menu apa pun (mis. semua rutenya belum ada). */
+    /** Buang judul kelompok yang tidak diikuti menu apa pun (mis. semua rutenya belum ada atau tidak boleh dibuka). */
     private static function dropEmptySections(array $items): array
     {
         $result = [];

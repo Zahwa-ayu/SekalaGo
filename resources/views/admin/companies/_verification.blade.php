@@ -38,37 +38,41 @@
     @endif
 
     @if ($company->verification_status === 'pending')
-        <div class="grid md:grid-cols-2 gap-4 pt-2">
-            <form method="POST" action="{{ route('admin.companies.verify', $company) }}" class="bg-white rounded-2xl border border-emerald-100 p-4 space-y-3">
-                @csrf
-                <div class="font-bold text-emerald-700 text-sm"><i class="fa-solid fa-circle-check"></i> {{ __('ui.company_approve') }}</div>
-                <div>
-                    <label class="{{ $label }}">{{ __('ui.travel_policy_limit_label') }}</label>
-                    <input type="number" name="travel_policy_limit" min="0" required value="{{ old('travel_policy_limit', $company->travel_policy_limit) }}" class="{{ $input }}">
-                </div>
-                <div>
-                    <label class="{{ $label }}">{{ __('ui.default_monthly_budget_label') }}</label>
-                    <input type="number" name="default_monthly_budget" min="0" value="{{ old('default_monthly_budget', $company->default_monthly_budget) }}" class="{{ $input }}">
-                </div>
-                <button class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition">{{ __('ui.company_approve') }}</button>
-            </form>
+        @if (\App\Support\AdminAbilities::can(auth()->user(), 'operations'))
+            <div class="grid md:grid-cols-2 gap-4 pt-2">
+                <form method="POST" action="{{ route('admin.companies.verify', $company) }}" class="bg-white rounded-2xl border border-emerald-100 p-4 space-y-3">
+                    @csrf
+                    <div class="font-bold text-emerald-700 text-sm"><i class="fa-solid fa-circle-check"></i> {{ __('ui.company_approve') }}</div>
+                    <div>
+                        <label class="{{ $label }}">{{ __('ui.travel_policy_limit_label') }}</label>
+                        <input type="number" name="travel_policy_limit" min="0" required value="{{ old('travel_policy_limit', $company->travel_policy_limit) }}" class="{{ $input }}">
+                    </div>
+                    <div>
+                        <label class="{{ $label }}">{{ __('ui.default_monthly_budget_label') }}</label>
+                        <input type="number" name="default_monthly_budget" min="0" value="{{ old('default_monthly_budget', $company->default_monthly_budget) }}" class="{{ $input }}">
+                    </div>
+                    <button class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition">{{ __('ui.company_approve') }}</button>
+                </form>
 
-            <form method="POST" action="{{ route('admin.companies.reject', $company) }}" class="bg-white rounded-2xl border border-red-100 p-4 space-y-3">
-                @csrf
-                <div class="font-bold text-red-700 text-sm"><i class="fa-solid fa-ban"></i> {{ __('ui.company_reject') }}</div>
-                <div>
-                    <label class="{{ $label }}">{{ __('ui.company_reject_reason') }}</label>
-                    <textarea name="verification_note" required maxlength="500" rows="3" class="{{ $input }}">{{ old('verification_note') }}</textarea>
-                </div>
-                <button class="px-4 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">{{ __('ui.company_reject') }}</button>
-            </form>
-        </div>
+                <form method="POST" action="{{ route('admin.companies.reject', $company) }}" class="bg-white rounded-2xl border border-red-100 p-4 space-y-3">
+                    @csrf
+                    <div class="font-bold text-red-700 text-sm"><i class="fa-solid fa-ban"></i> {{ __('ui.company_reject') }}</div>
+                    <div>
+                        <label class="{{ $label }}">{{ __('ui.company_reject_reason') }}</label>
+                        <textarea name="verification_note" required maxlength="500" rows="3" class="{{ $input }}">{{ old('verification_note') }}</textarea>
+                    </div>
+                    <button class="px-4 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">{{ __('ui.company_reject') }}</button>
+                </form>
+            </div>
+        @endif
     @elseif ($company->verification_status === 'rejected')
         <div class="text-sm text-red-700"><strong>{{ __('ui.company_reject_reason') }}:</strong> {{ $company->verification_note }}</div>
-        <form method="POST" action="{{ route('admin.companies.reopen', $company) }}">
-            @csrf
-            <button class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-bold transition">{{ __('ui.company_reopen') }}</button>
-        </form>
+        @if (\App\Support\AdminAbilities::can(auth()->user(), 'operations'))
+            <form method="POST" action="{{ route('admin.companies.reopen', $company) }}">
+                @csrf
+                <button class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-sm font-bold transition">{{ __('ui.company_reopen') }}</button>
+            </form>
+        @endif
     @elseif ($company->verified_at)
         <div class="text-xs text-slate-600">{{ __('ui.company_verified_on', ['date' => $company->verified_at->format('d/m/Y H:i'), 'name' => $company->verifier?->email ?? '-']) }}</div>
     @endif

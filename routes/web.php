@@ -14,6 +14,7 @@ use App\Http\Controllers\Corporate\PositionController;
 use App\Http\Controllers\Corporate\ReportController;
 use App\Http\Controllers\Admin\CurrencyController as AdminCurrencyController;
 use App\Http\Controllers\HotelSearchController;
+use App\Http\Controllers\Admin\StaffController as AdminStaffController;
 use App\Http\Controllers\Partner\AgreementController;
 use App\Http\Controllers\Admin\FacilityController as AdminFacilityController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
@@ -148,7 +149,7 @@ Route::middleware(['auth', 'role:customer,corporate'])->group(function () {
 });
 
 // Admin internal
-Route::middleware(['auth', 'role:admin'])
+Route::middleware(['auth', 'role:admin', 'admin.ability'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
@@ -235,6 +236,11 @@ Route::middleware(['auth', 'role:admin'])
 
         Route::patch('users/{user}/status', [AdminUserController::class, 'updateStatus'])
             ->name('users.status');
+
+        // Tim internal SekalaGo
+        Route::get('staff', [AdminStaffController::class, 'index'])->name('staff.index');
+        Route::post('staff', [AdminStaffController::class, 'store'])->name('staff.store');
+        Route::patch('staff/{user}', [AdminStaffController::class, 'update'])->name('staff.update');
 
         // Master data: kota
         Route::resource('cities', AdminCityController::class)->except(['create', 'show']);

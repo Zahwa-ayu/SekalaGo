@@ -137,6 +137,9 @@ class AccountController extends Controller
 
     private function roleKey($user): string
     {
+        if ($user->user_type === 'admin') {
+            return \App\Support\AdminAbilities::roleOf($user);
+        }
         return $user->user_type === 'corporate' && $user->companyUser?->isFinance()
             ? 'finance'
             : $user->user_type;

@@ -8,7 +8,7 @@ class AdminStaff extends Model
 {
     protected $table = 'admin_staffs';
 
-    protected $fillable = ['user_id', 'full_name', 'position'];
+    protected $fillable = ['user_id', 'full_name', 'position', 'sub_role'];
 
     public function user() { return $this->belongsTo(User::class); }
 }
