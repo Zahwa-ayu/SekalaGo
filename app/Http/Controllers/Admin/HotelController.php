@@ -30,11 +30,16 @@ class HotelController extends Controller
 
     public function show(Hotel $hotel)
     {
-        $hotel->load(['partner', 'translations', 'facilities', 'photos', 'nearbyPlaces', 'roomTypes.translations', 'roomTypes.photos', 'roomTypes.facilities']);
+        $hotel->load([
+            'partner.user', 'partner.agreements', 'cityMaster',
+            'translations', 'facilities', 'photos', 'nearbyPlaces',
+            'roomTypes.translations', 'roomTypes.photos', 'roomTypes.facilities',
+        ]);
 
-        $activities = $hotel->activities()->limit(20)->get();
-
-        return view('admin.hotels.show', compact('hotel', 'activities'));
+        return view('admin.hotels.show', [
+            'hotel'      => $hotel,
+            'activities' => method_exists($hotel, 'activities') ? $hotel->activities()->limit(20)->get() : collect(),
+        ]);
     }
 
     public function approve(Hotel $hotel)

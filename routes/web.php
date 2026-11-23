@@ -185,6 +185,7 @@ Route::middleware(['auth', 'role:admin', 'admin.ability'])
         Route::post('companies', [AdminCompanyController::class, 'store'])->name('companies.store');
         Route::get('companies/{company}', [AdminCompanyController::class, 'show'])->name('companies.show');
         Route::post('companies/{company}/topup', [AdminCompanyController::class, 'topup'])->name('companies.topup');
+        Route::post('companies/{company}/documents', [AdminCompanyController::class, 'uploadDocuments'])->name('companies.documents.store');
         Route::post('companies/{company}/verify', [AdminCompanyController::class, 'verify'])->name('companies.verify');
         Route::post('companies/{company}/reject', [AdminCompanyController::class, 'reject'])->name('companies.reject');
         Route::post('companies/{company}/reopen', [AdminCompanyController::class, 'reopen'])->name('companies.reopen');

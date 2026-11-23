@@ -13,7 +13,7 @@
         </span>
     </div>
 
-    @if ($company->source === 'self')
+    @if ($company->tax_id)
         <div class="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
             <div><span class="text-slate-500">{{ __('ui.legal_form') }}:</span> <strong>{{ $company->legal_form }}</strong></div>
             <div><span class="text-slate-500">{{ __('ui.tax_id') }}:</span> <strong class="font-mono">{{ $company->tax_id }}</strong></div>
@@ -35,6 +35,28 @@
                 <a href="{{ route('admin.companies.document', [$company, 'license']) }}" target="_blank" rel="noopener" class="font-bold text-sky-600 hover:underline"><i class="fa-solid fa-paperclip"></i> {{ __('ui.license_document') }}</a>
             @endif
         </div>
+
+        @php
+            $missingDocs = collect(['tax_document' => $company->tax_document_path, 'license_document' => $company->license_document_path])
+                ->filter(fn ($path) => blank($path))->keys();
+        @endphp
+
+        @if ($missingDocs->isNotEmpty() && \App\Support\AdminAbilities::can(auth()->user(), 'operations'))
+            <form method="POST" action="{{ route('admin.companies.documents.store', $company) }}" enctype="multipart/form-data"
+                  class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 space-y-2">
+                @csrf
+                <div class="text-xs font-bold text-amber-800"><i class="fa-solid fa-triangle-exclamation"></i> {{ __('ui.company_documents_missing') }}</div>
+                <div class="flex flex-wrap items-end gap-3">
+                    @foreach ($missingDocs as $name)
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 mb-1">{{ __('ui.' . $name) }}</label>
+                            <input type="file" name="{{ $name }}" accept=".pdf,image/jpeg,image/png,image/webp" class="text-xs">
+                        </div>
+                    @endforeach
+                    <button class="px-4 py-2 rounded-xl bg-white border border-amber-300 text-amber-800 hover:bg-amber-100 text-xs font-bold transition">{{ __('ui.save_changes') }}</button>
+                </div>
+            </form>
+        @endif
     @endif
 
     @if ($company->verification_status === 'pending')

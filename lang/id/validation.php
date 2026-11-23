@@ -149,5 +149,11 @@ return [
         'approved_amount' => 'jumlah yang diterima',
         'late_cancel_fee_percent' => 'denda pembatalan',
         'sub_role' => 'peran',
+
+        'finance_phone' => 'nomor HP Finance',
+        'finance_name' => 'nama Finance',
+        'finance_email' => 'email Finance',
+        'finance_password' => 'password sementara',
+        'initial_deposit_reference' => 'referensi saldo awal',
     ],
 ];

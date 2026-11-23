@@ -107,4 +107,5 @@ class AdminAbilities
             ->filter(fn (User $user) => self::roleOf($user) === self::SUPER)
             ->count();
     }
+    
 }

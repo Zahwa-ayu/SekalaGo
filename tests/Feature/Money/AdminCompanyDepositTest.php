@@ -143,4 +143,19 @@ class AdminCompanyDepositTest extends TestCase
 
         $this->assertSame(0, Company::count());
     }
+
+        private function companyDetails(): array
+    {
+        $city = \App\Models\City::firstOrCreate(['name' => 'Yogyakarta']);
+
+        return [
+            'legal_form'          => 'PT',
+            'tax_id'              => '01.234.567.8-901.000',
+            'business_license_no' => 'NIB-998877',
+            'address'             => 'Jl. Malioboro No. 1',
+            'city_id'             => $city->id,
+            'phone'               => '0274123456',
+            'finance_phone'       => '08123456789',
+        ];
+    }
 }

@@ -77,4 +77,10 @@ class Hotel extends Model
     {
         return $this->morphMany(ActivityLog::class, 'scope')->latest('created_at')->latest('id');
     }
+
+        /** Kota dari master data (kolom city tetap berisi salinan namanya). */
+    public function cityMaster()
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
 } 
