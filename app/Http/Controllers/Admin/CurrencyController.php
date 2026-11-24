@@ -15,10 +15,11 @@ class CurrencyController extends Controller
     /** Perubahan kurs di atas 25% dianggap berisiko salah ketik dan butuh konfirmasi. */
     private const LARGE_CHANGE = 0.25;
 
-    public function index()
+    public function index(Request $request)
     {
         $currencies = Currency::query()
             ->withCount('bookings')
+            ->search($request->query('q'), ['code', 'name', 'symbol'])
             ->orderByRaw('code = ? DESC', [config('sekalago.default_currency')])
             ->orderBy('code')
             ->paginate((int) config('sekalago.per_page', 15))

@@ -73,6 +73,11 @@
     <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
         <h2 class="px-6 pt-6 pb-3 font-extrabold text-slate-900">{{ __('ui.payout_history') }}</h2>
 
+        {{-- PENCARIAN --}}
+        <div class="px-6 pb-4">
+            <x-search-bar placeholder="Cari kode payout, referensi transfer, atau rekening" />
+        </div>
+
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">
                 <thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">

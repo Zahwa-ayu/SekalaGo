@@ -49,7 +49,12 @@
         @endif
     </div>
 
-    <div>
+    <div class="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
+        <a href="{{ route('partner.bookings.show', $booking) }}"
+           class="self-start sm:self-center px-3 py-1.5 rounded-lg border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white text-xs font-bold transition whitespace-nowrap">
+            {{ __('ui.view') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+        </a>
+
         @if ($stage === 'upcoming')
             <form method="POST" action="{{ route('partner.rentals.pickup', $booking) }}">
                 @csrf
@@ -59,18 +64,20 @@
                 </button>
             </form>
         @elseif ($stage === 'ongoing' || $stage === 'overdue')
-            <form method="POST" action="{{ route('partner.rentals.return', $booking) }}" class="flex flex-col sm:flex-row gap-2 sm:items-end">
-                @csrf
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.late_fee') }} (IDR)</label>
-                    <input type="number" name="late_fee" min="0" placeholder="{{ $lateFee }}" title="{{ __('ui.late_fee_input_hint') }}"
-                           class="w-36 rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
-                </div>
-                <button class="px-5 py-2.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition whitespace-nowrap">
-                    {{ __('ui.rental_mark_returned') }}
-                </button>
-            </form>
-            <p class="text-[10px] text-slate-400 mt-1 max-w-56">{{ __('ui.late_fee_input_hint') }}</p>
+            <div>
+                <form method="POST" action="{{ route('partner.rentals.return', $booking) }}" class="flex flex-col sm:flex-row gap-2 sm:items-end">
+                    @csrf
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.late_fee') }} (IDR)</label>
+                        <input type="number" name="late_fee" min="0" placeholder="{{ $lateFee }}" title="{{ __('ui.late_fee_input_hint') }}"
+                               class="w-36 rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue">
+                    </div>
+                    <button class="px-5 py-2.5 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition whitespace-nowrap">
+                        {{ __('ui.rental_mark_returned') }}
+                    </button>
+                </form>
+                <p class="text-[10px] text-slate-400 mt-1 max-w-56">{{ __('ui.late_fee_input_hint') }}</p>
+            </div>
         @endif
     </div>
 </div>

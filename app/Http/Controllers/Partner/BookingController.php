@@ -33,10 +33,21 @@ class BookingController extends Controller
 
         $bookings = (clone $base)
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
+            ->search($request->query('q'), ['booking_code', 'guest_name', 'contact_name', 'contact_phone', 'hotel_name', 'user.email'])
             ->latest()
             ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();
 
         return view('partner.bookings.index', compact('summary', 'bookings', 'status'));
+    }
+
+    public function show(Request $request, Booking $booking)
+    {
+        $partner = $this->partner($request);
+
+        // 404 (bukan 403) supaya mitra tidak bisa menebak kode booking milik mitra lain
+        abort_unless($booking->partner_id === $partner->id, 404);
+
+        return view('partner.bookings.show', compact('booking'));
     }
 }

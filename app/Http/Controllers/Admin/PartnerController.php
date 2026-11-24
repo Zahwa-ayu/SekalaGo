@@ -30,6 +30,7 @@ class PartnerController extends Controller
 
         $partners = Partner::with(['user', 'latestAgreement'])
             ->when($status !== 'all', fn ($q) => $q->where('verification_status', $status))
+            ->search($request->query('q'), ['company_name', 'tax_id', 'contact_name', 'user.email'])
             ->latest()
             ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();

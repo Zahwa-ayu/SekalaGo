@@ -11,10 +11,14 @@ use Illuminate\Validation\Rule;
 
 class StaffController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return view('admin.staff.index', [
-            'staff' => User::where('user_type', 'admin')->with('adminStaff')->orderBy('email')->get(),
+            'staff' => User::where('user_type', 'admin')
+                ->with('adminStaff')
+                ->search($request->query('q'), ['email', 'phone_number', 'adminStaff.full_name', 'adminStaff.position'])
+                ->orderBy('email')
+                ->get(),
             'roles' => AdminAbilities::ROLES,
         ]);
     }

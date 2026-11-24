@@ -17,6 +17,7 @@ class VehicleController extends Controller
 
         $vehicles = Vehicle::with(['partner', 'translations', 'photos'])
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
+            ->search($request->query('q'), ['city', 'partner.company_name', 'translations.name'])
             ->latest()
             ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();

@@ -31,6 +31,7 @@ class BookingController extends Controller
 
         $list = Booking::where('user_id', $request->user()->id)
             ->when($product, fn ($q, $type) => $q->where('product_type', $type))
+            ->search($request->query('q'), ['booking_code', 'guest_name', 'contact_name', 'contact_phone', 'hotel_name', 'user.email'])
             ->latest()
             ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();

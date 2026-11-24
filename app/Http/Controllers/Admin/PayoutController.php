@@ -27,6 +27,7 @@ class PayoutController extends Controller
         $history = Payout::query()
             ->with('partner')
             ->when($data['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
+            ->search($request->query('q'), ['code', 'transfer_reference', 'bank_name', 'bank_account_name', 'bank_account_no', 'partner.company_name'])
             ->latest()
             ->paginate(15)
             ->withQueryString();

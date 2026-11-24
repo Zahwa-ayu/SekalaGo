@@ -22,6 +22,7 @@ class EmployeeController extends Controller
         $employees = $company->companyUsers()
             ->with(['user', 'position'])
             ->when($showRemoved, fn ($q) => $q->whereNotNull('removed_at'), fn ($q) => $q->whereNull('removed_at'))
+            ->search($request->query('q'), ['full_name', 'department', 'user.email'])
             ->orderBy('full_name')
             ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();

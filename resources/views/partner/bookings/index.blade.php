@@ -44,6 +44,14 @@
             @include('partials.product-filter', ['route' => 'partner.bookings.index'])
         </div>
 
+        {{-- PENCARIAN --}}
+        <div class="mb-6">
+            <x-search-bar placeholder="Cari kode, nama tamu, kontak, atau hotel">
+                <input type="hidden" name="status" value="{{ $status }}">
+                <input type="hidden" name="product" value="{{ request('product') }}">
+            </x-search-bar>
+        </div>
+
         {{-- TABEL --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">
@@ -58,6 +66,7 @@
                             <th class="px-6 py-4 font-bold">{{ __('ui.total_price') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.platform_commission') }}</th>
                             <th class="px-6 py-4 font-bold">{{ __('ui.net_revenue') }}</th>
+                            <th class="px-6 py-4"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -71,7 +80,9 @@
                                 };
                             @endphp
                             <tr class="hover:bg-sky-50/50 transition">
-                                <td class="px-6 py-4 font-mono text-xs font-bold text-sagara-blue whitespace-nowrap">{{ $booking->booking_code }}</td>
+                                <td class="px-6 py-4 font-mono text-xs font-bold whitespace-nowrap">
+                                    <a href="{{ route('partner.bookings.show', $booking) }}" class="text-sagara-blue hover:underline">{{ $booking->booking_code }}</a>
+                                </td>
                                 <td class="px-6 py-4">
                                     <div class="font-bold text-slate-900"><i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1" title="{{ $booking->productLabel() }}"></i>{{ $booking->hotel_name }}</div>
                                     <div class="text-[11px] text-slate-500">{{ $booking->room_name }}</div>
@@ -87,10 +98,16 @@
                                 <td class="px-6 py-4 font-bold text-slate-900 whitespace-nowrap">{{ format_price($booking->total_price, 'IDR') }}</td>
                                 <td class="px-6 py-4 text-slate-600 whitespace-nowrap">{{ format_price($booking->platform_fee, 'IDR') }}</td>
                                 <td class="px-6 py-4 font-bold text-sagara-blue whitespace-nowrap">{{ format_price($booking->vendor_revenue, 'IDR') }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('partner.bookings.show', $booking) }}"
+                                       class="px-3 py-1.5 text-xs font-bold border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white rounded-lg transition whitespace-nowrap">
+                                        {{ __('ui.view') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-12 text-center text-slate-400">
+                                <td colspan="9" class="px-6 py-12 text-center text-slate-400">
                                     <i class="fa-solid fa-receipt text-3xl mb-2 block"></i>
                                     {{ __('ui.no_bookings') }}
                                 </td>

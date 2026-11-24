@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\Searchable;
+
 
 class Payout extends Model
 {
+    use Searchable;
+    
     protected $fillable = [
         'code', 'partner_id', 'status', 'total_amount', 'platform_fee_total', 'booking_count',
         'schedule', 'transfer_reference', 'paid_at', 'paid_by', 'note', 'created_by',

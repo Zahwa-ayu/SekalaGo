@@ -27,6 +27,7 @@ class CompanyController extends Controller
 
         $companies = Company::withCount('companyUsers')
             ->when($status, fn ($q, $value) => $q->where('verification_status', $value))
+            ->search($request->query('q'), ['company_name', 'corporate_code', 'tax_id'])
             ->orderByRaw("verification_status = 'pending' DESC")   // yang menunggu selalu di atas
             ->orderBy('company_name')
             ->paginate((int) config('sekalago.per_page', 15))

@@ -29,6 +29,7 @@ class BookingController extends Controller
         $bookings = (clone $base)
             ->with('partner')
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
+            ->search($request->query('q'), ['booking_code', 'guest_name', 'contact_name', 'contact_phone', 'hotel_name', 'user.email'])
             ->latest()
             ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();
@@ -52,5 +53,12 @@ class BookingController extends Controller
         return back()->with('success', __('ui.booking_cancelled_refunded', [
             'amount' => format_price($booking->refund_amount, 'IDR'),
         ]));
+    }
+
+        public function show(Booking $booking)
+    {
+        $booking->load(['partner', 'user', 'hotel']);
+
+        return view('admin.bookings.show', compact('booking'));
     }
 }

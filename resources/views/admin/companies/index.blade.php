@@ -10,6 +10,8 @@
             </a>
         </div>
 
+        <x-search-bar placeholder="Cari nama usaha, NPWP, atau kode perusahaan" />
+
         {{-- TAB STATUS VERIFIKASI --}}
         <div class="mb-6">
             @include('admin.companies._status-tabs')

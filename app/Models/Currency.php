@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\Searchable;
+
 
 class Currency extends Model
 {
+    use Searchable; 
     protected $primaryKey = 'code';
     public $incrementing = false;
     protected $keyType = 'string';

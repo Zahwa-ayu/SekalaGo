@@ -55,6 +55,14 @@
             </div>
         @endif
 
+        {{-- PENCARIAN --}}
+        <div class="mb-6">
+            <x-search-bar placeholder="Cari kode, nama tamu, kontak, atau hotel">
+                <input type="hidden" name="status" value="{{ $status }}">
+                <input type="hidden" name="product" value="{{ request('product') }}">
+            </x-search-bar>
+        </div>
+
         {{-- TABEL --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">
@@ -83,7 +91,9 @@
                                 };
                             @endphp
                             <tr class="hover:bg-sky-50/50 transition align-top">
-                                <td class="px-6 py-4 font-mono text-xs font-bold text-sagara-blue whitespace-nowrap">{{ $booking->booking_code }}</td>
+                                <td class="px-6 py-4 font-mono text-xs font-bold whitespace-nowrap">
+                                    <a href="{{ route('admin.bookings.show', $booking) }}" class="text-sagara-blue hover:underline">{{ $booking->booking_code }}</a>
+                                </td>
                                 <td class="px-6 py-4 text-slate-600">{{ $booking->partner?->company_name ?? '-' }}</td>
                                 <td class="px-6 py-4">
                                     <div class="font-bold text-slate-900"><i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1" title="{{ $booking->productLabel() }}"></i>{{ $booking->hotel_name }}</div>
@@ -99,6 +109,10 @@
 
                                 {{-- AKSI --}}
                                 <td class="px-6 py-4">
+                                    <a href="{{ route('admin.bookings.show', $booking) }}" class="block mb-2 text-xs font-bold text-sagara-blue hover:underline whitespace-nowrap">
+                                        {{ __('ui.view') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+                                    </a>
+
                                     @if ($booking->canBeCancelledByAdmin())
                                         <details>
                                             <summary class="cursor-pointer list-none inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition whitespace-nowrap">
@@ -128,8 +142,6 @@
                                                 <br><span class="font-semibold text-slate-700">{{ __('ui.refund_amount') }}: {{ format_price($booking->refund_amount, 'IDR') }}</span>
                                             @endif
                                         </div>
-                                    @else
-                                        <span class="text-slate-300">-</span>
                                     @endif
                                 </td>
                             </tr>

@@ -18,6 +18,8 @@
                 {{ __('ui.all') }}
             </a>
         </div>
+        
+        <x-search-bar placeholder="Cari armada, mitra, atau kota" />
 
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">

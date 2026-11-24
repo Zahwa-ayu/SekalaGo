@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Builder;
 trait Searchable
 {
     /**
-     * Cari kata di beberapa kolom. Kolom langsung ditulis apa adanya, kolom relasi dengan "relasi.kolom".
+     * Cari kata di beberapa kolom. Kolom langsung ditulis apa adanya,
+     * kolom relasi dengan "relasi.kolom".
      *
      * @param  list<string>  $columns
      */

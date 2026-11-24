@@ -72,6 +72,10 @@
 
         {{-- DAFTAR --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
+            <div class="px-6 pt-6 pb-4">
+                <x-search-bar placeholder="Cari nama, email, telepon, atau jabatan" />
+            </div>
+
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">
@@ -83,7 +87,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @foreach ($staff as $member)
+                        @forelse ($staff as $member)
                             @php
                                 $role = \App\Support\AdminAbilities::roleOf($member);
                                 $self = $member->id === auth()->id();
@@ -111,7 +115,11 @@
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="4" class="px-6 py-10 text-center text-slate-400 text-sm">{{ __('ui.no_results') }}</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

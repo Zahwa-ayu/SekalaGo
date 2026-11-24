@@ -25,6 +25,7 @@ class HotelController extends Controller
     {
         $partner = $this->partner($request);
         $hotels  = $partner->hotels()->with('translations')->latest()
+        ->search($request->query('q'), ['city', 'translations.name'])
         ->paginate((int) config('sekalago.per_page', 15))
         ->withQueryString();
 

@@ -13,6 +13,7 @@
         </div>
     </div>
 
+
     {{-- KONTEN: margin negatif menarik kartu masuk ke banner (pb banner - mt konten = jarak 32px) --}}
     <section class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 sm:-mt-24 pb-12">
         <div class="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">

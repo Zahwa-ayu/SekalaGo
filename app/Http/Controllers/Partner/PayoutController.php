@@ -19,7 +19,9 @@ class PayoutController extends Controller
         return view('partner.payouts.index', [
             'partner' => $partner,
             'summary' => $payouts->overview($partner->id)->first(),
-            'history' => Payout::where('partner_id', $partner->id)->latest()->paginate(15),
+            'history' => Payout::where('partner_id', $partner->id)->latest()
+            ->search($request->query('q'), ['code', 'transfer_reference', 'bank_name', 'bank_account_name', 'bank_account_no', 'partner.company_name'])
+            ->paginate(15),
         ]);
     }
 

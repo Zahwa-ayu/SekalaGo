@@ -194,6 +194,7 @@ Route::middleware(['auth', 'role:admin', 'admin.ability'])
         Route::post('hotels/{hotel}/reject', [AdminHotelController::class, 'reject'])->name('hotels.reject');
 
         Route::get('bookings', [AdminBookingController::class, 'index'])->name('bookings.index');
+        Route::get('bookings/{booking}', [AdminBookingController::class, 'show'])->name('bookings.show');
         Route::post('bookings/{booking}/cancel', [AdminBookingController::class, 'cancel'])->name('bookings.cancel');
 
         Route::get('companies', [AdminCompanyController::class, 'index'])->name('companies.index');
@@ -273,15 +274,9 @@ Route::middleware(['auth', 'role:admin', 'admin.ability'])
 
         // Manajemen FAQ (dinamis, tampil di halaman publik)
         Route::resource('faqs', FaqAdminController::class)->except(['show']);
-        Route::resource('pages', PageAdminController::class)->except(['show']);
 
         // Konten: halaman statis
-        // PERHATIAN: nama dan URL rute di bawah SAMA dengan Route::resource('pages', PageAdminController::class) di atas
-        // (admin.pages.index, admin.pages.edit, admin.pages.update). Yang terdaftar duluan yang dipakai.
-        // Hapus resource di atas kalau sudah digantikan, atau ganti URL/namanya, misalnya 'static-pages'.
-        Route::get('pages', [AdminStaticPageController::class, 'index'])->name('pages.index');
-        Route::get('pages/{page}/edit', [AdminStaticPageController::class, 'edit'])->name('pages.edit');
-        Route::put('pages/{page}', [AdminStaticPageController::class, 'update'])->name('pages.update');
+        Route::resource('pages', PageAdminController::class)->except(['show']);
 
         // Ulasan dan laporan masalah
         Route::get('reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
@@ -343,6 +338,7 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
 
             Route::get('bookings', [PartnerBookingController::class, 'index'])->name('bookings.index');
             Route::get('rentals', [RentalController::class, 'index'])->name('rentals.index');
+            Route::get('bookings/{booking}', [PartnerBookingController::class, 'show'])->name('bookings.show');
             Route::post('rentals/{booking}/pickup', [RentalController::class, 'markPickedUp'])->name('rentals.pickup');
             Route::post('rentals/{booking}/return', [RentalController::class, 'markReturned'])->name('rentals.return');
             Route::post('rentals/{booking}/cancel', [RentalController::class, 'cancelAtRisk'])->name('rentals.cancel');
@@ -394,6 +390,7 @@ Route::middleware(['auth', 'role:corporate'])
             Route::put('policy', [PositionController::class, 'updatePolicy'])->name('policy.update');
 
             Route::get('bookings', [CorporateBookingController::class, 'index'])->name('bookings.index');
+            Route::get('bookings/{booking}', [CorporateBookingController::class, 'show'])->name('bookings.show');
             Route::post('bookings/{booking}/approve', [CorporateBookingController::class, 'approve'])->name('bookings.approve');
             Route::post('bookings/{booking}/reject', [CorporateBookingController::class, 'reject'])->name('bookings.reject');
 

@@ -46,6 +46,14 @@
                 @include('partials.product-filter', ['route' => 'corporate.bookings.index'])
             </div>
 
+            {{-- PENCARIAN --}}
+            <div class="px-6 py-4 border-b border-slate-100">
+                <x-search-bar placeholder="Cari kode, karyawan, departemen, atau hotel">
+                    <input type="hidden" name="status" value="{{ $status }}">
+                    <input type="hidden" name="product" value="{{ request('product') }}">
+                </x-search-bar>
+            </div>
+
             {{-- TABEL --}}
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
@@ -96,6 +104,11 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
+                                    <a href="{{ route('corporate.bookings.show', $booking) }}"
+                                       class="inline-block mb-2 px-3 py-1.5 text-xs font-bold border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white rounded-lg transition whitespace-nowrap">
+                                        {{ __('ui.view') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+                                    </a>
+
                                     @if ($booking->status === 'pending_approval')
                                         <form method="POST" action="{{ route('corporate.bookings.approve', $booking) }}" class="mb-2">
                                             @csrf
@@ -118,8 +131,6 @@
                                         </details>
 
                                         <div class="text-[11px] text-slate-400 mt-2">{{ __('ui.hold_until', ['time' => $booking->expires_at->format('d/m H:i')]) }}</div>
-                                    @else
-                                        <span class="text-slate-300">-</span>
                                     @endif
                                 </td>
                             </tr>

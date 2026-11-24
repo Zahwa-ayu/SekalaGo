@@ -13,9 +13,10 @@ class FaqAdminController extends Controller
     // Bahasa yang wajib diisi. Bahasa lain di config('sekalago.locales') opsional.
     private const REQUIRED_LOCALES = ['id', 'en'];
 
-    public function index()
+    public function index(Request $request)
     {
         $faqs = Faq::with('translations')
+            ->search($request->query('q'), ['category', 'translations.question', 'translations.answer'])
             ->orderBy('category')
             ->orderBy('sort_order')
             ->paginate((int) config('sekalago.per_page', 15))
@@ -23,7 +24,6 @@ class FaqAdminController extends Controller
 
         return view('admin.faqs.index', compact('faqs'));
     }
-
     public function create()
     {
         return view('admin.faqs.create', ['locales' => config('sekalago.locales')]);
