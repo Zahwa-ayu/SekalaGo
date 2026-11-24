@@ -264,6 +264,28 @@
             </div>
         </header>
 
+        @if (\App\Support\AdminAbilities::isViewOnly($authUser))
+        <div class="px-4 sm:px-6 py-2 bg-amber-50 border-b border-amber-200 text-xs font-semibold text-amber-800">
+            <i class="fa-solid fa-eye"></i> {{ __('ui.view_only_mode') }}
+        </div>
+
+            <script>
+                // Peran hanya lihat: formulir yang mengubah data di area admin dinonaktifkan (server tetap menolaknya)
+                document.addEventListener('DOMContentLoaded', () => {
+                    document.querySelectorAll('main form').forEach((form) => {
+                        const method = (form.getAttribute('method') || 'get').toLowerCase();
+                        const action = form.getAttribute('action') || '';
+
+                        if (method === 'get' || !action.includes('/admin/')) return;
+
+                        form.querySelectorAll('button, input, select, textarea').forEach((el) => { el.disabled = true; });
+                        form.classList.add('opacity-50');
+                        form.title = @json(__('ui.view_only_hint'));
+                    });
+                });
+            </script>
+        @endif
+
         @include('partials.flash')
 
         <main class="flex-1">

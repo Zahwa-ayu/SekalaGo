@@ -1659,4 +1659,10 @@ return [
 'partner_issues_hint' => 'Laporan pelanggan tentang pesanan di hotel atau armada Anda. Tanggapan Anda membantu admin menyelesaikannya.',
 'admin_issues_hint' => 'Laporan pelanggan. Periksa, hubungi mitra bila perlu, lalu jawab pelanggan. Refund atau pembatalan dilakukan lewat Semua Pesanan.',
 'after_service_title' => 'Setelah layanan',
+
+// akun bos
+'role_manager' => 'Manager (hanya lihat)',
+'role_manager_desc' => 'Memantau seluruh halaman admin dan laporan tanpa bisa mengubah data apa pun. Tidak melihat manajemen tim.',
+'view_only_mode' => 'Mode hanya lihat: Anda bisa membuka semua halaman, tetapi tidak bisa mengubah data.',
+'view_only_hint' => 'Peran Anda hanya bisa melihat',
 ];

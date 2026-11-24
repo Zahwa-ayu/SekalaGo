@@ -10,8 +10,8 @@ class AdminStaffSeeder extends Seeder
     public function run(): void
     {
         $accounts = [
-            ['ops@sekalago.test', 'Rina Operasional', 'Admin Operasional', 'admin_ops'],
-            ['keuangan@sekalago.test', 'Dewi Keuangan', 'Admin Keuangan', 'admin_finance'],
+            ['bos@sekalago.test', 'Pak Bos', 'Pemilik / Direktur', 'super_admin'],
+            ['manager@sekalago.test', 'Bu Manager', 'Manager', 'manager'],
         ];
 
         foreach ($accounts as [$email, $name, $position, $role]) {

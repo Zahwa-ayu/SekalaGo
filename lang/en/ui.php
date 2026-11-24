@@ -1653,4 +1653,10 @@ return [
 'partner_issues_hint' => 'Customer reports about bookings at your hotels or vehicles. Your response helps the admin resolve them.',
 'admin_issues_hint' => 'Customer reports. Review, contact the partner if needed, then answer the customer. Refunds or cancellations are done through All Bookings.',
 'after_service_title' => 'After the service',
+
+// akun bos
+'role_manager' => 'Manager (view only)',
+'role_manager_desc' => 'Monitors every admin page and report without being able to change any data. Does not see team management.',
+'view_only_mode' => 'View-only mode: you can open every page but cannot change any data.',
+'view_only_hint' => 'Your role can only view',
 ];

@@ -10,13 +10,19 @@ class AdminAbilities
     public const SUPER   = 'super_admin';
     public const OPS     = 'admin_ops';
     public const FINANCE = 'admin_finance';
-    public const ROLES   = [self::SUPER, self::OPS, self::FINANCE];
+    public const MANAGER = 'manager';
+    public const ROLES   = [self::SUPER, self::OPS, self::FINANCE, self::MANAGER];
 
-    /** Kemampuan tiap peran. '*' berarti semuanya. */
+    /** Hak mengubah data per peran. '*' berarti semuanya. */
     private const GRANTS = [
         self::SUPER   => ['*'],
         self::OPS     => ['operations', 'bookings', 'companies', 'content'],
         self::FINANCE => ['analytics', 'bookings', 'companies', 'finance'],
+    ];
+
+    /** Peran hanya lihat: boleh membuka halaman (GET) untuk kemampuan ini, tidak pernah mengubah data. */
+    private const VIEW_ONLY = [
+        self::MANAGER => ['analytics', 'operations', 'bookings', 'companies', 'finance', 'content', 'system'],
     ];
 
     /**
@@ -39,7 +45,7 @@ class AdminAbilities
         'admin.companies.topup*' => 'finance',
         'admin.companies.index'  => 'companies',
         'admin.companies.show'   => 'companies',
-        'admin.companies.*'      => 'operations',     // buat, verifikasi, tolak, buka kembali, dokumen
+        'admin.companies.*'      => 'operations',
 
         'admin.payments.*'       => 'finance',
         'admin.topups.*'         => 'finance',
@@ -65,6 +71,12 @@ class AdminAbilities
         return $user->adminStaff?->sub_role ?: self::SUPER;
     }
 
+    public static function isViewOnly(User $user): bool
+    {
+        return $user->user_type === 'admin' && isset(self::VIEW_ONLY[self::roleOf($user)]);
+    }
+
+    /** Hak mengubah data. Peran hanya lihat tidak pernah punya. */
     public static function can(User $user, string $ability): bool
     {
         if ($user->user_type !== 'admin') {
@@ -76,11 +88,15 @@ class AdminAbilities
         return in_array('*', $grants, true) || in_array($ability, $grants, true);
     }
 
-    public static function allowsRoute(User $user, string $routeName): bool
+    public static function allowsRoute(User $user, string $routeName, string $method = 'GET'): bool
     {
         // Hanya rute admin yang diatur di sini
         if (! str_starts_with($routeName, 'admin.')) {
             return true;
+        }
+
+        if ($user->user_type !== 'admin') {
+            return false;
         }
 
         $ability = null;
@@ -92,9 +108,20 @@ class AdminAbilities
             }
         }
 
+        $role = self::roleOf($user);
+
+        // Peran hanya lihat: hanya membaca (GET atau HEAD), tidak pernah mengubah data
+        if (isset(self::VIEW_ONLY[$role])) {
+            if (! in_array(strtoupper($method), ['GET', 'HEAD'], true)) {
+                return false;
+            }
+
+            return $ability === 'any' || ($ability !== null && in_array($ability, self::VIEW_ONLY[$role], true));
+        }
+
         return match (true) {
-            $ability === 'any' => $user->user_type === 'admin',
-            $ability === null  => self::roleOf($user) === self::SUPER,   // belum terdaftar: hanya super admin
+            $ability === 'any' => true,
+            $ability === null  => $role === self::SUPER,   // belum terdaftar: hanya super admin
             default            => self::can($user, $ability),
         };
     }

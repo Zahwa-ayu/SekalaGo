@@ -14,7 +14,7 @@ class EnsureAdminAbility
         $user = $request->user();
         $name = $request->route()?->getName();
 
-        if ($user && $name && ! AdminAbilities::allowsRoute($user, $name)) {
+        if ($user && $name && ! AdminAbilities::allowsRoute($user, $name, $request->method())) {
             abort(403, __('ui.admin_forbidden'));
         }
 

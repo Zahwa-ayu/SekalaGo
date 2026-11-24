@@ -4,7 +4,12 @@
     @php
         $input = 'w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
         $label = 'block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1';
-        $roleTone = ['super_admin' => 'bg-violet-100 text-violet-700', 'admin_ops' => 'bg-sky-100 text-sky-700', 'admin_finance' => 'bg-emerald-100 text-emerald-700'];
+        $roleTone = [
+            'super_admin'   => 'bg-violet-100 text-violet-700',
+            'admin_ops'     => 'bg-sky-100 text-sky-700',
+            'admin_finance' => 'bg-emerald-100 text-emerald-700',
+            'manager'       => 'bg-slate-200 text-slate-700',
+        ];
     @endphp
 
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -20,7 +25,7 @@
         @endif
 
         {{-- PERAN --}}
-        <div class="grid md:grid-cols-3 gap-4">
+        <div class="grid md:grid-cols-4 gap-4">
             @foreach ($roles as $role)
                 <div class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 space-y-2">
                     <span class="px-2.5 py-1 rounded-full text-[11px] font-bold {{ $roleTone[$role] }}">{{ __('ui.role_' . $role) }}</span>
