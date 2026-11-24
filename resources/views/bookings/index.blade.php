@@ -3,8 +3,13 @@
 @section('content')
     {{-- BANNER BIRU (senada dengan hero Beranda): navbar di halaman ini putih solid dan memakai ruangnya sendiri, jadi padding atas kecil --}}
     <div class="bg-gradient-to-br from-sky-500 via-sky-600 to-sky-700 pt-8 sm:pt-10 pb-28 sm:pb-32">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-sm">{{ __('ui.my_bookings') }}</h1>
+
+            {{-- Tautan ke daftar laporan kendala (putih karena latarnya biru; text-sky-600 tidak terbaca di sini) --}}
+            <a href="{{ route('issues.index') }}" class="text-sm font-bold text-white/90 hover:text-white hover:underline">
+                <i class="fa-solid fa-life-ring"></i> {{ __('ui.issue_my_reports') }}
+            </a>
         </div>
     </div>
 

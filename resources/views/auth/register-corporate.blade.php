@@ -369,7 +369,12 @@
                             <label class="block text-sm text-slate-600 pt-2">
                                 <span class="flex items-start gap-3">
                                     <input type="checkbox" name="terms" value="1" required @checked(old('terms')) class="mt-0.5 rounded border-slate-300 text-sky-500">
-                                    <span>{{ __('ui.corporate_terms') }}</span>
+                                    <span>
+                                        <span>{{ __('ui.corporate_terms') }}</span>
+                                        <a href="{{ route('pages.show', 'terms') }}" target="_blank" rel="noopener" class="font-bold text-sky-600 hover:underline whitespace-nowrap">{{ __('ui.read_terms') }}</a>
+                                        <span class="text-slate-300">&middot;</span>
+                                        <a href="{{ route('pages.show', 'privacy') }}" target="_blank" rel="noopener" class="font-bold text-sky-600 hover:underline whitespace-nowrap">{{ __('ui.read_privacy') }}</a>
+                                    </span>
                                 </span>
                             </label>
 

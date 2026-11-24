@@ -49,4 +49,17 @@ return [
     'partner_share_line' => 'Bagian Anda dari denda: :amount (masuk pencairan dana).',
     'booking_cancelled' => ['title' => 'Pesanan dibatalkan: :code', 'body' => 'Pesanan :name dibatalkan oleh :by. :fee :refund'],
     'booking_cancelled_partner' => ['title' => 'Pesanan dibatalkan: :code', 'body' => 'Pesanan :name atas nama :guest dibatalkan (:by). Stok sudah dikembalikan. :share'],
+
+    'payment_expiring' => ['title' => 'Segera bayar: :code', 'body' => 'Waktu pembayaran :name tinggal sekitar :minutes menit. Selesaikan sekarang agar pesanan tidak hangus.'],
+    'arrival_tomorrow_hotel' => ['title' => 'Check-in besok: :code', 'body' => 'Anda menginap di :name mulai besok. Perkiraan tiba: :time. Bawa identitas asli dan e-ticket.'],
+    'arrival_tomorrow_car' => ['title' => 'Pengambilan mobil besok: :code', 'body' => 'Ambil :name besok pukul :time di :place. Bawa KTP asli (dan SIM untuk lepas kunci) serta e-ticket.'],
+    'return_soon' => ['title' => 'Segera kembalikan mobil: :code', 'body' => ':name harus kembali :time. Butuh lebih lama? Perpanjang sewa dari halaman pesanan sebelum batas waktu.'],
+    'return_overdue_customer' => ['title' => 'Mobil terlambat dikembalikan: :code', 'body' => ':name melewati batas kembali (:time). Denda keterlambatan berjalan sesuai ketentuan dan dibayar langsung ke vendor. Segera kembalikan mobilnya.'],
+    'return_overdue_partner' => ['title' => 'Mobil belum kembali: :code', 'body' => ':name atas nama :guest melewati batas kembali (:time). Hubungi penyewa dan periksa pesanan berikutnya di Sewa Berjalan.'],
+    'review_prompt' => ['title' => 'Bagaimana pengalaman Anda?', 'body' => 'Ceritakan pengalaman Anda dengan :name. Ulasan Anda membantu pelanggan lain.'],
+    'review_received' => ['title' => 'Ulasan baru :rating/5', 'body' => 'Pelanggan mengulas :name. Buka halaman Ulasan untuk membaca dan membalas.'],
+    'review_replied' => ['title' => 'Mitra membalas ulasan Anda', 'body' => 'Mitra :name membalas ulasan Anda.'],
+    'issue_reported' => ['title' => 'Laporan masalah baru: :code', 'body' => 'Laporan untuk pesanan :booking (:name) menunggu ditinjau.'],
+    'issue_for_partner' => ['title' => 'Pelanggan melaporkan masalah: :code', 'body' => 'Ada laporan untuk pesanan :booking (:name). Buka Laporan Masalah untuk memberi tanggapan.'],
+    'issue_updated' => ['title' => 'Laporan :code diperbarui', 'body' => 'Status laporan Anda sekarang: :status. Buka Laporan saya untuk jawabannya.'],
 ];

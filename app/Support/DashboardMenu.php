@@ -54,6 +54,8 @@ class DashboardMenu
 
                 // Data & isi situs
                 ['section' => 'ui.menu_content'],
+                ['fa-star', 'ui.reviews', 'admin.reviews.index', ['admin.reviews.*']],
+                ['fa-life-ring', 'ui.issue_reports', 'admin.issues.index', ['admin.issues.*']],
                 [
                     'icon'     => 'fa-database',
                     'label'    => 'ui.master_data',
@@ -71,6 +73,7 @@ class DashboardMenu
                         ['fa-share-nodes', 'ui.social_media', 'admin.social-media.index', ['admin.social-media.*']],
                         ['fa-circle-question', 'ui.faq_management', 'admin.faqs.index', ['admin.faqs.*']],
                         ['fa-image', 'ui.banners', 'admin.banners.index', ['admin.banners.*']],
+                        ['fa-file-lines', 'ui.static_pages', 'admin.pages.index', ['admin.pages.*']],
                     ],
                 ],
 
@@ -101,6 +104,8 @@ class DashboardMenu
                     // Uang
                     ['section' => 'ui.menu_finance'],
                     ['fa-wallet', 'ui.payouts', 'partner.payouts.index', ['partner.payouts.*']],
+                    ['fa-star', 'ui.reviews', 'partner.reviews.index', ['partner.reviews.*']],
+                    ['fa-life-ring', 'ui.issue_reports', 'partner.issues.index', ['partner.issues.*']],
 
                     // Dokumen dan data mitra
                     ['section' => 'ui.menu_account'],

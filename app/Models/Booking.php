@@ -226,4 +226,19 @@ public function cancellationQuote(): array
 
     return ['type' => 'none', 'percent' => 0, 'fee' => 0, 'refund' => 0];
 }
+
+public function review()       { return $this->hasOne(Review::class); }
+public function issueReports() { return $this->hasMany(IssueReport::class)->latest(); }
+
+/** ok, atau alasan pemesan belum bisa mengulas. */
+public function reviewStatus(): string
+{
+    return app(\App\Services\ReviewService::class)->eligibility($this, auth()->user());
+}
+
+/** Kategori laporan masalah yang boleh dipilih pemesan untuk pesanan ini (kosong = belum bisa melapor). */
+public function issueCategories(): array
+{
+    return app(\App\Services\IssueService::class)->allowedCategories($this, auth()->user());
+}
 }

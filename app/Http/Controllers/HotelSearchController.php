@@ -76,7 +76,10 @@ class HotelSearchController extends Controller
     $hasDates ? \Illuminate\Support\Arr::only($params, ['city', 'check_in', 'check_out', 'guests']) : []
     );
 
-    return view('hotels.show', compact('hotel', 'roomTypes', 'params', 'nights', 'datesAreDefault', 'backUrl'));
+    $reviews = \App\Models\Review::visible()->where('hotel_id', $hotel->id)->latest()
+    ->paginate(5, ['*'], 'reviews')->withQueryString()->fragment('reviews');
+
+    return view('hotels.show', compact('hotel', 'roomTypes', 'reviews', 'params', 'nights', 'datesAreDefault', 'backUrl'));
     }
 
     /** Hotel pilihan beserta harga mulai dari (tanpa pencarian). */

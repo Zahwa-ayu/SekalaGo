@@ -294,6 +294,7 @@
                         <span class="hover:text-white cursor-pointer">{{ __('ui.footer_terms') }}</span>
                         <span class="hover:text-white cursor-pointer">{{ __('ui.footer_privacy') }}</span>
                     @endforelse
+
                 </div>
             </div>
         </div>

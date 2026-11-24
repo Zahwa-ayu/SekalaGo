@@ -30,6 +30,8 @@ class AdminAbilities
         'admin.partners.*'       => 'operations',
         'admin.hotels.*'         => 'operations',
         'admin.vehicles.*'       => 'operations',
+        'admin.reviews.*'        => 'operations',
+        'admin.issues.*'         => 'operations',
         'admin.bookings.cancel*' => 'operations',
         'admin.bookings.*'       => 'bookings',
 
@@ -50,6 +52,7 @@ class AdminAbilities
         'admin.social-media.*'   => 'content',
         'admin.faqs.*'           => 'content',
         'admin.banners.*'        => 'content',
+        'admin.pages.*'          => 'content',
 
         'admin.staff.*'          => 'staff',
         'admin.users.*'          => 'staff',
@@ -107,5 +110,4 @@ class AdminAbilities
             ->filter(fn (User $user) => self::roleOf($user) === self::SUPER)
             ->count();
     }
-    
 }

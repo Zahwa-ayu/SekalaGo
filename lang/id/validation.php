@@ -155,5 +155,14 @@ return [
         'finance_email' => 'email Finance',
         'finance_password' => 'password sementara',
         'initial_deposit_reference' => 'referensi saldo awal',
+
+        'rating' => 'penilaian',
+        'comment' => 'komentar',
+        'category' => 'jenis masalah',
+        'evidence' => 'bukti',
+        'resolution' => 'jawaban',
+        'partner_reply' => 'balasan',
+        'partner_response' => 'tanggapan',
+        'reason' => 'alasan',
     ],
 ];

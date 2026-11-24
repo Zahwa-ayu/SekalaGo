@@ -58,6 +58,12 @@ use App\Http\Controllers\Admin\PlatformBankAccountController as AdminBankAccount
 use App\Http\Controllers\Admin\TopupController as AdminTopupController;
 use App\Http\Controllers\Corporate\TopupController as CorporateTopupController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\Admin\IssueController as AdminIssueController;
+use App\Http\Controllers\Admin\ReviewController as AdminReviewController;
+use App\Http\Controllers\IssueController;
+use App\Http\Controllers\Partner\IssueController as PartnerIssueController;
+use App\Http\Controllers\Partner\ReviewController as PartnerReviewController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Admin\PageAdminController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\Partner\StayController as PartnerStayController;
@@ -73,6 +79,7 @@ Route::get('/cars/search', [CarSearchController::class, 'legacySearch'])->name('
 Route::get('/cars/{vehicle}', [CarSearchController::class, 'show'])->name('cars.show');
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');
 Route::get('/page/{page:slug}', [PageController::class, 'show'])->name('pages.show');
+// Halaman hukum, Tentang, dan Kontak
 // Pilihan bahasa & mata uang (tamu dan user login)
 Route::post('/preferences', [PreferenceController::class, 'update'])->name('preferences.update');
 Route::get('/calendar/prices', [CalendarPriceController::class, 'index'])->middleware('throttle:60,1')->name('calendar.prices');
@@ -126,6 +133,9 @@ Route::middleware('auth')->group(function () {
     // Pengaturan notifikasi (tab di Pengaturan Akun)
     Route::get('/account/notifications', [AccountController::class, 'notifications'])->name('account.notifications');
     Route::put('/account/notifications', [AccountController::class, 'updateNotifications'])->name('account.notifications.update');
+
+    // Bukti laporan masalah: bisa dibuka pelapor, mitra, dan admin
+    Route::get('/issues/{issue}/evidence', [IssueController::class, 'evidence'])->name('issues.evidence');
 });
 
 // Pemesanan: pelanggan B2C (bayar lewat gateway) dan karyawan corporate (saldo kantor)
@@ -146,6 +156,12 @@ Route::middleware(['auth', 'role:customer,corporate'])->group(function () {
 
     Route::get('/car-bookings/create', [CarBookingController::class, 'create'])->name('car-bookings.create');
     Route::post('/car-bookings', [CarBookingController::class, 'store'])->name('car-bookings.store');
+
+    Route::get('/bookings/{booking}/review', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/bookings/{booking}/review', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/bookings/{booking}/issue', [IssueController::class, 'create'])->name('issues.create');
+    Route::post('/bookings/{booking}/issue', [IssueController::class, 'store'])->name('issues.store');
+    Route::get('/issues', [IssueController::class, 'index'])->name('issues.index');
 });
 
 // Admin internal
@@ -259,10 +275,25 @@ Route::middleware(['auth', 'role:admin', 'admin.ability'])
         Route::resource('faqs', FaqAdminController::class)->except(['show']);
         Route::resource('pages', PageAdminController::class)->except(['show']);
 
+        // Konten: halaman statis
+        // PERHATIAN: nama dan URL rute di bawah SAMA dengan Route::resource('pages', PageAdminController::class) di atas
+        // (admin.pages.index, admin.pages.edit, admin.pages.update). Yang terdaftar duluan yang dipakai.
+        // Hapus resource di atas kalau sudah digantikan, atau ganti URL/namanya, misalnya 'static-pages'.
+        Route::get('pages', [AdminStaticPageController::class, 'index'])->name('pages.index');
+        Route::get('pages/{page}/edit', [AdminStaticPageController::class, 'edit'])->name('pages.edit');
+        Route::put('pages/{page}', [AdminStaticPageController::class, 'update'])->name('pages.update');
+
+        // Ulasan dan laporan masalah
+        Route::get('reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+        Route::post('reviews/{review}/hide', [AdminReviewController::class, 'hide'])->name('reviews.hide');
+        Route::post('reviews/{review}/unhide', [AdminReviewController::class, 'unhide'])->name('reviews.unhide');
+        Route::get('issues', [AdminIssueController::class, 'index'])->name('issues.index');
+        Route::post('issues/{issue}', [AdminIssueController::class, 'update'])->name('issues.update');
+
         // Master data: fasilitas hotel dan kamar
         Route::resource('facilities', AdminFacilityController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::patch('facilities/{facility}/status', [AdminFacilityController::class, 'status'])->name('facilities.status');
-        
+
         // Rekening bisnis SekalaGo dan permintaan top-up saldo
         Route::resource('bank-accounts', AdminBankAccountController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
         Route::get('topups', [AdminTopupController::class, 'index'])->name('topups.index');
@@ -338,6 +369,12 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::post('stays/{booking}/arrive', [PartnerStayController::class, 'arrive'])->name('stays.arrive');
             Route::post('stays/{booking}/no-show', [PartnerStayController::class, 'noShow'])->name('stays.noshow');
             Route::post('stays/{booking}/depart', [PartnerStayController::class, 'depart'])->name('stays.depart');
+
+            // Ulasan dan laporan masalah dari pelanggan
+            Route::get('reviews', [PartnerReviewController::class, 'index'])->name('reviews.index');
+            Route::post('reviews/{review}/reply', [PartnerReviewController::class, 'reply'])->name('reviews.reply');
+            Route::get('issues', [PartnerIssueController::class, 'index'])->name('issues.index');
+            Route::post('issues/{issue}/respond', [PartnerIssueController::class, 'respond'])->name('issues.respond');
         });
     });
 

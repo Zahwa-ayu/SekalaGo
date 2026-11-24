@@ -53,5 +53,13 @@ return [
 
     // PPN atas biaya gateway (persen). Isi 0 jika tarif di atas sudah termasuk PPN.
     'gateway_vat_percent' => 11,
+
+    // 'contact' => [
+    // 'email'    => env('CONTACT_EMAIL', 'support@sekalago.test'),
+    // 'phone'    => env('CONTACT_PHONE', '+62 274 000 000'),
+    // 'whatsapp' => env('CONTACT_WHATSAPP', '+62 812 0000 0000'),
+    // 'address'  => env('CONTACT_ADDRESS', 'Yogyakarta, Indonesia'),
+    // 'hours'    => 'Senin sampai Jumat, 09.00 sampai 17.00 WIB',
+// ],
     
 ];

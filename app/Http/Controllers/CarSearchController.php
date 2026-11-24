@@ -89,6 +89,9 @@ class CarSearchController extends Controller
     $hasDates ? \Illuminate\Support\Arr::only($params, ['city', 'pickup_date', 'return_date', 'driver']) : []
     );
 
+    $reviews = \App\Models\Review::visible()->where('hotel_id', $vehicle->id)->latest()
+    ->paginate(5, ['*'], 'reviews')->withQueryString()->fragment('reviews');
+
     return view('cars.show', compact('vehicle', 'params', 'days', 'available', 'freeUnits', 'passengers', 'driver', 'datesAreDefault', 'backUrl'));
     }
 

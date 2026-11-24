@@ -145,6 +145,48 @@
             </div>
         @endif
 
+        {{-- ULASAN DAN LAPORAN KENDALA --}}
+        @php
+            $reviewState     = $booking->reviewStatus();
+            $issueCategories = $booking->issueCategories();
+            $myReview        = $booking->review;
+            $myReports       = $booking->issueReports;
+        @endphp
+
+        @if ($myReview || $reviewState === 'ok' || $issueCategories || $myReports->isNotEmpty())
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8 space-y-4">
+                <h2 class="text-base font-extrabold text-slate-900">{{ __('ui.after_service_title') }}</h2>
+
+                @if ($myReview)
+                    <div class="rounded-2xl bg-amber-50 border border-amber-100 px-4 py-3 space-y-1">
+                        <div class="text-amber-400">@foreach (range(1, 5) as $i)<i class="fa-solid fa-star {{ $i <= $myReview->rating ? '' : 'text-slate-200' }}"></i>@endforeach</div>
+                        @if ($myReview->comment)<p class="text-sm text-slate-700 whitespace-pre-line">{{ $myReview->comment }}</p>@endif
+                        @if ($myReview->partner_reply)<p class="text-xs text-slate-500 border-l-2 border-amber-200 pl-3"><strong>{{ __('ui.review_partner_reply') }}:</strong> {{ $myReview->partner_reply }}</p>@endif
+                    </div>
+                @elseif ($reviewState === 'ok')
+                    <a href="{{ route('reviews.create', $booking) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-500 text-white text-sm font-bold shadow-md transition">
+                        <i class="fa-solid fa-star"></i> {{ __('ui.review_write') }}
+                    </a>
+                @endif
+
+                @if ($issueCategories)
+                    <div>
+                        <a href="{{ route('issues.create', $booking) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-sky-50 hover:text-sky-600 text-sm font-bold transition">
+                            <i class="fa-solid fa-life-ring"></i> {{ __('ui.issue_report') }}
+                        </a>
+                    </div>
+                @endif
+
+                @foreach ($myReports as $report)
+                    <div class="text-xs text-slate-600">
+                        <i class="fa-solid fa-life-ring text-sky-500 w-4"></i>
+                        <a href="{{ route('issues.index') }}" class="font-mono font-bold hover:underline">{{ $report->code }}</a>
+                        &middot; {{ __('ui.issue_cat_' . $report->category) }} &middot; <strong>{{ __('ui.issue_status_' . $report->status) }}</strong>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
         {{-- DIBATALKAN --}}
         @if ($booking->status === 'cancelled')
             <div class="bg-white rounded-3xl border border-red-100 shadow-md p-6 text-sm space-y-1">

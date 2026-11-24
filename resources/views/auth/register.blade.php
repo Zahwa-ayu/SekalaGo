@@ -20,7 +20,7 @@
         <div class="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 items-center">
 
             {{-- KIRI: teks sambutan --}}
-            <div class="text-center lg:text-left lg:col-span-2">w
+            <div class="text-center lg:text-left lg:col-span-2">
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight drop-shadow-md">
                     Join<br class="hidden lg:block"> with us!
                 </h1>

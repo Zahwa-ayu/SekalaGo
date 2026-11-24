@@ -51,6 +51,12 @@
                 {{-- JUDUL + CHIP --}}
                 <div>
                     <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 break-words">{{ $vehicle->name }}</h1>
+
+                    {{-- Rating (hanya tampil bila sudah ada ulasan) --}}
+                    <div class="mt-2">
+                        @include('partials.rating-badge', ['avg' => $vehicle->rating_avg, 'count' => $vehicle->rating_count])
+                    </div>
+
                     <div class="flex flex-wrap gap-2 mt-3">
                         <span class="{{ $chip }}"><i class="fa-solid fa-car-side text-sky-600"></i> {{ __('ui.vehicle_type_' . $vehicle->type) }}</span>
                         <span class="{{ $chip }}"><i class="fa-solid fa-chair text-sky-600"></i> {{ $vehicle->seats }} {{ __('ui.seats_short') }}</span>
@@ -239,5 +245,8 @@
                 </div>
             </aside>
         </div>
+
+        {{-- ULASAN PENYEWA (selebar penuh, di bawah kedua kolom) --}}
+        @include('partials.reviews-list', ['reviews' => $reviews, 'avg' => $vehicle->rating_avg, 'count' => $vehicle->rating_count])
     </section>
 @endsection

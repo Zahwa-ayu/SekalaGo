@@ -45,4 +45,17 @@ return [
     'partner_share_line' => 'Your share of the fee: :amount (included in your payouts).',
     'booking_cancelled' => ['title' => 'Booking cancelled: :code', 'body' => 'Your booking for :name was cancelled by :by. :fee :refund'],
     'booking_cancelled_partner' => ['title' => 'Booking cancelled: :code', 'body' => 'The booking for :name by :guest was cancelled (:by). The stock has been released. :share'],
+
+    'payment_expiring' => ['title' => 'Pay soon: :code', 'body' => 'The payment time for :name has about :minutes minute(s) left. Complete it now so the booking is not lost.'],
+    'arrival_tomorrow_hotel' => ['title' => 'Check-in tomorrow: :code', 'body' => 'You stay at :name starting tomorrow. Estimated arrival: :time. Bring your original ID and the e-ticket.'],
+    'arrival_tomorrow_car' => ['title' => 'Car pick-up tomorrow: :code', 'body' => 'Pick up :name tomorrow at :time at :place. Bring your original ID (and driving licence for self-drive) and the e-ticket.'],
+    'return_soon' => ['title' => 'Return the car soon: :code', 'body' => ':name is due back :time. Need longer? Extend the rental from the booking page before the deadline.'],
+    'return_overdue_customer' => ['title' => 'Car returned late: :code', 'body' => ':name has passed its return deadline (:time). A late fee applies under the terms and is paid directly to the vendor. Please return the car now.'],
+    'return_overdue_partner' => ['title' => 'Car not returned: :code', 'body' => ':name for :guest has passed its return deadline (:time). Contact the renter and check the next booking under Active Rentals.'],
+    'review_prompt' => ['title' => 'How was your experience?', 'body' => 'Tell us about your experience with :name. Your review helps other customers.'],
+    'review_received' => ['title' => 'New review :rating/5', 'body' => 'A customer reviewed :name. Open the Reviews page to read and reply.'],
+    'review_replied' => ['title' => 'The partner replied to your review', 'body' => 'The partner of :name replied to your review.'],
+    'issue_reported' => ['title' => 'New issue report: :code', 'body' => 'A report for booking :booking (:name) awaits review.'],
+    'issue_for_partner' => ['title' => 'A customer reported a problem: :code', 'body' => 'There is a report for booking :booking (:name). Open Issue Reports to respond.'],
+    'issue_updated' => ['title' => 'Report :code updated', 'body' => 'Your report status is now: :status. Open My reports for the answer.'],
 ];

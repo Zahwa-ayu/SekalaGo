@@ -57,6 +57,12 @@
                 {{-- JUDUL + CHIP --}}
                 <div>
                     <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 break-words">{{ $hotel->name }}</h1>
+
+                    {{-- Rating (hanya tampil bila sudah ada ulasan) --}}
+                    <div class="mt-2">
+                        @include('partials.rating-badge', ['avg' => $hotel->rating_avg, 'count' => $hotel->rating_count])
+                    </div>
+
                     <div class="flex flex-wrap gap-2 mt-3">
                         @if ($hotel->star_rating)
                             <span class="{{ $chip }}">
@@ -328,5 +334,8 @@
                 </div>
             </aside>
         </div>
+
+        {{-- ULASAN TAMU (selebar penuh, di bawah kedua kolom) --}}
+        @include('partials.reviews-list', ['reviews' => $reviews, 'avg' => $hotel->rating_avg, 'count' => $hotel->rating_count])
     </section>
 @endsection
