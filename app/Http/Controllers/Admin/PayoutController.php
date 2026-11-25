@@ -7,6 +7,7 @@ use App\Models\Partner;
 use App\Models\Payout;
 use App\Models\Payment;
 use App\Services\PayoutService;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -20,25 +21,33 @@ class PayoutController extends Controller
 
     public function index(Request $request)
     {
-        $data = $request->validate(['status' => ['nullable', Rule::in(['pending', 'paid', 'cancelled'])]]);
+        $data = $request->validate([
+            'status' => ['nullable', Rule::in(['pending', 'paid', 'cancelled'])],
+            'q'      => ['nullable', 'string', 'max:100'],
+        ]);
 
-        $rows = $this->payouts->overview();
+        $term = trim((string) ($data['q'] ?? ''));
+        $all  = $this->payouts->overview();
+        $rows = $term === ''
+            ? $all
+            : $all->filter(fn ($row) => Str::contains(Str::lower($row['partner']->company_name), Str::lower($term)))->values();
 
         $history = Payout::query()
             ->with('partner')
+            ->search($term, ['code', 'transfer_reference', 'bank_name', 'bank_account_name', 'bank_account_no', 'partner.company_name'])
             ->when($data['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
-            ->search($request->query('q'), ['code', 'transfer_reference', 'bank_name', 'bank_account_name', 'bank_account_no', 'partner.company_name'])
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
         return view('admin.payouts.index', [
-            'rows'    => $rows,
-            'history' => $history,
-            'status'  => $data['status'] ?? null,
-            'totals'  => [
-                'eligible' => $rows->sum('eligible'),
-                'waiting'  => $rows->sum('waiting'),
+            'rows'     => $rows,
+            'history'  => $history,
+            'status'   => $data['status'] ?? null,
+            'dueCount' => $all->where('state', 'due')->count(),   // tombol "cairkan semua yang jatuh tempo" selalu untuk semua mitra
+            'totals'   => [
+                'eligible' => $all->sum('eligible'),
+                'waiting'  => $all->sum('waiting'),
                 'pending'  => (int) Payout::where('status', 'pending')->sum('total_amount'),
                 'paid'     => (int) Payout::where('status', 'paid')->where('paid_at', '>=', now()->startOfMonth())->sum('total_amount'),
             ],

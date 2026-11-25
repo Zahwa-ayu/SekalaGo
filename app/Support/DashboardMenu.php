@@ -104,6 +104,7 @@ class DashboardMenu
                     // Uang
                     ['section' => 'ui.menu_finance'],
                     ['fa-wallet', 'ui.payouts', 'partner.payouts.index', ['partner.payouts.*']],
+                    ['fa-chart-column', 'ui.partner_reports', 'partner.reports.index', ['partner.reports.*']],
                     ['fa-star', 'ui.reviews', 'partner.reviews.index', ['partner.reviews.*']],
                     ['fa-life-ring', 'ui.issue_reports', 'partner.issues.index', ['partner.issues.*']],
 

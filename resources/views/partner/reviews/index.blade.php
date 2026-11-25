@@ -20,6 +20,26 @@
             </ul>
         @endif
 
+        <div class="space-y-3">
+            <x-filter-tabs param="view" :current="$view" :counts="$counts" :options="[
+                '' => __('ui.all'),
+                'unreplied' => __('ui.reviews_tab_unreplied'),
+                'replied' => __('ui.reviews_tab_replied'),
+                'hidden' => __('ui.reviews_tab_hidden'),
+            ]" />
+
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                <x-filter-tabs param="rating" :current="$rating ?: ''" :options="[
+                    '' => __('ui.all_ratings'), '5' => '5 ★', '4' => '4 ★', '3' => '3 ★', '2' => '2 ★', '1' => '1 ★',
+                ]" />
+                <x-filter-tabs param="type" :current="$type" :options="[
+                    '' => __('ui.all'), 'hotel' => __('ui.tab_hotels'), 'car' => __('ui.tab_cars'),
+                ]" />
+            </div>
+
+            <x-search-bar :placeholder="__('ui.review_search_partner')" />
+        </div>
+
         @forelse ($reviews as $review)
             <div class="bg-white rounded-2xl border {{ $review->is_visible ? 'border-slate-100' : 'border-red-200' }} shadow-sm p-5 space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2">

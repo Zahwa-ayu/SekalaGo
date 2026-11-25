@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\Searchable;
 
 class Review extends Model
 {
+    use Searchable; 
     protected $fillable = [
         'booking_id', 'user_id', 'partner_id', 'hotel_id', 'vehicle_id', 'rating', 'comment', 'reviewer_name',
         'is_visible', 'hidden_reason', 'hidden_by', 'hidden_at', 'partner_reply', 'partner_replied_at',

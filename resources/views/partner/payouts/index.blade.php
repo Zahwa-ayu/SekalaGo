@@ -71,12 +71,22 @@
 
     {{-- RIWAYAT --}}
     <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
-        <h2 class="px-6 pt-6 pb-3 font-extrabold text-slate-900">{{ __('ui.payout_history') }}</h2>
-
-        {{-- PENCARIAN --}}
-        <div class="px-6 pb-4">
-            <x-search-bar placeholder="Cari kode payout, referensi transfer, atau rekening" />
+        {{-- PENCARIAN + FILTER --}}
+        <div class="px-6 pt-6">
+            <x-search-bar :placeholder="__('ui.payout_search_partner')" :except="['status', 'from', 'to']">
+                <select name="status" class="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                    <option value="">{{ __('ui.all') }}</option>
+                    @foreach (['pending', 'paid', 'cancelled'] as $option)
+                        <option value="{{ $option }}" @selected(request('status') === $option)>{{ __('ui.payout_status_' . $option) }}</option>
+                    @endforeach
+                </select>
+                <input type="date" name="from" value="{{ request('from') }}" class="rounded-xl border border-slate-200 px-3 py-2 text-sm" aria-label="{{ __('ui.analytics_from') }}">
+                <span class="text-slate-400 text-xs">-</span>
+                <input type="date" name="to" value="{{ request('to') }}" class="rounded-xl border border-slate-200 px-3 py-2 text-sm" aria-label="{{ __('ui.analytics_to') }}">
+            </x-search-bar>
         </div>
+
+        <h2 class="px-6 pt-5 pb-3 font-extrabold text-slate-900">{{ __('ui.payout_history') }}</h2>
 
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left">

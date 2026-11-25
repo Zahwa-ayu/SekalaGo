@@ -18,13 +18,13 @@ class CurrencyController extends Controller
     public function index(Request $request)
     {
         $currencies = Currency::query()
-            ->withCount('bookings')
             ->search($request->query('q'), ['code', 'name', 'symbol'])
+            ->withCount('bookings')
             ->orderByRaw('code = ? DESC', [config('sekalago.default_currency')])
             ->orderBy('code')
             ->paginate((int) config('sekalago.per_page', 15))
             ->withQueryString();
-            
+
         return view('admin.currencies.index', compact('currencies'));
     }
 

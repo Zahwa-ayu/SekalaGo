@@ -16,8 +16,7 @@
             'cancelled' => 'bg-slate-100 text-slate-500',
         ];
 
-        $ready    = $rows->filter(fn ($row) => $row['eligible'] > 0);
-        $dueCount = $rows->where('state', 'due')->count();
+        $ready = $rows->filter(fn ($row) => $row['eligible'] > 0);
 
         $cards = [
             ['fa-hand-holding-dollar', 'payout_card_ready', $money($totals['eligible']), 'bg-emerald-100 text-emerald-600'],
@@ -32,6 +31,8 @@
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.payouts') }}</h1>
             <p class="text-sm text-slate-500 mt-1">{{ __('ui.payouts_hint') }}</p>
         </div>
+
+        <x-search-bar :placeholder="__('ui.payout_search')" :except="[]" />
 
         @if ($errors->any())
             <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">

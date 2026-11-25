@@ -17,6 +17,27 @@
             </ul>
         @endif
 
+        <div class="space-y-3">
+            <x-filter-tabs param="view" :current="$view" :counts="$counts" :options="[
+                'active' => __('ui.issue_tab_active'),
+                'needs_response' => __('ui.issue_tab_needs_response'),
+                'resolved' => __('ui.issue_status_resolved'),
+                'rejected' => __('ui.issue_status_rejected'),
+                'all' => __('ui.all'),
+            ]" />
+
+            <x-filter-tabs param="category" :current="$category" :options="[
+                '' => __('ui.all_categories'),
+                'not_as_described' => __('ui.issue_cat_not_as_described'),
+                'not_available' => __('ui.issue_cat_not_available'),
+                'service_issue' => __('ui.issue_cat_service_issue'),
+                'refund_problem' => __('ui.issue_cat_refund_problem'),
+                'other' => __('ui.issue_cat_other'),
+            ]" />
+
+            <x-search-bar :placeholder="__('ui.issue_search')" />
+        </div>
+
         @forelse ($reports as $report)
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2">

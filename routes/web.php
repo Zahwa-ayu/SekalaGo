@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\FacilityController as AdminFacilityController;
 use App\Http\Controllers\Partner\BookingController as PartnerBookingController;
 use App\Http\Controllers\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Partner\PayoutController as PartnerPayoutController;
+use App\Http\Controllers\Partner\ReportController as PartnerReportController;
 use App\Http\Controllers\Partner\HotelController;
 use App\Http\Controllers\Admin\ContactInfoController;
 use App\Http\Controllers\Partner\ProfileController;
@@ -350,6 +351,10 @@ Route::middleware(['auth', 'role:partner', 'partner.verified'])
             Route::post('room-types/{room_type}/photos', [PhotoController::class, 'roomTypeStore'])->name('room-types.photos.store');
             Route::post('photos/{photo}/cover', [PhotoController::class, 'cover'])->name('photos.cover');
             Route::delete('photos/{photo}', [PhotoController::class, 'destroy'])->name('photos.destroy');
+
+            Route::get('reports', [PartnerReportController::class, 'index'])->name('reports.index');
+            Route::get('reports/csv', [PartnerReportController::class, 'csv'])->name('reports.csv');
+            Route::get('reports/pdf', [PartnerReportController::class, 'pdf'])->name('reports.pdf');
 
             // rental cars
             Route::resource('vehicles', VehicleController::class)->except(['show']);

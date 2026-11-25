@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\Searchable;
+
 
 class IssueReport extends Model
 {
+    use Searchable;
     protected $fillable = [
         'code', 'booking_id', 'user_id', 'partner_id', 'category', 'description', 'evidence_path',
         'status', 'resolution', 'partner_response', 'partner_responded_at', 'handled_by', 'resolved_at',

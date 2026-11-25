@@ -78,7 +78,7 @@
         {{-- DAFTAR --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="px-6 pt-6 pb-4">
-                <x-search-bar placeholder="Cari nama, email, telepon, atau jabatan" />
+                <x-search-bar :placeholder="__('ui.staff_search')" />
             </div>
 
             <div class="overflow-x-auto">
