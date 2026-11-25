@@ -20,9 +20,15 @@ class AdminAbilities
         self::FINANCE => ['analytics', 'bookings', 'companies', 'finance'],
     ];
 
-    /** Peran hanya lihat: boleh membuka halaman (GET) untuk kemampuan ini, tidak pernah mengubah data. */
+    /** Peran hanya lihat: halaman dengan kemampuan ini boleh dibuka (GET), tanpa pernah mengubah data. */
     private const VIEW_ONLY = [
-        self::MANAGER => ['analytics', 'operations', 'bookings', 'companies', 'finance', 'content', 'system'],
+        self::MANAGER => ['analytics', 'operations', 'bookings', 'companies', 'finance', 'system'],
+    ];
+
+    /** Halaman yang tidak dibuka untuk peran hanya lihat walau kemampuannya cocok: Master Data dan CMS. */
+    private const VIEW_ONLY_HIDDEN = [
+        'admin.cities.*', 'admin.facilities.*', 'admin.currencies.*', 'admin.bank-accounts.*',
+        'admin.social-media.*', 'admin.faqs.*', 'admin.banners.*', 'admin.pages.*',
     ];
 
     /**
@@ -110,10 +116,16 @@ class AdminAbilities
 
         $role = self::roleOf($user);
 
-        // Peran hanya lihat: hanya membaca (GET atau HEAD), tidak pernah mengubah data
+        // Peran hanya lihat: hanya membaca (GET atau HEAD), tidak pernah mengubah data, dan tidak membuka Master Data dan CMS
         if (isset(self::VIEW_ONLY[$role])) {
             if (! in_array(strtoupper($method), ['GET', 'HEAD'], true)) {
                 return false;
+            }
+
+            foreach (self::VIEW_ONLY_HIDDEN as $pattern) {
+                if (Str::is($pattern, $routeName)) {
+                    return false;
+                }
             }
 
             return $ability === 'any' || ($ability !== null && in_array($ability, self::VIEW_ONLY[$role], true));

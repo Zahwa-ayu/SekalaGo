@@ -1662,7 +1662,6 @@ return [
 
 // akun bos
 'role_manager' => 'Manager (hanya lihat)',
-'role_manager_desc' => 'Memantau seluruh halaman admin dan laporan tanpa bisa mengubah data apa pun. Tidak melihat manajemen tim.',
 'view_only_mode' => 'Mode hanya lihat: Anda bisa membuka semua halaman, tetapi tidak bisa mengubah data.',
 'view_only_hint' => 'Peran Anda hanya bisa melihat',
 
@@ -1711,4 +1710,6 @@ return [
 'preport_note_earnings' => 'bagian Anda dari pesanan terkonfirmasi setelah komisi, termasuk perpanjangan sewa. Biaya supir, BBM, tol, dan denda keterlambatan dibayar langsung kepada Anda dan tidak termasuk.',
 'preport_note_cancel' => 'bagian Anda dari denda pembatalan pelanggan, dihitung pada tanggal pembatalan. Dicairkan setelah tanggal check-in terlewati.',
 'preport_note_date' => 'pesanan dihitung pada tanggal pembayarannya. Pesanan yang dibatalkan dengan refund penuh tidak masuk laporan.',
+
+'role_manager_desc' => 'Memantau pesanan, mitra, keuangan, dan laporan tanpa bisa mengubah data apa pun. Tidak melihat Master Data, CMS, dan manajemen tim.',
 ];

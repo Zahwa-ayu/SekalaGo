@@ -1656,7 +1656,6 @@ return [
 
 // akun bos
 'role_manager' => 'Manager (view only)',
-'role_manager_desc' => 'Monitors every admin page and report without being able to change any data. Does not see team management.',
 'view_only_mode' => 'View-only mode: you can open every page but cannot change any data.',
 'view_only_hint' => 'Your role can only view',
 
@@ -1706,4 +1705,6 @@ return [
 'preport_note_earnings' => 'your share of confirmed bookings after commission, including rental extensions. Driver fee, fuel, tolls and late fees are paid directly to you and are excluded.',
 'preport_note_cancel' => 'your share of customers\' cancellation fees, counted on the cancellation date. Paid out once the check-in date has passed.',
 'preport_note_date' => 'bookings are counted on their payment date. Bookings cancelled with a full refund are not in the report.',
+
+'role_manager_desc' => 'Monitors bookings, partners, finance and reports without being able to change any data. Does not see Master Data, CMS or team management.',
 ];
