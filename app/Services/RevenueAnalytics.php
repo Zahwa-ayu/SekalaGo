@@ -55,7 +55,7 @@ class RevenueAnalytics
             ->selectRaw('COUNT(*) AS orders, COALESCE(SUM(bookings.total_price), 0) AS gmv, COALESCE(SUM(bookings.platform_fee), 0) AS fee, COALESCE(SUM(bookings.vendor_revenue), 0) AS vendor')
             ->first();
 
-        $refund = Booking::query()
+        $refund = $this->applyItem(Booking::query())
             ->where('bookings.payment_status', 'refunded')
             ->whereBetween('bookings.refunded_at', [$start, $end])
             ->when($product, fn ($q, $type) => $q->where('bookings.product_type', $type))
@@ -66,7 +66,7 @@ class RevenueAnalytics
             ->selectRaw("COALESCE(SUM(payments.gateway_fee), 0) AS fee, COALESCE(SUM(CASE WHEN payments.gateway_fee_source = 'estimate' THEN 1 ELSE 0 END), 0) AS estimated")
             ->first();
         
-        $cancel = Booking::query()
+        $cancel = $this->applyItem(Booking::query())
         ->where('bookings.status', 'cancelled')
         ->where('bookings.cancel_fee', '>', 0)
         ->whereBetween('bookings.cancelled_at', [$start, $end])
@@ -199,7 +199,7 @@ class RevenueAnalytics
     /** Denda keterlambatan yang tercatat: dibayar langsung ke vendor, bukan pendapatan platform. */
     public function lateFees(Carbon $start, Carbon $end): array
     {
-        $row = Booking::query()
+        $row = $this->applyItem(Booking::query())
             ->where('product_type', 'car')
             ->where('status', 'confirmed')
             ->where('late_fee', '>', 0)
@@ -234,7 +234,7 @@ class RevenueAnalytics
     /** Pesanan terkonfirmasi yang dibayar dalam periode. */
     private function confirmed(Carbon $start, Carbon $end, ?string $product): Builder
     {
-        return Booking::query()
+        return $this->applyItem(Booking::query())
             ->where('bookings.status', 'confirmed')
             ->whereRaw(self::PAID_AT . ' BETWEEN ? AND ?', [$start, $end])
             ->when($product, fn ($q, $type) => $q->where('bookings.product_type', $type));
@@ -256,6 +256,53 @@ class RevenueAnalytics
         return Payment::query()
             ->whereIn('payments.status', ['paid', 'refunded'])
             ->whereBetween('payments.paid_at', [$start, $end])
-            ->when($product, fn ($q, $type) => $q->whereHas('booking', fn ($b) => $b->where('bookings.product_type', $type)));
+            ->when($product, fn ($q, $type) => $q->whereHas('booking', fn ($b) => $b->where('bookings.product_type', $type)))
+            ->when($this->itemId, fn ($q) => $q->whereHas('booking', fn ($b) => $this->applyItem($b)));
+    }
+
+    private ?string $itemType = null;
+    private ?int $itemId = null;
+
+    /** Batasi analytics ke satu hotel atau armada: 'hotel:12' atau 'car:5'. */
+    public function onlyItem(?string $key): static
+    {
+        if ($key && preg_match('/^(hotel|car):(\d+)$/', $key, $m)) {
+            $this->itemType = $m[1];
+            $this->itemId   = (int) $m[2];
+        }
+
+        return $this;
+    }
+
+    private function applyItem(Builder $query): Builder
+    {
+        if (! $this->itemId) {
+            return $query;
+        }
+
+        return $query
+            ->where('bookings.product_type', $this->itemType)
+            ->where($this->itemType === 'car' ? 'bookings.vehicle_id' : 'bookings.hotel_id', $this->itemId);
+    }
+
+    /** Hotel dan armada dengan nilai pesanan terbesar pada periode. */
+    public function topItems(Carbon $start, Carbon $end, ?string $product, int $limit = 15): Collection
+    {
+        return $this->confirmed($start, $end, $product)
+            ->join('partners', 'partners.id', '=', 'bookings.partner_id')
+            ->selectRaw('bookings.product_type AS type, COALESCE(bookings.hotel_id, bookings.vehicle_id) AS item_id, MAX(bookings.hotel_name) AS name, partners.company_name AS partner, COUNT(*) AS orders, SUM(bookings.nights) AS units, SUM(bookings.total_price) AS gmv, SUM(bookings.platform_fee) AS fee')
+            ->groupBy('bookings.product_type', 'item_id', 'partners.company_name')
+            ->orderByDesc('gmv')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($row) => [
+                'type'    => (string) $row->type,
+                'name'    => (string) $row->name,
+                'partner' => (string) $row->partner,
+                'orders'  => (int) $row->orders,
+                'units'   => (int) $row->units,
+                'gmv'     => (int) $row->gmv,
+                'fee'     => (int) $row->fee,
+            ]);
     }
 }

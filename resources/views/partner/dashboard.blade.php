@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+    @php
+        $partner      = auth()->user()->partner;
+        $offersHotels = $partner->offersHotels();
+        $offersCars   = $partner->offersCars();
+    @endphp
+
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         @if ($overdueRentals > 0)
             <a href="{{ route('partner.rentals.index') }}" class="block rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-bold text-red-700 hover:bg-red-100 transition">
@@ -10,51 +16,65 @@
 
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.dashboard') }}</h1>
-            <a href="{{ route('partner.hotels.create') }}"
-               class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
-                <i class="fa-solid fa-plus mr-1"></i> {{ __('ui.add_hotel') }}
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                @if ($offersHotels)
+                    <a href="{{ route('partner.hotels.create') }}"
+                       class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
+                        <i class="fa-solid fa-plus mr-1"></i> {{ __('ui.add_hotel') }}
+                    </a>
+                @endif
+                @if ($offersCars)
+                    <a href="{{ route('partner.vehicles.create') }}"
+                       class="px-5 py-2.5 text-sm font-semibold text-white bg-sagara-blue hover:bg-sagara-navy rounded-xl shadow-md transition whitespace-nowrap">
+                        <i class="fa-solid fa-plus mr-1"></i> {{ __('ui.add_vehicle') }}
+                    </a>
+                @endif
+            </div>
         </div>
 
         {{-- HOTEL --}}
-        <div>
-            <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">{{ __('ui.my_hotels') }}</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                @foreach ([
-                    ['fa-circle-check', __('ui.status_approved'), $hotelStatus->get('approved', 0), 'bg-emerald-100 text-emerald-600'],
-                    ['fa-hourglass-half', __('ui.status_pending'), $hotelStatus->get('pending', 0), 'bg-amber-100 text-amber-600'],
-                    ['fa-circle-xmark', __('ui.status_rejected'), $hotelStatus->get('rejected', 0), 'bg-red-100 text-red-600'],
-                ] as [$icon, $label, $count, $tone])
-                    <a href="{{ route('partner.hotels.index') }}" class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl {{ $tone }}"><i class="fa-solid {{ $icon }}"></i></div>
-                        <div>
-                            <div class="text-2xl font-black text-slate-900">{{ $count }}</div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $label }}</div>
-                        </div>
-                    </a>
-                @endforeach
+        @if ($offersHotels)
+            <div>
+                <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">{{ __('ui.my_hotels') }}</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    @foreach ([
+                        ['fa-circle-check', __('ui.status_approved'), $hotelStatus->get('approved', 0), 'bg-emerald-100 text-emerald-600'],
+                        ['fa-hourglass-half', __('ui.status_pending'), $hotelStatus->get('pending', 0), 'bg-amber-100 text-amber-600'],
+                        ['fa-circle-xmark', __('ui.status_rejected'), $hotelStatus->get('rejected', 0), 'bg-red-100 text-red-600'],
+                    ] as [$icon, $label, $count, $tone])
+                        <a href="{{ route('partner.hotels.index') }}" class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl {{ $tone }}"><i class="fa-solid {{ $icon }}"></i></div>
+                            <div>
+                                <div class="text-2xl font-black text-slate-900">{{ $count }}</div>
+                                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $label }}</div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
             </div>
-        </div>
+        @endif
 
         {{-- ARMADA --}}
-        <div>
-            <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">{{ __('ui.my_vehicles') }}</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                @foreach ([
-                    ['fa-circle-check', __('ui.status_approved'), $vehicleStatus->get('approved', 0), 'bg-emerald-100 text-emerald-600'],
-                    ['fa-hourglass-half', __('ui.status_pending'), $vehicleStatus->get('pending', 0), 'bg-amber-100 text-amber-600'],
-                    ['fa-circle-xmark', __('ui.status_rejected'), $vehicleStatus->get('rejected', 0), 'bg-red-100 text-red-600'],
-                ] as [$icon, $label, $count, $tone])
-                    <a href="{{ route('partner.vehicles.index') }}" class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition">
-                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl {{ $tone }}"><i class="fa-solid {{ $icon }}"></i></div>
-                        <div>
-                            <div class="text-2xl font-black text-slate-900">{{ $count }}</div>
-                            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $label }}</div>
-                        </div>
-                    </a>
-                @endforeach
+        @if ($offersCars)
+            <div>
+                <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3">{{ __('ui.my_vehicles') }}</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    @foreach ([
+                        ['fa-circle-check', __('ui.status_approved'), $vehicleStatus->get('approved', 0), 'bg-emerald-100 text-emerald-600'],
+                        ['fa-hourglass-half', __('ui.status_pending'), $vehicleStatus->get('pending', 0), 'bg-amber-100 text-amber-600'],
+                        ['fa-circle-xmark', __('ui.status_rejected'), $vehicleStatus->get('rejected', 0), 'bg-red-100 text-red-600'],
+                    ] as [$icon, $label, $count, $tone])
+                        <a href="{{ route('partner.vehicles.index') }}" class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 flex items-center gap-4 hover:shadow-lg transition">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-xl {{ $tone }}"><i class="fa-solid {{ $icon }}"></i></div>
+                            <div>
+                                <div class="text-2xl font-black text-slate-900">{{ $count }}</div>
+                                <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ $label }}</div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
             </div>
-        </div>
+        @endif
 
         {{-- BULAN INI --}}
         <div>

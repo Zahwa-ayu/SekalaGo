@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\PartnerRegistrationController;
 use App\Models\City;
+use App\Models\Hotel;
+use App\Models\Vehicle;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 
@@ -250,5 +252,24 @@ class PartnerController extends Controller
         abort_unless($path && Storage::disk('local')->exists($path), 404);
 
         return Storage::disk('local')->response($path);
+    }
+
+        public function updateBusinessType(Request $request, Partner $partner)
+    {
+        $data = $request->validate(['business_type' => ['required', Rule::in(['hotel', 'car', 'both'])]]);
+        $type = $data['business_type'];
+
+        // Jenis usaha tidak boleh dipersempit selama mitra masih punya produk dari jenis yang dibuang
+        if ($type === 'hotel' && Vehicle::where('partner_id', $partner->id)->exists()) {
+            return back()->with('error', __('ui.business_type_in_use'));
+        }
+
+        if ($type === 'car' && Hotel::where('partner_id', $partner->id)->exists()) {
+            return back()->with('error', __('ui.business_type_in_use'));
+        }
+
+        $partner->update(['business_type' => $type]);
+
+        return back()->with('success', __('ui.business_type_changed'));
     }
 }

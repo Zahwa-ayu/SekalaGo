@@ -96,6 +96,20 @@
 
             @include('partials.product-filter', ['route' => 'admin.analytics.index'])
 
+            <form method="GET" action="{{ route('admin.analytics.index') }}" class="flex flex-wrap items-center gap-2">
+                @foreach (request()->except(['item', 'page']) as $name => $value)
+                    @if (! is_array($value) && filled($value))<input type="hidden" name="{{ $name }}" value="{{ $value }}">@endif
+                @endforeach
+
+                <i class="fa-solid fa-hotel text-slate-400"></i>
+                <select name="item" onchange="this.form.submit()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm max-w-xs focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                    <option value="">{{ __('ui.all_items') }}</option>
+                    @foreach ($itemOptions as $option)
+                        <option value="{{ $option['key'] }}" @selected(($filters['item'] ?? '') === $option['key'])>{{ $option['label'] }}</option>
+                    @endforeach
+                </select>
+            </form>
+
             @if ($errors->any())
                 <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">
                     @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
@@ -215,6 +229,43 @@
                         {{ __('ui.late_fee_info', ['amount' => $money($lateFees['fees']), 'count' => $lateFees['rentals']]) }}
                     </div>
                 @endif
+            </div>
+        </div>
+
+        {{-- HOTEL DAN ARMADA TERATAS --}}
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
+            <div class="px-6 pt-6">
+                <h2 class="font-extrabold text-slate-900">{{ __('ui.analytics_items_title') }}</h2>
+                <p class="text-xs text-slate-500">{{ __('ui.analytics_items_hint') }}</p>
+            </div>
+
+            <div class="overflow-x-auto mt-3">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 text-[11px] uppercase tracking-wider text-slate-400">
+                        <tr>
+                            <th class="text-left px-6 py-2.5">{{ __('ui.preport_col_item') }}</th>
+                            <th class="text-left px-3 py-2.5">{{ __('ui.col_partner') }}</th>
+                            <th class="text-right px-3 py-2.5">{{ __('ui.col_orders') }}</th>
+                            <th class="text-right px-3 py-2.5">{{ __('ui.preport_col_units') }}</th>
+                            <th class="text-right px-3 py-2.5">GMV</th>
+                            <th class="text-right px-6 py-2.5">{{ __('ui.kpi_commission') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse ($items as $item)
+                            <tr>
+                                <td class="px-6 py-2.5 font-semibold text-slate-800"><i class="fa-solid {{ $item['type'] === 'car' ? 'fa-car-side' : 'fa-hotel' }} text-sky-500 mr-1"></i>{{ $item['name'] }}</td>
+                                <td class="px-3 py-2.5 text-slate-500 text-xs">{{ $item['partner'] }}</td>
+                                <td class="px-3 py-2.5 text-right text-slate-600">{{ $item['orders'] }}</td>
+                                <td class="px-3 py-2.5 text-right text-slate-600">{{ $item['units'] }}</td>
+                                <td class="px-3 py-2.5 text-right font-bold text-slate-900">{{ $money($item['gmv']) }}</td>
+                                <td class="px-6 py-2.5 text-right text-slate-600">{{ $money($item['fee']) }}</td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="6" class="px-6 py-8 text-center text-slate-400 text-xs">{{ __('ui.analytics_empty') }}</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 

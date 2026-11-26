@@ -1707,4 +1707,19 @@ return [
 'preport_note_date' => 'bookings are counted on their payment date. Bookings cancelled with a full refund are not in the report.',
 
 'role_manager_desc' => 'Monitors bookings, partners, finance and reports without being able to change any data. Does not see Master Data, CMS or team management.',
+
+'range_today' => 'Today',
+'date_apply' => 'Apply',
+'date_by' => 'Date basis',
+'date_by_created' => 'Created date',
+'date_by_ordered' => 'Order date',
+'date_by_check_in' => 'Check-in / pick-up date',
+'date_by_paid' => 'Payment date',
+'all_items' => 'All hotels and vehicles',
+'analytics_items_title' => 'Top hotels and vehicles',
+'analytics_items_hint' => 'Sorted by booking value. Pick one in the filter to see every figure on this page for that item only.',
+'partner_type_forbidden' => 'Your business type does not include this page.',
+'business_type_changed' => 'The partner\'s business type was changed.',
+'business_type_in_use' => 'The business type cannot be narrowed because the partner still has hotels or vehicles of that kind.',
+'business_type_admin_label' => 'Change business type',
 ];

@@ -130,4 +130,15 @@ class Partner extends Model
 
         return (int) ($agreement->late_cancel_fee_percent ?? config('sekalago.late_cancel_fee_percent', 50));
     }
+
+        /** Mitra lama tanpa jenis usaha dianggap mencakup keduanya. */
+    public function offersHotels(): bool
+    {
+        return in_array($this->business_type, [null, '', 'hotel', 'both'], true);
+    }
+
+    public function offersCars(): bool
+    {
+        return in_array($this->business_type, [null, '', 'car', 'both'], true);
+    }
 }

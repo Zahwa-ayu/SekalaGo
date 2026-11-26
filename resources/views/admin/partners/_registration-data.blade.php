@@ -20,6 +20,19 @@
         <div class="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
             <div><span class="text-slate-500">{{ __('ui.legal_form') }}:</span> <strong>{{ $partner->legal_form ?: '-' }}</strong></div>
             <div><span class="text-slate-500">{{ __('ui.business_type') }}:</span> <strong>{{ $partner->business_type ? __('ui.business_type_' . $partner->business_type) : '-' }}</strong></div>
+
+            @if (\App\Support\AdminAbilities::can(auth()->user(), 'operations'))
+                <form method="POST" action="{{ route('admin.partners.business-type', $partner) }}" class="sm:col-span-2 flex flex-wrap items-center gap-2 pt-1">
+                    @csrf
+                    <select name="business_type" class="rounded-xl border border-slate-200 px-3 py-1.5 text-xs">
+                        @foreach (['hotel', 'car', 'both'] as $type)
+                            <option value="{{ $type }}" @selected(($partner->business_type ?? 'both') === $type)>{{ __('ui.business_type_' . $type) }}</option>
+                        @endforeach
+                    </select>
+                    <button class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-sky-100 hover:text-sky-700 text-slate-700 text-xs font-bold transition">{{ __('ui.business_type_admin_label') }}</button>
+                </form>
+            @endif
+
             <div><span class="text-slate-500">{{ __('ui.tax_id') }}:</span> <strong class="font-mono">{{ $partner->tax_id ?: '-' }}</strong></div>
             <div><span class="text-slate-500">{{ __('ui.business_license_no') }}:</span> <strong class="font-mono">{{ $partner->business_license_no ?: '-' }}</strong></div>
             <div class="sm:col-span-2"><span class="text-slate-500">{{ __('ui.company_address') }}:</span> <strong>{{ $partner->address }}{{ $partner->city ? ', ' . $partner->city->name : '' }}</strong></div>

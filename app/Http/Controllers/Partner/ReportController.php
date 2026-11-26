@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hotel;
+use App\Models\Vehicle;
 use App\Services\PartnerReport;
 use App\Services\RevenueAnalytics;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -23,9 +25,13 @@ class ReportController extends Controller
     {
         [$filters, $start, $end] = $this->resolve($request);
 
-        $data = $this->reports->build($this->partner($request), $start, $end, $filters['product']);
+        $partner = $this->partner($request);
 
-        return view('partner.reports.index', $data + compact('filters', 'start', 'end'));
+        $data = $this->reports->onlyItem($filters['item'])->build($partner, $start, $end, $filters['product']);
+
+        return view('partner.reports.index', $data + compact('filters', 'start', 'end') + [
+            'itemOptions' => $this->itemOptions($partner),
+        ]);
     }
 
     public function csv(Request $request)
@@ -34,7 +40,7 @@ class ReportController extends Controller
 
         $partner  = $this->partner($request);
         $product  = $filters['product'];
-        $summary  = $this->reports->build($partner, $start, $end, $product)['summary'];
+        $summary  = $this->reports->onlyItem($filters['item'])->build($partner, $start, $end, $product)['summary'];
         $filename = 'Laporan-' . Str::slug($partner->company_name) . '-' . $start->format('Ymd') . '-' . $end->format('Ymd') . '.csv';
 
         return response()->streamDownload(function () use ($partner, $start, $end, $product, $summary) {
@@ -105,7 +111,7 @@ class ReportController extends Controller
         app()->setLocale('id');
 
         $partner = $this->partner($request);
-        $data    = $this->reports->build($partner, $start, $end, $filters['product']);
+        $data    = $this->reports->onlyItem($filters['item'])->build($partner, $start, $end, $filters['product']);
 
         return Pdf::loadView('partner.reports.pdf', $data + [
             'partner'   => $partner,
@@ -117,6 +123,18 @@ class ReportController extends Controller
           ->download('Laporan-' . Str::slug($partner->company_name) . '-' . $start->format('Ymd') . '-' . $end->format('Ymd') . '.pdf');
     }
 
+    /** @return list<array{key: string, label: string}> hotel dan armada milik mitra */
+    private function itemOptions($partner): array
+    {
+        $hotels = Hotel::where('partner_id', $partner->id)->with('translations')->get()
+            ->map(fn ($h) => ['key' => 'hotel:' . $h->id, 'label' => $h->name]);
+
+        $cars = Vehicle::where('partner_id', $partner->id)->with('translations')->get()
+            ->map(fn ($v) => ['key' => 'car:' . $v->id, 'label' => $v->name]);
+
+        return $hotels->concat($cars)->sortBy('label')->values()->all();
+    }
+
     /** @return array{0: array<string, ?string>, 1: \Illuminate\Support\Carbon, 2: \Illuminate\Support\Carbon} */
     private function resolve(Request $request): array
     {
@@ -125,6 +143,7 @@ class ReportController extends Controller
             'from'    => ['nullable', 'date', 'required_if:range,custom'],
             'to'      => ['nullable', 'date', 'after_or_equal:from', 'required_if:range,custom'],
             'product' => ['nullable', Rule::in(['hotel', 'car'])],
+            'item'    => ['nullable', 'regex:/^(hotel|car):\d+$/'],
         ]);
 
         $range = $data['range'] ?? 'this_month';
@@ -136,7 +155,13 @@ class ReportController extends Controller
         }
 
         return [
-            ['range' => $range, 'from' => $data['from'] ?? null, 'to' => $data['to'] ?? null, 'product' => $data['product'] ?? null],
+            [
+                'range'   => $range,
+                'from'    => $data['from'] ?? null,
+                'to'      => $data['to'] ?? null,
+                'product' => $data['product'] ?? null,
+                'item'    => $data['item'] ?? null,
+            ],
             $start,
             $end,
         ];

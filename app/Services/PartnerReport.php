@@ -49,7 +49,7 @@ class PartnerReport
             ->first();
 
         // Setelah pembatalan berdenda, kolom hak mitra memuat bagian mitra dari denda yang ditahan
-        $penalty = Booking::query()
+        $penalty = $this->applyItem(Booking::query())
             ->where('bookings.partner_id', $partner->id)
             ->where('bookings.status', 'cancelled')
             ->where('bookings.cancel_fee', '>', 0)
@@ -58,7 +58,7 @@ class PartnerReport
             ->selectRaw('COUNT(*) AS n, COALESCE(SUM(bookings.vendor_revenue), 0) AS share')
             ->first();
 
-        $cancelled = Booking::query()
+        $cancelled = $this->applyItem(Booking::query())
             ->where('bookings.partner_id', $partner->id)
             ->where('bookings.status', 'cancelled')
             ->where('bookings.payment_status', 'refunded')
@@ -68,7 +68,7 @@ class PartnerReport
             ->first();
 
         // Denda keterlambatan dibayar langsung ke mitra: hanya informasi
-        $late = Booking::query()
+        $late = $this->applyItem(Booking::query())
             ->where('bookings.partner_id', $partner->id)
             ->where('bookings.product_type', 'car')
             ->where('bookings.status', 'confirmed')
@@ -149,7 +149,8 @@ class PartnerReport
 
     private function ratingBlock(Partner $partner, Carbon $start, Carbon $end): array
     {
-        $all = Review::visible()->where('partner_id', $partner->id);
+        $all = Review::visible()->where('partner_id', $partner->id)
+            ->when($this->itemId, fn ($q) => $q->where($this->itemType === 'car' ? 'vehicle_id' : 'hotel_id', $this->itemId));
 
         return [
             'average'   => round((float) (clone $all)->avg('rating'), 1),
@@ -174,7 +175,7 @@ class PartnerReport
     /** Pesanan dibatalkan dengan denda pada periode (bagian mitra dari denda). */
     public function penaltyRows(Partner $partner, Carbon $start, Carbon $end, ?string $product): Collection
     {
-        return Booking::query()
+        return $this->applyItem(Booking::query())
             ->where('bookings.partner_id', $partner->id)
             ->where('bookings.status', 'cancelled')
             ->where('bookings.cancel_fee', '>', 0)
@@ -186,7 +187,7 @@ class PartnerReport
 
     private function confirmed(Partner $partner, Carbon $start, Carbon $end, ?string $product): Builder
     {
-        return Booking::query()
+        return $this->applyItem(Booking::query())
             ->where('bookings.partner_id', $partner->id)
             ->where('bookings.status', 'confirmed')
             ->whereRaw(self::PAID_AT . ' BETWEEN ? AND ?', [$start, $end])
@@ -196,5 +197,30 @@ class PartnerReport
     private function delta(int $now, int $before): ?float
     {
         return $before > 0 ? round(($now - $before) / $before * 100, 1) : null;
+    }
+
+    private ?string $itemType = null;
+    private ?int $itemId = null;
+
+    /** Batasi laporan ke satu hotel atau armada: 'hotel:12' atau 'car:5'. */
+    public function onlyItem(?string $key): static
+    {
+        if ($key && preg_match('/^(hotel|car):(\d+)$/', $key, $m)) {
+            $this->itemType = $m[1];
+            $this->itemId   = (int) $m[2];
+        }
+
+        return $this;
+    }
+
+    private function applyItem(Builder $query): Builder
+    {
+        if (! $this->itemId) {
+            return $query;
+        }
+
+        return $query
+            ->where('bookings.product_type', $this->itemType)
+            ->where($this->itemType === 'car' ? 'bookings.vehicle_id' : 'bookings.hotel_id', $this->itemId);
     }
 }

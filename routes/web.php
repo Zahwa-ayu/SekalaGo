@@ -175,6 +175,7 @@ Route::middleware(['auth', 'role:admin', 'admin.ability'])
         // Analytics & Revenue
         Route::get('analytics', [AdminAnalyticsController::class, 'index'])->name('analytics.index');
         Route::get('analytics/csv', [AdminAnalyticsController::class, 'csv'])->name('analytics.csv');
+        Route::post('partners/{partner}/business-type', [AdminPartnerController::class, 'updateBusinessType'])->name('partners.business-type');
 
         // PENTING: partners/create harus di atas partners/{partner}, kalau tidak "create" dianggap ID mitra (404)
         Route::get('partners', [AdminPartnerController::class, 'index'])->name('partners.index');
@@ -308,7 +309,7 @@ Route::middleware(['auth', 'role:admin', 'admin.ability'])
     });
 
 // Mitra / vendor (data sudah diverifikasi admin)
-Route::middleware(['auth', 'role:partner', 'partner.verified'])
+Route::middleware(['auth', 'role:partner', 'partner.verified', 'partner.offers'])
     ->prefix('partner')
     ->name('partner.')
     ->group(function () {

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Hotel;
+use App\Models\Vehicle;
 use App\Services\RevenueAnalytics;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -19,25 +21,29 @@ class AnalyticsController extends Controller
         [$filters, $start, $end] = $this->resolve($request);
         $product = $filters['product'];
 
+        $this->analytics->onlyItem($filters['item']);
+
         [$prevStart, $prevEnd] = $this->analytics->previous($start, $end);
 
         $summary  = $this->analytics->summary($start, $end, $product);
         $previous = $this->analytics->summary($prevStart, $prevEnd, $product);
 
         return view('admin.analytics.index', [
-            'filters'   => $filters,
-            'start'     => $start,
-            'end'       => $end,
-            'prevStart' => $prevStart,
-            'prevEnd'   => $prevEnd,
-            'summary'   => $summary,
-            'deltas'    => $this->deltas($summary, $previous),
-            'series'    => $this->analytics->series($start, $end, $product),
-            'byProduct' => $this->analytics->byProduct($start, $end, $product),
-            'bySegment' => $this->analytics->bySegment($start, $end, $product),
-            'partners'  => $this->analytics->topPartners($start, $end, $product),
-            'cities'    => $this->analytics->topCities($start, $end, $product),
-            'lateFees'  => $product === 'hotel' ? null : $this->analytics->lateFees($start, $end),
+            'filters'     => $filters,
+            'start'       => $start,
+            'end'         => $end,
+            'prevStart'   => $prevStart,
+            'prevEnd'     => $prevEnd,
+            'summary'     => $summary,
+            'deltas'      => $this->deltas($summary, $previous),
+            'series'      => $this->analytics->series($start, $end, $product),
+            'byProduct'   => $this->analytics->byProduct($start, $end, $product),
+            'bySegment'   => $this->analytics->bySegment($start, $end, $product),
+            'partners'    => $this->analytics->topPartners($start, $end, $product),
+            'cities'      => $this->analytics->topCities($start, $end, $product),
+            'lateFees'    => $product === 'hotel' ? null : $this->analytics->lateFees($start, $end),
+            'items'       => $this->analytics->topItems($start, $end, $product),
+            'itemOptions' => $this->itemOptions(),
         ]);
     }
 
@@ -45,6 +51,8 @@ class AnalyticsController extends Controller
     {
         [$filters, $start, $end] = $this->resolve($request);
         $product = $filters['product'];
+
+        $this->analytics->onlyItem($filters['item']);
 
         $filename = 'Analytics-' . $start->format('Ymd') . '-' . $end->format('Ymd') . '.csv';
         $summary  = $this->analytics->summary($start, $end, $product);
@@ -94,7 +102,19 @@ class AnalyticsController extends Controller
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
-    /** @return array{0: array{range: string, from: ?string, to: ?string, product: ?string}, 1: \Illuminate\Support\Carbon, 2: \Illuminate\Support\Carbon} */
+    /** @return list<array{key: string, label: string}> hotel dan armada yang tayang, beserta mitranya */
+    private function itemOptions(): array
+    {
+        $hotels = Hotel::where('status', 'approved')->with('translations', 'partner')->get()
+            ->map(fn ($h) => ['key' => 'hotel:' . $h->id, 'label' => $h->name . ' - ' . $h->partner?->company_name]);
+
+        $cars = Vehicle::where('status', 'approved')->with('translations', 'partner')->get()
+            ->map(fn ($v) => ['key' => 'car:' . $v->id, 'label' => $v->name . ' - ' . $v->partner?->company_name]);
+
+        return $hotels->concat($cars)->sortBy('label')->values()->all();
+    }
+
+    /** @return array{0: array{range: string, from: ?string, to: ?string, product: ?string, item: ?string}, 1: \Illuminate\Support\Carbon, 2: \Illuminate\Support\Carbon} */
     private function resolve(Request $request): array
     {
         $data = $request->validate([
@@ -102,6 +122,7 @@ class AnalyticsController extends Controller
             'from'    => ['nullable', 'date', 'required_if:range,custom'],
             'to'      => ['nullable', 'date', 'after_or_equal:from', 'required_if:range,custom'],
             'product' => ['nullable', Rule::in(['hotel', 'car'])],
+            'item'    => ['nullable', 'regex:/^(hotel|car):\d+$/'],
         ]);
 
         $range = $data['range'] ?? 'this_month';
@@ -118,6 +139,7 @@ class AnalyticsController extends Controller
                 'from'    => $data['from'] ?? null,
                 'to'      => $data['to'] ?? null,
                 'product' => $data['product'] ?? null,
+                'item'    => $data['item'] ?? null,
             ],
             $start,
             $end,

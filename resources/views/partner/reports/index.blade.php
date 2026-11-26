@@ -2,6 +2,10 @@
 
 @section('content')
     @php
+        $partner      = auth()->user()->partner;
+        $offersHotels = $partner->offersHotels();
+        $offersCars   = $partner->offersCars();
+
         $money   = fn ($value) => format_price($value, 'IDR');
         $current = $filters['range'];
         $keep    = request()->except(['range', 'from', 'to', 'page']);
@@ -62,7 +66,30 @@
                 </form>
             </div>
 
-            <x-filter-tabs param="product" :current="$filters['product'] ?? ''" :options="['' => __('ui.all'), 'hotel' => __('ui.tab_hotels'), 'car' => __('ui.tab_cars')]" />
+            {{-- Tab produk hanya relevan kalau mitra punya hotel dan mobil --}}
+            @if ($offersHotels && $offersCars)
+                <x-filter-tabs param="product" :current="$filters['product'] ?? ''" :options="array_filter([
+                    '' => __('ui.all'),
+                    'hotel' => $offersHotels ? __('ui.tab_hotels') : null,
+                    'car' => $offersCars ? __('ui.tab_cars') : null,
+                ])" />
+            @endif
+
+            @if (count($itemOptions) > 1)
+                <form method="GET" action="{{ route('partner.reports.index') }}" class="flex flex-wrap items-center gap-2">
+                    @foreach (request()->except(['item', 'page']) as $name => $value)
+                        @if (! is_array($value) && filled($value))<input type="hidden" name="{{ $name }}" value="{{ $value }}">@endif
+                    @endforeach
+
+                    <i class="fa-solid fa-hotel text-slate-400"></i>
+                    <select name="item" onchange="this.form.submit()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                        <option value="">{{ __('ui.all_items') }}</option>
+                        @foreach ($itemOptions as $option)
+                            <option value="{{ $option['key'] }}" @selected(($filters['item'] ?? '') === $option['key'])>{{ $option['label'] }}</option>
+                        @endforeach
+                    </select>
+                </form>
+            @endif
 
             @if ($errors->any())
                 <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">

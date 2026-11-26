@@ -1712,4 +1712,19 @@ return [
 'preport_note_date' => 'pesanan dihitung pada tanggal pembayarannya. Pesanan yang dibatalkan dengan refund penuh tidak masuk laporan.',
 
 'role_manager_desc' => 'Memantau pesanan, mitra, keuangan, dan laporan tanpa bisa mengubah data apa pun. Tidak melihat Master Data, CMS, dan manajemen tim.',
+
+'range_today' => 'Hari ini',
+'date_apply' => 'Terapkan',
+'date_by' => 'Dasar tanggal',
+'date_by_created' => 'Tanggal dibuat',
+'date_by_ordered' => 'Tanggal pesan',
+'date_by_check_in' => 'Tanggal check-in / ambil',
+'date_by_paid' => 'Tanggal bayar',
+'all_items' => 'Semua hotel dan armada',
+'analytics_items_title' => 'Hotel dan armada teratas',
+'analytics_items_hint' => 'Urut menurut nilai pesanan. Pilih satu di filter untuk melihat seluruh angka halaman ini hanya untuk itu.',
+'partner_type_forbidden' => 'Jenis usaha Anda tidak mencakup halaman ini.',
+'business_type_changed' => 'Jenis usaha mitra diubah.',
+'business_type_in_use' => 'Jenis usaha tidak bisa dipersempit karena mitra masih punya hotel atau armada dari jenis itu.',
+'business_type_admin_label' => 'Ubah jenis usaha',
 ];

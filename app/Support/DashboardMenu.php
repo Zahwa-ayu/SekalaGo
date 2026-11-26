@@ -85,40 +85,7 @@ class DashboardMenu
                 self::ACCOUNT_SETTINGS,
             ],
 
-            'partner' => $user->partner?->hasSignedAgreement()
-                ? [
-                    // Ringkasan (tanpa judul, selalu paling atas)
-                    ['fa-gauge', 'ui.dashboard', 'partner.dashboard', ['partner.dashboard']],
-
-                    // Bisnis hotel
-                    ['section' => 'ui.menu_hotel'],
-                    ['fa-hotel', 'ui.my_hotels', 'partner.hotels.index', ['partner.hotels.*', 'partner.room-types.*']],
-                    ['fa-receipt', 'ui.incoming_bookings', 'partner.bookings.index', ['partner.bookings.*']],
-                    ['fa-bell-concierge', 'ui.guests_page', 'partner.stays.index', ['partner.stays.*']],
-
-                    // Bisnis rental mobil
-                    ['section' => 'ui.menu_rental'],
-                    ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']],
-                    ['fa-car-on', 'ui.rentals', 'partner.rentals.index', ['partner.rentals.*']],
-
-                    // Uang
-                    ['section' => 'ui.menu_finance'],
-                    ['fa-wallet', 'ui.payouts', 'partner.payouts.index', ['partner.payouts.*']],
-                    ['fa-chart-column', 'ui.partner_reports', 'partner.reports.index', ['partner.reports.*']],
-                    ['fa-star', 'ui.reviews', 'partner.reviews.index', ['partner.reviews.*']],
-                    ['fa-life-ring', 'ui.issue_reports', 'partner.issues.index', ['partner.issues.*']],
-
-                    // Dokumen dan data mitra
-                    ['section' => 'ui.menu_account'],
-                    ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
-                    ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
-                    self::ACCOUNT_SETTINGS,
-                ]
-                : [
-                    ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
-                    ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
-                    self::ACCOUNT_SETTINGS,
-                ],
+            'partner' => self::partnerMenu($user),
 
             'corporate' => $user->companyUser?->isFinance()
                 ? [
@@ -157,6 +124,39 @@ class DashboardMenu
         return self::filter(match ($user->user_type) {
             default => [],
         });
+    }
+
+    private static function partnerMenu(User $user): array
+    {
+        $partner = $user->partner;
+
+        // Sebelum MOU ditandatangani: hanya MOU, profil, dan pengaturan akun
+        if (! $partner?->hasSignedAgreement()) {
+            return [
+                ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
+                ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
+                self::ACCOUNT_SETTINGS,
+            ];
+        }
+
+        $hotels = $partner->offersHotels();
+        $cars   = $partner->offersCars();
+
+        return array_values(array_filter([
+            ['fa-gauge', 'ui.dashboard', 'partner.dashboard', ['partner.dashboard']],
+            $hotels ? ['fa-hotel', 'ui.my_hotels', 'partner.hotels.index', ['partner.hotels.*', 'partner.room-types.*']] : null,
+            ['fa-receipt', 'ui.incoming_bookings', 'partner.bookings.index', ['partner.bookings.*']],
+            $hotels ? ['fa-bell-concierge', 'ui.guests_page', 'partner.stays.index', ['partner.stays.*']] : null,
+            $cars ? ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']] : null,
+            $cars ? ['fa-car-on', 'ui.rentals', 'partner.rentals.index', ['partner.rentals.*']] : null,
+            ['fa-wallet', 'ui.payouts', 'partner.payouts.index', ['partner.payouts.*']],
+            ['fa-chart-column', 'ui.partner_reports', 'partner.reports.index', ['partner.reports.*']],
+            ['fa-star', 'ui.reviews', 'partner.reviews.index', ['partner.reviews.*']],
+            ['fa-life-ring', 'ui.issue_reports', 'partner.issues.index', ['partner.issues.*']],
+            ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
+            ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
+            self::ACCOUNT_SETTINGS,
+        ]));
     }
 
     /**
