@@ -107,6 +107,9 @@
             </form>
         @endif
 
+        {{-- FILTER TANGGAL --}}
+        <x-date-filter />
+
         {{-- RIWAYAT --}}
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <h2 class="px-6 pt-6 pb-3 font-extrabold text-slate-900">{{ __('ui.topup_history') }}</h2>

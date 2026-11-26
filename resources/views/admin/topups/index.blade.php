@@ -27,13 +27,15 @@
 
         <div class="flex flex-wrap gap-2">
             @foreach ($tabs as $tab)
-                <a href="{{ route('admin.topups.index', ['status' => $tab]) }}"
+                <a href="{{ route('admin.topups.index', array_merge(request()->only('from', 'to'), ['status' => $tab])) }}"
                    class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $status === $tab ? 'bg-sagara-navy text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                     {{ $tab === 'all' ? __('ui.all') : __('ui.topup_status_' . $tab) }}
                     @if ($tab !== 'all') <span class="opacity-70">({{ $counts->get($tab, 0) }})</span> @endif
                 </a>
             @endforeach
         </div>
+
+        <x-date-filter />
 
         <div class="space-y-4">
             @forelse ($requests as $topup)

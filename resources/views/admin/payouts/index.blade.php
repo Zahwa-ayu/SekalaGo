@@ -138,7 +138,7 @@
 
                 <div class="flex flex-wrap gap-2">
                     @foreach ([null => 'all', 'pending' => 'payout_status_pending', 'paid' => 'payout_status_paid', 'cancelled' => 'payout_status_cancelled'] as $value => $label)
-                        <a href="{{ route('admin.payouts.index', $value ? ['status' => $value] : []) }}"
+                        <a href="{{ route('admin.payouts.index', array_merge(request()->only('from', 'to', 'by'), $value ? ['status' => $value] : [])) }}"
                            class="px-3 py-1.5 rounded-xl text-xs font-bold transition {{ (string) $status === (string) $value ? 'bg-sagara-navy text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                             {{ __('ui.' . $label) }}
                         </a>
@@ -153,6 +153,11 @@
                         <input type="hidden" name="status" value="{{ $status }}">
                     @endif
                 </x-search-bar>
+            </div>
+
+            {{-- FILTER TANGGAL --}}
+            <div class="px-6 pb-4">
+                <x-date-filter :by="['created' => __('ui.date_by_created'), 'paid' => __('ui.payout_paid_on')]" />
             </div>
 
             <div class="overflow-x-auto">

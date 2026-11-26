@@ -19,7 +19,11 @@ class BookingController extends Controller
         $product = $request->query('product');
         abort_unless(in_array($product, [null, '', 'hotel', 'car'], true), 404);
 
-        $base = Booking::query()->when($product, fn ($q, $type) => $q->where('product_type', $type));
+        $dateColumn = $request->query('by') === 'check_in' ? 'check_in' : 'created_at';
+
+        $base = Booking::query()
+            ->when($product, fn ($q, $type) => $q->where('product_type', $type))
+            ->betweenDates($dateColumn, $request->query('from'), $request->query('to'));
 
         $summary = (clone $base)
             ->where('status', 'confirmed')
@@ -55,7 +59,7 @@ class BookingController extends Controller
         ]));
     }
 
-        public function show(Booking $booking)
+    public function show(Booking $booking)
     {
         $booking->load(['partner', 'user', 'hotel']);
 

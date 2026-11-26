@@ -24,6 +24,7 @@ class TopupController extends Controller
         abort_unless(in_array($status, ['pending', 'approved', 'rejected', 'cancelled', 'all'], true), 404);
 
         $requests = TopupRequest::with('company', 'account', 'requester', 'decider')
+            ->betweenDates('created_at', $request->query('from'), $request->query('to'))
             ->when($status !== 'all', fn ($q) => $q->where('status', $status))
             ->orderByRaw("status = 'pending' DESC")
             ->latest()

@@ -24,7 +24,12 @@ class TopupController extends Controller
         return view('corporate.topups.index', [
             'company'  => $company,
             'accounts' => PlatformBankAccount::active()->orderBy('sort_order')->orderBy('bank_name')->get(),
-            'requests' => TopupRequest::with('account')->where('company_id', $company->id)->latest()->paginate((int) config('sekalago.per_page', 15)),
+            'requests' => TopupRequest::with('account')
+                ->where('company_id', $company->id)
+                ->betweenDates('created_at', $request->query('from'), $request->query('to'))
+                ->latest()
+                ->paginate((int) config('sekalago.per_page', 15))
+                ->withQueryString(),
             'minimum'  => (int) config('sekalago.topup_minimum', 100000),
         ]);
     }

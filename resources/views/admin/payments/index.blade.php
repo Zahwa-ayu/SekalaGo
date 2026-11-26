@@ -46,7 +46,7 @@
 
         <div class="flex flex-wrap gap-2">
             @foreach ($tabs as $value => $label)
-                <a href="{{ route('admin.payments.index', $value ? ['view' => $value] : []) }}"
+                <a href="{{ route('admin.payments.index', array_merge(request()->only('from', 'to', 'by'), $value ? ['view' => $value] : [])) }}"
                    class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ (string) $view === (string) $value ? 'bg-sagara-navy text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                     {{ __('ui.' . $label) }}
                     @if ($value === 'refund' && $manualCount > 0)
@@ -55,6 +55,8 @@
                 </a>
             @endforeach
         </div>
+
+        <x-date-filter :by="['created' => __('ui.date_by_created'), 'paid' => __('ui.date_by_paid')]" />
 
         <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
             <div class="overflow-x-auto">

@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\Searchable;
+use App\Models\Concerns\FiltersByDate;
 
 
 class Payout extends Model
 {
-    use Searchable;
+    use Searchable, FiltersByDate;
     
     protected $fillable = [
         'code', 'partner_id', 'status', 'total_amount', 'platform_fee_total', 'booking_count',

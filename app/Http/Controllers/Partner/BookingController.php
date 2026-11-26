@@ -22,10 +22,13 @@ class BookingController extends Controller
         $product = $request->query('product');
         abort_unless(in_array($product, [null, '', 'hotel', 'car'], true), 404);
 
-        $base = Booking::where('partner_id', $partner->id)
-            ->when($product, fn ($q, $type) => $q->where('product_type', $type));
+        $dateColumn = $request->query('by') === 'check_in' ? 'check_in' : 'created_at';
 
-        // Ringkasan hanya menghitung pesanan terkonfirmasi, mengikuti filter jenis produk
+        $base = Booking::where('partner_id', $partner->id)
+            ->when($product, fn ($q, $type) => $q->where('product_type', $type))
+            ->betweenDates($dateColumn, $request->query('from'), $request->query('to'));
+
+        // Ringkasan hanya menghitung pesanan terkonfirmasi, mengikuti filter jenis produk dan tanggal
         $summary = (clone $base)
             ->where('status', 'confirmed')
             ->selectRaw('count(*) as orders, coalesce(sum(total_price), 0) as gross, coalesce(sum(platform_fee), 0) as fee, coalesce(sum(vendor_revenue), 0) as net')

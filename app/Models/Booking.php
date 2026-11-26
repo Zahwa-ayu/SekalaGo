@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Concerns\Searchable;
+use App\Models\Concerns\FiltersByDate;
 use Illuminate\Support\Carbon;
 use App\Models\Concerns\LogsActivity;
 
 class Booking extends Model
 {
-    use LogsActivity, Searchable;
+    use LogsActivity, Searchable, FiltersByDate;
 
     protected $fillable = [
         'booking_code', 'user_id', 'partner_id', 'company_id', 'product_type', 'hotel_id', 'room_type_id',

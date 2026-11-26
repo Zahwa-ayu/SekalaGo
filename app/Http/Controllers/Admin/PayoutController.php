@@ -33,6 +33,7 @@ class PayoutController extends Controller
             : $all->filter(fn ($row) => Str::contains(Str::lower($row['partner']->company_name), Str::lower($term)))->values();
 
         $history = Payout::query()
+            ->betweenDates($request->query('by') === 'paid' ? 'paid_at' : 'created_at', $request->query('from'), $request->query('to'))
             ->with('partner')
             ->search($term, ['code', 'transfer_reference', 'bank_name', 'bank_account_name', 'bank_account_no', 'partner.company_name'])
             ->when($data['status'] ?? null, fn ($q, $status) => $q->where('status', $status))

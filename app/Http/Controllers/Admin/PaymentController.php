@@ -17,6 +17,7 @@ class PaymentController extends Controller
 
         $payments = Payment::query()
             ->with('booking')
+            ->betweenDates($request->query('by') === 'paid' ? 'paid_at' : 'created_at', $request->query('from'), $request->query('to'))
             ->when($view === 'refund', fn ($q) => $q->where('refund_status', 'manual_pending'))
             ->when($view === 'failed', fn ($q) => $q->whereIn('status', ['failed', 'expired']))
             ->latest()

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\FiltersByDate;
 
 class Payment extends Model
 {
+    use FiltersByDate; 
+    
     protected $fillable = [
         'booking_id', 'provider', 'order_id', 'amount', 'status', 'payment_type', 'transaction_id',
         'snap_token', 'redirect_url', 'expires_at', 'paid_at',

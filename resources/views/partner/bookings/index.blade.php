@@ -26,13 +26,13 @@
         {{-- FILTER STATUS --}}
         <div class="flex flex-wrap gap-2 mb-6">
             @foreach (['confirmed', 'pending_payment', 'cancelled', 'expired'] as $s)
-                <a href="{{ route('partner.bookings.index', ['status' => $s]) }}"
+                <a href="{{ route('partner.bookings.index', array_merge(request()->only('from', 'to', 'by'), ['status' => $s])) }}"
                    class="px-4 py-2 rounded-xl text-xs sm:text-sm transition
                           {{ $status === $s ? 'bg-sagara-navy text-white font-bold shadow-md' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-100' }}">
                     {{ __('ui.booking_status_' . $s) }}
                 </a>
             @endforeach
-            <a href="{{ route('partner.bookings.index', ['status' => 'all']) }}"
+            <a href="{{ route('partner.bookings.index', array_merge(request()->only('from', 'to', 'by'), ['status' => 'all'])) }}"
                class="px-4 py-2 rounded-xl text-xs sm:text-sm transition
                       {{ $status === 'all' ? 'bg-sagara-navy text-white font-bold shadow-md' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-100' }}">
                 {{ __('ui.all') }}
@@ -44,11 +44,21 @@
             @include('partials.product-filter', ['route' => 'partner.bookings.index'])
         </div>
 
+        {{-- FILTER TANGGAL --}}
+        <div class="mb-6">
+            <x-date-filter :by="['created' => __('ui.date_by_ordered'), 'check_in' => __('ui.date_by_check_in')]" />
+        </div>
+
         {{-- PENCARIAN --}}
         <div class="mb-6">
             <x-search-bar placeholder="Cari kode, nama tamu, kontak, atau hotel">
                 <input type="hidden" name="status" value="{{ $status }}">
                 <input type="hidden" name="product" value="{{ request('product') }}">
+                @foreach (['from', 'to', 'by'] as $key)
+                    @if (request($key))
+                        <input type="hidden" name="{{ $key }}" value="{{ request($key) }}">
+                    @endif
+                @endforeach
             </x-search-bar>
         </div>
 

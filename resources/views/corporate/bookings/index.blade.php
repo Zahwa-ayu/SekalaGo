@@ -27,14 +27,14 @@
             {{-- FILTER STATUS --}}
             <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap gap-2">
                 @foreach (['pending_approval', 'confirmed', 'rejected', 'cancelled', 'expired'] as $s)
-                    <a href="{{ route('corporate.bookings.index', ['status' => $s]) }}"
+                    <a href="{{ route('corporate.bookings.index', array_merge(request()->only('from', 'to', 'by'), ['status' => $s])) }}"
                        class="px-4 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-2 transition
                               {{ $status === $s ? 'bg-sagara-blue text-white font-bold shadow-md' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50' }}">
                         {{ __('ui.booking_status_' . $s) }}
                         <span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold {{ $status === $s ? 'bg-white/20' : 'bg-slate-100 text-slate-500' }}">{{ $counts->get($s, 0) }}</span>
                     </a>
                 @endforeach
-                <a href="{{ route('corporate.bookings.index', ['status' => 'all']) }}"
+                <a href="{{ route('corporate.bookings.index', array_merge(request()->only('from', 'to', 'by'), ['status' => 'all'])) }}"
                    class="px-4 py-2 rounded-xl text-xs sm:text-sm transition
                           {{ $status === 'all' ? 'bg-sagara-blue text-white font-bold shadow-md' : 'bg-white border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50' }}">
                     {{ __('ui.all') }}
@@ -46,11 +46,21 @@
                 @include('partials.product-filter', ['route' => 'corporate.bookings.index'])
             </div>
 
+            {{-- FILTER TANGGAL --}}
+            <div class="px-6 py-4 border-b border-slate-100">
+                <x-date-filter :by="['created' => __('ui.date_by_ordered'), 'check_in' => __('ui.date_by_check_in')]" />
+            </div>
+
             {{-- PENCARIAN --}}
             <div class="px-6 py-4 border-b border-slate-100">
                 <x-search-bar placeholder="Cari kode, karyawan, departemen, atau hotel">
                     <input type="hidden" name="status" value="{{ $status }}">
                     <input type="hidden" name="product" value="{{ request('product') }}">
+                    @foreach (['from', 'to', 'by'] as $key)
+                        @if (request($key))
+                            <input type="hidden" name="{{ $key }}" value="{{ request($key) }}">
+                        @endif
+                    @endforeach
                 </x-search-bar>
             </div>
 

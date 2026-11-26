@@ -30,19 +30,22 @@ class BookingController extends Controller
 
         $this->bookings->expireOverdue();
 
-        $base = Booking::where('company_id', $company->id)
-            ->when($product, fn ($q, $type) => $q->where('product_type', $type));
+        $dateColumn = $request->query('by') === 'check_in' ? 'check_in' : 'created_at';
 
-            $bookings = (clone $base)
-                ->when($status !== 'all', fn ($q) => $q->where('status', $status))
-                ->search($request->query('q'), [
-                    'booking_code', 'guest_name', 'contact_name', 'hotel_name', 'department',
-                    'user.email', 'user.companyUser.full_name',
-                ])
-                ->with('user.companyUser')
-                ->latest()
-                ->paginate((int) config('sekalago.per_page', 15))
-                ->withQueryString();
+        $base = Booking::where('company_id', $company->id)
+            ->when($product, fn ($q, $type) => $q->where('product_type', $type))
+            ->betweenDates($dateColumn, $request->query('from'), $request->query('to'));
+
+        $bookings = (clone $base)
+            ->when($status !== 'all', fn ($q) => $q->where('status', $status))
+            ->search($request->query('q'), [
+                'booking_code', 'guest_name', 'contact_name', 'hotel_name', 'department',
+                'user.email', 'user.companyUser.full_name',
+            ])
+            ->with('user.companyUser')
+            ->latest()
+            ->paginate((int) config('sekalago.per_page', 15))
+            ->withQueryString();
 
         $counts = (clone $base)
             ->selectRaw('status, count(*) as total')
@@ -83,7 +86,7 @@ class BookingController extends Controller
         abort_unless($booking->company_id === $this->company($request)->id, 404);
     }
 
-        public function show(Request $request, Booking $booking)
+    public function show(Request $request, Booking $booking)
     {
         $this->ownBooking($request, $booking);
 
