@@ -17,26 +17,38 @@
             </ul>
         @endif
 
-        <div class="space-y-3">
-            <x-filter-tabs param="view" :current="$view" :counts="$counts" :options="[
-                'active' => __('ui.issue_tab_active'),
+        @php
+            $select = 'rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30';
+            $views  = [
+                'active'         => __('ui.issue_tab_active'),
                 'needs_response' => __('ui.issue_tab_needs_response'),
-                'resolved' => __('ui.issue_status_resolved'),
-                'rejected' => __('ui.issue_status_rejected'),
-                'all' => __('ui.all'),
-            ]" />
-
-            <x-filter-tabs param="category" :current="$category" :options="[
-                '' => __('ui.all_categories'),
+                'resolved'       => __('ui.issue_status_resolved'),
+                'rejected'       => __('ui.issue_status_rejected'),
+                'all'            => __('ui.all'),
+            ];
+            $categories = [
+                ''                 => __('ui.all_categories'),
                 'not_as_described' => __('ui.issue_cat_not_as_described'),
-                'not_available' => __('ui.issue_cat_not_available'),
-                'service_issue' => __('ui.issue_cat_service_issue'),
-                'refund_problem' => __('ui.issue_cat_refund_problem'),
-                'other' => __('ui.issue_cat_other'),
-            ]" />
+                'not_available'    => __('ui.issue_cat_not_available'),
+                'service_issue'    => __('ui.issue_cat_service_issue'),
+                'refund_problem'   => __('ui.issue_cat_refund_problem'),
+                'other'            => __('ui.issue_cat_other'),
+            ];
+        @endphp
 
-            <x-search-bar :placeholder="__('ui.issue_search')" />
-        </div>
+        <x-search-bar :placeholder="__('ui.issue_search')" :except="['view', 'category']">
+            <select name="view" onchange="this.form.submit()" class="{{ $select }}" aria-label="{{ __('ui.account_status') }}">
+                @foreach ($views as $value => $label)
+                    <option value="{{ $value }}" @selected($view === $value)>{{ $label }}@if (isset($counts[$value])) ({{ $counts[$value] }})@endif</option>
+                @endforeach
+            </select>
+
+            <select name="category" onchange="this.form.submit()" class="{{ $select }}" aria-label="{{ __('ui.issue_category') }}">
+                @foreach ($categories as $value => $label)
+                    <option value="{{ $value }}" @selected($category === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </x-search-bar>
 
         @forelse ($reports as $report)
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 space-y-3">

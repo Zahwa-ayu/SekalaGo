@@ -19,15 +19,20 @@
             </ul>
         @endif
 
-        <div class="flex flex-wrap gap-2">
-            @foreach ($tabs as $value => $label)
-                <a href="{{ route('admin.issues.index', ['status' => $value]) }}"
-                   class="px-3.5 py-2 rounded-xl text-xs font-bold transition {{ $status === $value ? 'bg-sagara-navy text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
-                    {{ __('ui.' . $label) }}
-                    @if ($value === 'active')<span class="opacity-70">({{ $counts->get('open', 0) + $counts->get('in_review', 0) }})</span>@endif
-                </a>
-            @endforeach
-        </div>
+        <x-search-bar :placeholder="__('ui.issue_search')" :except="['status']">
+            <select name="status" onchange="this.form.submit()" class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                @foreach ([
+                    'active' => __('ui.issue_tab_active') . ' (' . ($counts->get('open', 0) + $counts->get('in_review', 0)) . ')',
+                    'open' => __('ui.issue_status_open') . ' (' . $counts->get('open', 0) . ')',
+                    'in_review' => __('ui.issue_status_in_review') . ' (' . $counts->get('in_review', 0) . ')',
+                    'resolved' => __('ui.issue_status_resolved') . ' (' . $counts->get('resolved', 0) . ')',
+                    'rejected' => __('ui.issue_status_rejected') . ' (' . $counts->get('rejected', 0) . ')',
+                    'all' => __('ui.all'),
+                ] as $value => $label)
+                    <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </x-search-bar>
 
         <div class="space-y-4">
             @forelse ($reports as $report)

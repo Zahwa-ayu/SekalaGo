@@ -20,6 +20,7 @@ class IssueController extends Controller
         abort_unless(in_array($status, ['active', 'open', 'in_review', 'resolved', 'rejected', 'all'], true), 404);
 
         $reports = IssueReport::with('booking', 'user', 'partner', 'handler')
+            ->search($request->query('q'), ['code', 'description', 'booking.booking_code', 'user.email'])
             ->when($status === 'active', fn ($q) => $q->whereIn('status', ['open', 'in_review']))
             ->when(! in_array($status, ['active', 'all'], true), fn ($q) => $q->where('status', $status))
             ->orderByRaw("status = 'open' DESC")
