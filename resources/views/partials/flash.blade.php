@@ -1,5 +1,3 @@
-{{-- resources/views/partials/flash.blade.php
-     Notifikasi melayang (toast) di bawah navbar: tidak mendorong layout dan tidak tertimpa navbar. --}}
 @php
     // kunci session => [gaya, ikon]
     $types = [

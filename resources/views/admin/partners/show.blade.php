@@ -9,6 +9,9 @@
         $box       = 'bg-slate-50 p-3 rounded-2xl border border-slate-200 focus-within:border-sagara-blue transition';
         $label     = 'block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1';
         $input     = 'w-full bg-transparent font-semibold text-slate-800 text-sm focus:outline-none';
+        // Gaya isian form kirim / kirim ulang MOU
+        $field      = 'w-full h-11 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
+        $fieldLabel = 'block text-sm font-semibold text-slate-700 mb-1.5';
         // Tombol aksi: biru sky, sama dengan tombol Daftar/Cari di situs publik
         $btn       = 'px-6 py-2.5 bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold rounded-xl transition inline-flex items-center justify-center gap-2';
         $sendLabel = $partner->verification_status === 'verified' ? __('ui.mou_resend_btn') : __('ui.mou_send_btn');
@@ -140,20 +143,28 @@
                         {{-- USULAN KOMISI DARI MITRA --}}
                         @include('admin.partners._commission-proposal')
 
+                        {{-- FORM KIRIM / KIRIM ULANG MOU --}}
                         <div class="mt-6 pt-6 border-t border-slate-100">
                             <h3 class="text-base font-bold text-slate-900 mb-4">{{ $sendLabel }}</h3>
 
                             <form method="POST" action="{{ route('admin.partners.agreement', $partner) }}" class="space-y-4">
                                 @csrf
-                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    <div class="{{ $box }}">
-                                        <label class="{{ $label }}"><i class="fa-solid fa-percent text-sagara-blue"></i> {{ __('ui.commission_rate') }} (10 - 25)</label>
-                                        <input type="number" name="commission_percent" min="10" max="25" step="0.5" required class="{{ $input }}"
-                                               value="{{ old('commission_percent', $partner->proposedPercent() ?? 15) }}">
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
+                                    {{-- KOMISI --}}
+                                    <div>
+                                        <label for="commission_percent" class="{{ $fieldLabel }}">{{ __('ui.commission_rate') }} (10 - 25)</label>
+                                        <div class="relative">
+                                            <input id="commission_percent" type="number" name="commission_percent" min="10" max="25" step="0.5" required
+                                                   value="{{ old('commission_percent', $partner->proposedPercent() ?? 15) }}" class="{{ $field }} pr-10">
+                                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 pointer-events-none">%</span>
+                                        </div>
                                     </div>
-                                    <div class="{{ $box }}">
-                                        <label class="{{ $label }}"><i class="fa-solid fa-money-bill-transfer text-sagara-blue"></i> {{ __('ui.payout_schedule') }}</label>
-                                        <select name="payout_schedule" class="{{ $input }} cursor-pointer">
+
+                                    {{-- JADWAL PENCAIRAN --}}
+                                    <div>
+                                        <label for="payout_schedule" class="{{ $fieldLabel }}">{{ __('ui.payout_schedule') }}</label>
+                                        <select id="payout_schedule" name="payout_schedule" class="{{ $field }} cursor-pointer">
                                             @foreach (['weekly', 'biweekly', 'monthly'] as $option)
                                                 <option value="{{ $option }}"
                                                     @selected(old('payout_schedule', $agreement?->payout_schedule ?? 'monthly') === $option)>
@@ -162,28 +173,39 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="{{ $box }}">
-                                        <label class="{{ $label }}"><i class="fa-solid fa-calendar-xmark text-sagara-blue"></i> {{ __('ui.free_cancel_days') }}</label>
-                                        <input type="number" name="free_cancel_days" min="0" max="30" required class="{{ $input }}"
-                                               value="{{ old('free_cancel_days', $agreement?->free_cancel_days ?? 3) }}">
-                                    </div>
+
+                                    {{-- BATAS BATAL GRATIS --}}
                                     <div>
-                                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.late_cancel_fee_label') }}</label>
-                                        <div class="flex items-center gap-2">
-                                            <input type="number" name="late_cancel_fee_percent" min="10" max="90"
+                                        <label for="free_cancel_days" class="{{ $fieldLabel }}">{{ __('ui.free_cancel_days') }}</label>
+                                        <input id="free_cancel_days" type="number" name="free_cancel_days" min="0" max="30" required
+                                               value="{{ old('free_cancel_days', $agreement?->free_cancel_days ?? 3) }}" class="{{ $field }}">
+                                    </div>
+
+                                    {{-- DENDA BATAL --}}
+                                    <div>
+                                        <label for="late_cancel_fee_percent" class="{{ $fieldLabel }}">{{ __('ui.late_cancel_fee_label') }}</label>
+                                        <div class="relative">
+                                            <input id="late_cancel_fee_percent" type="number" name="late_cancel_fee_percent" min="10" max="90"
                                                    value="{{ old('late_cancel_fee_percent', $partner->latestAgreement?->late_cancel_fee_percent ?? config('sekalago.late_cancel_fee_percent', 50)) }}"
-                                                   class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
-                                            <span class="text-sm font-bold text-slate-500">%</span>
+                                                   class="{{ $field }} pr-10">
+                                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 pointer-events-none">%</span>
                                         </div>
-                                        <p class="text-[11px] text-slate-400 mt-1">{{ __('ui.late_cancel_fee_hint') }}</p>
+                                        <p class="text-xs text-slate-400 mt-1">{{ __('ui.late_cancel_fee_hint') }}</p>
                                     </div>
                                 </div>
+
+                                {{-- CATATAN --}}
                                 <div>
-                                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{{ __('ui.admin_note_for_partner') }}</label>
-                                    <input name="admin_note" maxlength="300" value="{{ old('admin_note') }}" placeholder="{{ __('ui.admin_note_hint') }}"
-                                           class="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">
+                                    <label for="admin_note" class="{{ $fieldLabel }}">{{ __('ui.admin_note_for_partner') }}</label>
+                                    <input id="admin_note" name="admin_note" maxlength="300" value="{{ old('admin_note') }}"
+                                           placeholder="{{ __('ui.admin_note_hint') }}" class="{{ $field }}">
                                 </div>
-                                <button class="{{ $btn }}"><i class="fa-solid fa-paper-plane"></i> {{ $sendLabel }}</button>
+
+                                <div class="flex justify-end">
+                                    <button class="{{ $btn }} w-full sm:w-auto">
+                                        <i class="fa-solid fa-paper-plane"></i> {{ $sendLabel }}
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     @endif

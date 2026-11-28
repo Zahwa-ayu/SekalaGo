@@ -209,12 +209,7 @@ return [
     'integrity_invalid' => 'Invalid (document changed after signing)',
 
     // cancellation booking
-    'cancel_booking' => 'Cancel booking',
     'cancel_confirm' => 'Are you sure you want to cancel this booking?',
-    'cancel_reason' => 'Cancellation reason (optional)',
-    'free_cancel_until' => 'Free cancellation until :date.',
-    'refund_full_notice' => ':amount will be fully refunded.',
-    'cancel_not_allowed' => 'The free cancellation period has passed. Please contact an admin for help.',
     'cancel_not_allowed_admin' => 'This booking cannot be cancelled (not confirmed, or the stay has already started).',
     'booking_cancelled' => 'Booking cancelled.',
     'booking_cancelled_refunded' => 'Booking cancelled and :amount refunded.',
@@ -222,7 +217,6 @@ return [
     'cancelled_by_customer' => 'Cancelled by customer',
     'cancelled_by_admin' => 'Cancelled by admin',
     'cancellation_reason_label' => 'Cancellation reason',
-    'refund_amount' => 'Amount refunded',
     'download_ticket' => 'Download E-ticket (PDF)',
     'admin_cancel' => 'Cancel and refund in full',
     'admin_cancel_reason' => 'Reason (required)',
@@ -647,7 +641,6 @@ return [
     // car
     'tab_hotels' => 'Hotels',
     'tab_cars' => 'Car Rental',
-    'car_hero_title' => 'Where do you need a car?',
     'pickup_date' => 'Pick-up date',
     'return_date' => 'Return date',
     'driver_any' => 'Any driver option',
@@ -705,8 +698,10 @@ return [
     'units_below_bookings' => 'The number of units cannot be below :count because of bookings running at the same time.',
 
     // revisi bahasa
+    // en
+'hotel_page_title' => 'Great hotels, fair prices',
+'car_hero_title'   => 'Great cars, fair prices',
     'nav_home' => 'Home',
-'hotel_page_title' => 'Find the best hotel for your trip',
 'featured_hotels' => 'Featured hotels',
 'popular_cities' => 'Popular cities',
 'featured_cars' => 'Featured vehicles',
@@ -1499,11 +1494,7 @@ return [
 ///
 'cancel_fee_title' => 'Cancellation with a fee',
 'cancel_fee_explain' => 'The free cancellation period has passed. Until the day before the start date the booking can still be cancelled with a :percent% fee of the total. The rest is refunded.',
-'cancel_fee_amount' => 'Cancellation fee',
-'cancel_fee_confirm' => 'A fee of :fee will be withheld and :amount refunded. Cancel the booking?',
-'cancel_fee_accept' => 'I understand this fee and still want to cancel.',
 'cancel_fee_accept_required' => 'Please tick the cancellation fee acknowledgement first.',
-'cancel_booking_with_fee' => 'Cancel with a fee',
 'cancel_fee_policy' => 'After the free period until the day before the start date, cancellation carries a :percent% fee of the total. It cannot be cancelled on the start day.',
 'booking_cancelled_with_fee' => 'Booking cancelled. A fee of :fee was withheld and :amount refunded.',
 'analytics_cancel_fees' => 'Includes cancellation fees from :count booking(s): :total in total, platform share :platform (part of net revenue).',
@@ -1654,11 +1645,6 @@ return [
 'admin_issues_hint' => 'Customer reports. Review, contact the partner if needed, then answer the customer. Refunds or cancellations are done through All Bookings.',
 'after_service_title' => 'After the service',
 
-// akun bos
-'role_manager' => 'Manager (view only)',
-'view_only_mode' => 'View-only mode: you can open every page but cannot change any data.',
-'view_only_hint' => 'Your role can only view',
-
 // report partner
 // Search
 'payout_search' => 'Search code, reference, account or partner name',
@@ -1706,8 +1692,6 @@ return [
 'preport_note_cancel' => 'your share of customers\' cancellation fees, counted on the cancellation date. Paid out once the check-in date has passed.',
 'preport_note_date' => 'bookings are counted on their payment date. Bookings cancelled with a full refund are not in the report.',
 
-'role_manager_desc' => 'Monitors bookings, partners, finance and reports without being able to change any data. Does not see Master Data, CMS or team management.',
-
 'range_today' => 'Today',
 'date_apply' => 'Apply',
 'date_by' => 'Date basis',
@@ -1722,4 +1706,82 @@ return [
 'business_type_changed' => 'The partner\'s business type was changed.',
 'business_type_in_use' => 'The business type cannot be narrowed because the partner still has hotels or vehicles of that kind.',
 'business_type_admin_label' => 'Change business type',
+
+'role_manager' => 'Manager',
+
+'role_manager_desc' => 'Monitors business performance: dashboard, analytics, bookings, companies, reviews and issue reports. Does not change data.',
+
+// lang/en/ui.php
+'menu_products' => 'Products',
+'menu_feedback' => 'Reviews & Support',
+
+'cancel_booking'          => 'Cancel booking',
+'cancel_fee_amount'       => 'Cancellation fee',
+'refund_amount'           => 'Refund',
+'free_cancel_until'       => 'Free cancellation until :date.',
+'refund_full_notice'      => 'Refund: :amount',
+'cancel_reason'           => 'Reason for cancellation (optional)',
+'cancel_fee_accept'       => 'I agree to the cancellation fee.',
+'cancel_booking_with_fee' => 'Cancel booking',
+'cancel_fee_confirm'      => 'Fee :fee, refund :amount.',
+'cancel_not_allowed'      => 'This booking cannot be cancelled.',
+'confirm_yes'             => 'Yes, cancel',
+'cancel_modal_title'      => 'Cancel booking?',
+'cancel_modal_message'    => 'Are you sure you want to cancel this booking?',
+'withdraw_modal_message'  => 'Are you sure you want to withdraw this request?',
+
+'ticket_title'           => 'E-Ticket',
+'ticket_subtitle'        => 'E-TICKET / HOTEL VOUCHER',
+'ticket_booking_code'    => 'Booking code',
+'ticket_confirmed'       => 'CONFIRMED',
+'ticket_hotel'           => 'Hotel',
+'ticket_stay'            => 'Stay',
+'ticket_check_in'        => 'Check-in',
+'ticket_check_out'       => 'Check-out',
+'ticket_time'            => 'Time',
+'ticket_guest'           => 'Guest',
+'ticket_guest_name'      => 'Guest name',
+'ticket_guest_count'     => 'Number of guests',
+'ticket_nights'          => 'Nights',
+'ticket_arrival'         => 'Estimated arrival',
+'ticket_requests'        => 'Special requests',
+'ticket_payment'         => 'Payment',
+'ticket_total_paid'      => 'Total paid',
+'ticket_equivalent'      => 'Equivalent',
+'ticket_reference'       => 'Reference',
+'ticket_paid_at'         => 'Paid at',
+'ticket_cancellation'    => 'Cancellation',
+'ticket_free_until'      => 'Free until',
+'ticket_after_free'      => 'After the free period',
+'ticket_fee_policy'      => 'A :percent% fee applies until the day before check-in. No cancellation on the check-in day.',
+'ticket_show_note'       => 'Please show this e-ticket at the front desk on check-in.',
+'ticket_simulation_note' => 'Simulated document for application development.',
+
+// 
+'ticket_car_subtitle'    => 'E-TICKET / CAR RENTAL VOUCHER',
+'ticket_vehicle'         => 'Vehicle',
+'ticket_with_driver'     => 'With driver',
+'ticket_self_drive'      => 'Self-drive',
+'ticket_pickup_location' => 'Pick-up and return location',
+'ticket_rental'          => 'Rental',
+'ticket_pickup_date'     => 'Pick-up date',
+'ticket_return_by'       => 'Return by',
+'ticket_renter'          => 'Renter',
+'ticket_renter_name'     => 'Renter name',
+'ticket_contact'         => 'Contact',
+'ticket_passengers'      => 'Passengers',
+'ticket_days'            => 'Number of days',
+'ticket_destination'     => 'Destination',
+'ticket_extensions'      => 'Extensions',
+'ticket_extension_line'  => 'Extra days: :days, until :date (:amount)',
+'ticket_rental_paid'     => 'Rental paid',
+'ticket_extra_costs'     => 'Extra costs',
+'ticket_paid_to_vendor'  => 'Paid directly to vendor',
+'ticket_driver_fee'      => 'Driver fee is about :amount per day.',
+'ticket_not_included'    => 'Fuel, tolls and parking are not included in the rental total.',
+'ticket_late_return'     => 'Late return',
+'ticket_late_policy'     => 'Returns more than :minutes minutes late are charged :percent% of the daily price per hour (up to one full day per 24 hours), paid directly to the vendor.',
+'ticket_no_late_fee'     => 'No late fee applies.',
+'ticket_late_recorded'   => 'Late fee recorded: :amount (paid directly to the vendor)',
+'ticket_car_show_note'   => 'Please show this e-ticket and your ID at pick-up. For self-drive, also bring a valid driving licence.',
 ];

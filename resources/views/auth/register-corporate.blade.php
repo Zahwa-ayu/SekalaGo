@@ -1,4 +1,5 @@
 @extends('layouts.storefront')
+@section('flush_footer', '1')
 
 @section('content')
     @php
@@ -396,6 +397,11 @@
                         {{ __('ui.already_have_account') }}
                         <a href="{{ route('login') }}" class="font-extrabold text-sky-600 hover:text-sky-700 hover:underline">{{ __('ui.login') }}</a>
                     </p>
+                </div>
+
+                {{-- Bantuan --}}
+                <div class="!mt-4">
+                    @include('partials.register-help')
                 </div>
 
             </div>

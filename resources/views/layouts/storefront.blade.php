@@ -3,7 +3,7 @@
     // Bisa lewat @section('solid_nav', '1') di view-nya, atau daftarkan nama route di bawah.
     $solidNav = \Illuminate\Support\Facades\View::hasSection('solid_nav')
         || request()->routeIs('cars.show', 'hotels.show', 'auth.login', 'corporate.dashboard', 'register.corporate', 
-        'bookings.*', 'password.*', 'car-bookings.*',
+        'bookings.*', 'password.*', 'car-bookings.*', 'issues.create', 'issues.index', 'notifications.index',
          'account.*');
 
     // Gaya link menu utama (Hotel / Mobil / FAQ / Bisnis)
@@ -65,6 +65,13 @@
             color: #0284c7 !important;
         }
 
+        /* Dropdown Akun: sembunyikan panah bawaan <details> */
+        .acct-dd summary::-webkit-details-marker { display: none; }
+
+        /* Lonceng notifikasi: ikut gelap saat navbar putih (isi dropdown tidak terpengaruh) */
+        .is-scrolled #notif-toggle { color: #334155; }
+        .is-scrolled #notif-toggle:hover { color: #0284c7; background-color: #f1f5f9; }
+
         /* Ikon sosmed footer: warna brand platform sebagai default, balik putih solid saat hover */
         .social-link {
             background-color: var(--sm-color);
@@ -92,12 +99,12 @@
                     {{-- Sebelum scroll (navbar transparan) --}}
                     <img src="{{ asset('images/logo_home_white.png') }}"
                          alt="SekalaGo"
-                         class="nav-logo-light h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
+                         class="nav-logo-light h-11 w-auto max-w-[180px] object-contain group-hover:scale-105 transition">
 
                     {{-- Setelah scroll (navbar putih) --}}
                     <img src="{{ asset('images/logo_home.png') }}"
                          alt="SekalaGo"
-                         class="nav-logo-dark h-9 w-auto max-w-[140px] object-contain group-hover:scale-105 transition">
+                         class="nav-logo-dark h-11 w-auto max-w-[180px] object-contain group-hover:scale-105 transition">
                 </a>
 
                 <!-- Mobile Hamburger Button -->
@@ -155,39 +162,56 @@
                         </details>
                     @endguest
 
+                    {{-- Pemisah antara menu utama dan area akun (hanya desktop) --}}
+                    <span class="hidden lg:block w-px h-5 bg-current opacity-20" aria-hidden="true"></span>
+
                     {{-- BAHASA & MATA UANG (satu tombol ikon bola) --}}
                     @include('partials.preferences')
 
+                    {{-- DASHBOARD: tetap di luar karena pintu utama kerja partner, admin, dan corporate --}}
                     @auth
-                        @if (in_array(auth()->user()->user_type, ['customer', 'corporate']))
-                            <a href="{{ route('bookings.index') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-receipt text-sky-400"></i> {{ __('ui.my_bookings') }}
-                            </a>
-                        @endif
-
                         @if (auth()->user()->user_type !== 'customer')
-                            <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-gauge text-sky-400"></i> {{ __('ui.dashboard') }}
+                            <a href="{{ route(auth()->user()->dashboardRoute()) }}" class="{{ $navLink }} {{ request()->routeIs(auth()->user()->dashboardRoute()) ? $navOn : $navOff }}">
+                                <i class="fa-solid fa-gauge mr-1"></i> {{ __('ui.dashboard') }}
                             </a>
                         @endif
+                    @endauth
 
+                    @auth
                         {{-- LONCENG NOTIFIKASI --}}
                         @include('partials.notification-bell', ['tone' => 'dark'])
 
-                        {{-- PENGATURAN AKUN (Finance tidak perlu di sini: aksesnya lewat sidebar Dashboard) --}}
-                        @if (Route::has('account.settings') && ! (auth()->user()->user_type === 'corporate' && auth()->user()->companyUser?->isFinance()))
-                            <a href="{{ route('account.settings') }}" class="nav-link-text px-3 py-1.5 rounded-lg hover:bg-white/15 transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-user-gear text-sky-400"></i> {{ __('ui.account_settings') }}
-                            </a>
-                        @endif
+                        {{-- DROPDOWN AKUN: Pesanan Saya, Pengaturan Akun, Keluar --}}
+                        <details class="acct-dd relative">
+                            <summary class="{{ $navLink }} {{ request()->routeIs('account.*', 'bookings.*') ? $navOn : $navOff }} cursor-pointer list-none flex items-center gap-1">
+                                <i class="fa-solid fa-circle-user text-xl mr-1"></i> {{ __('ui.menu_account') }}
+                                <i class="fa-solid fa-chevron-down text-[10px] ml-0.5"></i>
+                            </summary>
 
-                        {{-- TOMBOL KELUAR / LOGOUT --}}
-                        <form method="POST" action="{{ route('logout') }}" class="inline-block ml-1">
-                            @csrf
-                            <button id="btn-logout" class="px-3.5 py-1.5 rounded-lg border {{ $solidNav ? 'border-slate-300 text-slate-700' : 'border-white/30' }} hover:bg-rose-600 hover:border-rose-600 hover:text-white transition flex items-center gap-1.5 font-bold shadow-sm">
-                                <i class="fa-solid fa-right-from-bracket"></i> {{ __('ui.logout') }}
-                            </button>
-                        </form>
+                            <div class="lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-52 mt-1 z-50
+                                        bg-white text-slate-700 rounded-xl border border-slate-200 shadow-lg p-1.5">
+                                @if (in_array(auth()->user()->user_type, ['customer', 'corporate']))
+                                    <a href="{{ route('bookings.index') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-sky-50 hover:text-sky-600 transition {{ request()->routeIs('bookings.*') ? 'bg-sky-50 text-sky-600' : '' }}">
+                                        <i class="fa-solid fa-receipt w-4 text-center text-sky-500"></i> {{ __('ui.my_bookings') }}
+                                    </a>
+                                @endif
+
+                                {{-- Finance tidak perlu Pengaturan Akun di sini: aksesnya lewat sidebar Dashboard --}}
+                                @if (Route::has('account.settings') && ! (auth()->user()->user_type === 'corporate' && auth()->user()->companyUser?->isFinance()))
+                                    <a href="{{ route('account.settings') }}" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg hover:bg-sky-50 hover:text-sky-600 transition">
+                                        <i class="fa-solid fa-user-gear w-4 text-center text-sky-500"></i> {{ __('ui.account_settings') }}
+                                    </a>
+                                @endif
+
+                                {{-- Garis pemisah hanya kalau ada menu di atas tombol Keluar --}}
+                                <form method="POST" action="{{ route('logout') }}" class="[&:not(:first-child)]:border-t [&:not(:first-child)]:border-slate-100 [&:not(:first-child)]:mt-1 [&:not(:first-child)]:pt-1">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-rose-600 hover:bg-rose-50 transition font-bold">
+                                        <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> {{ __('ui.logout') }}
+                                    </button>
+                                </form>
+                            </div>
+                        </details>
                     @else
                         <a href="{{ route('login') }}" class="nav-link-text px-3 py-1.5 hover:opacity-80 transition">{{ __('ui.login') }}</a>
                         <a href="{{ route('register') }}" class="px-4 py-2 text-center font-bold text-white bg-sky-500 hover:bg-sky-600 rounded-lg shadow-md shadow-sky-500/20 transition">{{ __('ui.register') }}</a>
@@ -205,7 +229,7 @@
     </main>
 
     {{-- FOOTER SKY-950 SOLID (biru tua, senada dengan hero) --}}
-    <footer class="bg-sky-950 text-sky-100/80 text-xs border-t border-sky-900 mt-20">
+    <footer class="bg-sky-950 text-sky-100/80 text-xs border-t border-sky-900 {{ \Illuminate\Support\Facades\View::hasSection('flush_footer') ? '' : 'mt-20' }}">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="flex flex-col md:flex-row justify-between gap-8">
                 <div class="max-w-sm space-y-3">
@@ -353,6 +377,13 @@
                 menu.classList.toggle('hidden', !open);
                 btnMobile.setAttribute('aria-expanded', String(open));
             });
+
+            // Dropdown Akun: tutup saat klik di luar atau tekan Esc
+            const acctDd = document.querySelector('.acct-dd');
+            if (acctDd) {
+                document.addEventListener('click', (e) => { if (!acctDd.contains(e.target)) acctDd.open = false; });
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape') acctDd.open = false; });
+            }
 
             // Dropdown Bisnis: tutup saat klik di luar atau tekan Esc
             const bizDd = document.querySelector('.biz-dd');

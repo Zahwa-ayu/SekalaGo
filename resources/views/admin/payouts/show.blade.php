@@ -8,7 +8,8 @@
             'paid'      => 'bg-emerald-100 text-emerald-700',
             'cancelled' => 'bg-slate-100 text-slate-500',
         ];
-        $input = 'w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
+        $card  = 'bg-white rounded-3xl border border-slate-100 shadow-md';
+        $input = 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue';
         $label = 'block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1';
 
         $accountDigits = preg_replace('/\D/', '', (string) $payout->bank_account_no);
@@ -16,11 +17,11 @@
     @endphp
 
     <section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        <div>
-            <a href="{{ route('admin.payouts.index') }}" class="text-xs font-bold text-sky-600 hover:underline">
-                <i class="fa-solid fa-chevron-left mr-1"></i> {{ __('ui.payouts') }}
+        <div class="space-y-3">
+            <a href="{{ route('admin.payouts.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
+                <i class="fa-solid fa-arrow-left"></i> {{ __('ui.payouts') }}
             </a>
-            <div class="flex flex-wrap items-center gap-3 mt-1">
+            <div class="flex flex-wrap items-center gap-3">
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono">{{ $payout->code }}</h1>
                 <span class="px-2.5 py-1 rounded-full text-[11px] font-bold {{ $statusStyle[$payout->status] }}">{{ __('ui.payout_status_' . $payout->status) }}</span>
             </div>
@@ -33,7 +34,7 @@
         @endif
 
         {{-- RINGKASAN TRANSFER --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8 grid sm:grid-cols-2 gap-6">
+        <div class="{{ $card }} p-6 sm:p-8 grid sm:grid-cols-2 gap-6">
             <div class="space-y-3 text-sm">
                 <h2 class="text-[11px] font-bold uppercase tracking-wider text-slate-400">{{ __('ui.payout_transfer_to') }}</h2>
                 <div class="font-extrabold text-slate-900 text-lg">{{ $payout->partner->company_name }}</div>
@@ -45,7 +46,7 @@
                         @if ($accountDigits !== '')
                             <button type="button"
                                     onclick="navigator.clipboard.writeText(@js($accountDigits)).then(() => { this.textContent = @js(__('ui.copied')) })"
-                                    class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-sky-50 hover:text-sky-600 transition">
+                                    class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-600 hover:bg-slate-100 hover:text-sagara-blue transition">
                                 {{ __('ui.copy_number') }}
                             </button>
                         @endif
@@ -105,16 +106,16 @@
 
         {{-- AKSI (hanya saat menunggu transfer) --}}
         @if ($payout->status === 'pending')
-            <div class="grid md:grid-cols-2 gap-6">
+            <div class="grid md:grid-cols-2 gap-6 items-start">
                 <form method="POST" action="{{ route('admin.payouts.paid', $payout) }}" enctype="multipart/form-data"
-                      class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 space-y-4">
+                      class="{{ $card }} p-6 space-y-4">
                     @csrf
                     <h2 class="font-extrabold text-slate-900"><i class="fa-solid fa-circle-check text-emerald-500 mr-1"></i> {{ __('ui.payout_mark_paid') }}</h2>
 
                     <div>
                         <label class="{{ $label }}">{{ __('ui.payout_proof') }}</label>
                         <input type="file" name="proof" required accept="image/jpeg,image/png,image/webp,application/pdf"
-                               class="block w-full text-sm text-slate-600 file:mr-3 file:px-4 file:py-2.5 file:rounded-xl file:border-0 file:bg-emerald-50 file:text-emerald-700 file:font-bold hover:file:bg-emerald-100">
+                               class="block w-full text-sm text-slate-600 file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-slate-100 file:text-slate-700 file:font-bold hover:file:bg-slate-200">
                         <p class="text-[11px] text-slate-400 mt-1">{{ __('ui.payout_proof_hint') }}</p>
                     </div>
 
@@ -129,12 +130,12 @@
                         </div>
                     </div>
 
-                    <button class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md transition">
-                        {{ __('ui.payout_mark_paid') }}
+                    <button class="px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition">
+                        <i class="fa-solid fa-check"></i> {{ __('ui.payout_mark_paid') }}
                     </button>
                 </form>
 
-                <form method="POST" action="{{ route('admin.payouts.cancel', $payout) }}" class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 space-y-4"
+                <form method="POST" action="{{ route('admin.payouts.cancel', $payout) }}" class="{{ $card }} p-6 space-y-4"
                       onsubmit="return confirm(@js(__('ui.payout_cancel_confirm')))">
                     @csrf
                     <h2 class="font-extrabold text-slate-900"><i class="fa-solid fa-ban text-red-500 mr-1"></i> {{ __('ui.payout_cancel') }}</h2>
@@ -145,7 +146,7 @@
                         <input name="reason" required maxlength="500" value="{{ old('reason') }}" class="{{ $input }}">
                     </div>
 
-                    <button class="px-5 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">
+                    <button class="px-6 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">
                         {{ __('ui.payout_cancel') }}
                     </button>
                 </form>
@@ -153,10 +154,10 @@
         @endif
 
         {{-- RINCIAN PESANAN --}}
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md overflow-hidden">
+        <div class="{{ $card }} overflow-hidden">
             <div class="px-6 pt-6 pb-4 flex items-center justify-between gap-3">
                 <h2 class="font-extrabold text-slate-900">{{ __('ui.booking_detail') }}</h2>
-                <a href="{{ route('admin.payouts.csv', $payout) }}" class="text-sm font-bold text-sky-600 hover:underline">
+                <a href="{{ route('admin.payouts.csv', $payout) }}" class="text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
                     <i class="fa-solid fa-file-csv mr-1"></i> {{ __('ui.analytics_csv') }}
                 </a>
             </div>
@@ -178,7 +179,7 @@
                             <tr>
                                 <td class="px-6 py-2.5 font-mono text-xs text-slate-600">{{ $booking->booking_code }}</td>
                                 <td class="px-3 py-2.5 text-slate-800">
-                                    <i class="fa-solid {{ $booking->productIcon() }} text-sky-500 mr-1"></i>{{ $booking->hotel_name }}
+                                    <i class="fa-solid {{ $booking->productIcon() }} text-sagara-blue mr-1"></i>{{ $booking->hotel_name }}
                                     <span class="text-[11px] text-slate-500">/ {{ $booking->room_name }}</span>
                                 </td>
                                 <td class="px-3 py-2.5 text-xs text-slate-500">{{ $booking->check_in->format('d/m') }} - {{ $booking->check_out->format('d/m/Y') }}</td>

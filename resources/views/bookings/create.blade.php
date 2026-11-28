@@ -4,8 +4,14 @@
     {{-- BANNER BIRU (senada dengan hero Beranda) --}}
     <div class="bg-gradient-to-br from-sky-500 via-sky-600 to-sky-700 pt-8 pb-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
-            <a href="{{ url()->previous() }}" class="text-xs font-bold text-sky-100 hover:text-white transition">
-                <i class="fa-solid fa-chevron-left mr-1"></i> {{ __('ui.back') }}
+            <a href="{{ route('hotels.show', [
+                    'hotel'     => $roomType->hotel,
+                    'check_in'  => $checkIn->toDateString(),
+                    'check_out' => $checkOut->toDateString(),
+                    'guests'    => $guests,
+                ]) }}"
+            class="inline-flex items-center gap-2 text-sm font-bold text-white hover:underline">
+                <i class="fa-solid fa-arrow-left"></i> {{ __('ui.back') }}
             </a>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-sm">{{ __('ui.order_summary') }}</h1>
         </div>

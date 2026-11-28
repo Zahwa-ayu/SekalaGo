@@ -45,7 +45,7 @@ class CarSearchController extends Controller
         return redirect()->route('cars.home', $request->query());
     }
 
-    public function show(Request $request, Vehicle $vehicle)
+     public function show(Request $request, Vehicle $vehicle)
     {
         abort_unless($vehicle->status === 'approved', 404);
 
@@ -84,15 +84,30 @@ class CarSearchController extends Controller
         $datesAreDefault = ! $hasDates;
 
         $backUrl = BackLink::toListing(
-    $request,
-    'cars.home',
-    $hasDates ? \Illuminate\Support\Arr::only($params, ['city', 'pickup_date', 'return_date', 'driver']) : []
-    );
+            $request,
+            'cars.home',
+            $hasDates ? \Illuminate\Support\Arr::only($params, ['city', 'pickup_date', 'return_date', 'driver']) : []
+        );
 
-    $reviews = \App\Models\Review::visible()->where('hotel_id', $vehicle->id)->latest()
-    ->paginate(5, ['*'], 'reviews')->withQueryString()->fragment('reviews');
+        $reviews = \App\Models\Review::visible()
+            ->where('vehicle_id', $vehicle->id)
+            ->latest()
+            ->paginate(5, ['*'], 'reviews')
+            ->withQueryString()
+            ->fragment('reviews');
 
-    return view('cars.show', compact('vehicle', 'params', 'days', 'available', 'freeUnits', 'passengers', 'driver', 'datesAreDefault', 'backUrl'));
+        return view('cars.show', compact(
+            'vehicle',
+            'params',
+            'days',
+            'available',
+            'freeUnits',
+            'passengers',
+            'driver',
+            'datesAreDefault',
+            'backUrl',
+            'reviews'
+        ));
     }
 
     /** Opsi supir yang berlaku: pilihan pengguna jika armada menawarkannya, kalau tidak yang tersedia. */

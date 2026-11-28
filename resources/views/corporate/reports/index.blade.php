@@ -79,7 +79,7 @@
 
         {{-- PER PRODUK --}}
         @if ($byProduct->isNotEmpty())
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 {{ $byProduct->count() > 1 ? 'sm:grid-cols-2' : '' }} gap-4">
                 @foreach ($byProduct as $row)
                     <div class="bg-white rounded-2xl border border-slate-100 shadow-md p-5 flex items-center gap-4">
                         <div class="w-12 h-12 rounded-xl bg-sky-100 text-sagara-blue flex items-center justify-center text-xl">

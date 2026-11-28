@@ -6,7 +6,7 @@
         $withSidebar = in_array($authUser->user_type, ['admin', 'partner'], true) || $authUser->companyUser?->isFinance();
     @endphp
 
-    <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 {{ $withSidebar ? 'py-8' : 'pt-28 pb-12' }} space-y-5">
+    <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 {{ $withSidebar ? 'py-8' : 'pt-8 pb-12' }} space-y-5">
         <div class="flex flex-wrap items-end justify-between gap-3">
             <div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.notifications') }}</h1>

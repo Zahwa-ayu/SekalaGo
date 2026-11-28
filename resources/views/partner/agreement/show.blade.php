@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.mou_title') }}</h1>
 
         @if (! $agreement)

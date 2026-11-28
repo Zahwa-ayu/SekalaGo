@@ -119,8 +119,9 @@
 
                                 {{-- AKSI --}}
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('admin.bookings.show', $booking) }}" class="block mb-2 text-xs font-bold text-sagara-blue hover:underline whitespace-nowrap">
-                                        {{ __('ui.view') }} <i class="fa-solid fa-chevron-right ml-1"></i>
+                                    <a href="{{ route('admin.bookings.show', $booking) }}"
+                                       class="px-3 py-1.5 text-xs font-bold border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white rounded-lg transition whitespace-nowrap">
+                                        {{ __('ui.review') }} <i class="fa-solid fa-chevron-right ml-1"></i>
                                     </a>
 
                                     @if ($booking->canBeCancelledByAdmin())

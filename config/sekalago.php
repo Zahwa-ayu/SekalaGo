@@ -14,6 +14,7 @@ return [
     // Jumlah minimal pengajuan top-up saldo perusahaan (IDR)
     'topup_minimum' => 100000,
     'per_page' => 15,
+    'per_page_options' => [15, 30, 50, 100],
     // Tampilkan tautan reset password di layar (hanya untuk demo tanpa server email)
     'show_reset_link' => env('SHOW_RESET_LINK', false),
 

@@ -1,114 +1,187 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <title>E-Ticket {{ $booking->booking_code }}</title>
+    <title>{{ __('ui.ticket_title') }} {{ $booking->booking_code }}</title>
     <style>
-        @page { margin: 40px 45px; }
-        body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #111; line-height: 1.5; }
-        .head { border-bottom: 2px solid #0a64a4; padding-bottom: 8px; margin-bottom: 14px; }
-        .brand { font-size: 20px; font-weight: bold; color: #0a64a4; }
-        .code { font-size: 22px; font-weight: bold; letter-spacing: 2px; border: 2px dashed #0a64a4; padding: 10px; text-align: center; margin: 12px 0; }
-        table.info { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        table.info td { border: 1px solid #ccc; padding: 6px 8px; vertical-align: top; }
-        table.info td.label { width: 34%; background: #f2f6fa; font-weight: bold; }
-        h2 { font-size: 12px; margin: 14px 0 4px; color: #0a64a4; }
-        .ok { color: #0a7a2f; font-weight: bold; }
-        .note { font-size: 9px; color: #555; margin-top: 16px; }
+        @page { margin: 28px 36px; }
+        body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #0f172a; line-height: 1.4; margin: 0; }
+
+        table { width: 100%; border-collapse: collapse; }
+        td { vertical-align: top; }
+
+        .head { background: #0284c7; color: #ffffff; }
+        .head td { padding: 16px 18px; vertical-align: middle; }
+        .brand { font-size: 20px; font-weight: bold; }
+        .subtitle { font-size: 9px; color: #e0f2fe; letter-spacing: 1px; }
+
+        .code-box { background: #f0f9ff; margin-bottom: 4px; }
+        .code-box td { padding: 12px 18px; vertical-align: middle; }
+        .code { font-size: 20px; font-weight: bold; color: #0369a1; letter-spacing: 2px; }
+        .status { display: inline-block; background: #d1fae5; color: #047857; font-size: 9px; font-weight: bold; padding: 5px 10px; border-radius: 10px; }
+
+        .small { font-size: 8px; color: #64748b; }
+        .right { text-align: right; }
+        .muted { color: #64748b; }
+
+        h2 { font-size: 11px; color: #0369a1; margin: 11px 0 4px; }
+
+        .info td { padding: 2px 0; }
+        .info td.label { width: 38%; color: #64748b; padding-right: 10px; }
+        .info td.value { font-weight: bold; }
+
+        .car-name { font-size: 15px; font-weight: bold; }
+
+        .dates td { width: 50%; background: #f8fafc; padding: 9px 14px; }
+        .dates td.gap { width: 8px; background: #ffffff; padding: 0; }
+        .date { font-size: 15px; font-weight: bold; }
+
+        .total { background: #f0f9ff; margin-bottom: 4px; }
+        .total td { padding: 9px 14px; vertical-align: middle; }
+        .amount { font-size: 17px; font-weight: bold; color: #0369a1; }
+
+        .note { background: #f8fafc; font-size: 8px; color: #64748b; padding: 9px 14px; margin-top: 12px; }
     </style>
 </head>
 <body>
-    <div class="head">
-        <span class="brand">{{ $platform }}</span><br>
-        E-TICKET / VOUCHER RENTAL MOBIL
-    </div>
-
-    <div class="code">{{ $booking->booking_code }}</div>
-    <p>Status: <span class="ok">TERKONFIRMASI / CONFIRMED</span></p>
-
-    <h2>Kendaraan / Vehicle</h2>
-    <table class="info">
-        <tr><td class="label">Mobil / Car</td><td>{{ $booking->hotel_name }}</td></tr>
-        <tr><td class="label">Opsi / Option</td><td>{{ $booking->with_driver ? 'Dengan supir / With driver' : 'Lepas kunci / Self-drive' }}</td></tr>
-        <tr><td class="label">Lokasi ambil &amp; kembali / Pick-up &amp; return</td><td>{{ $booking->pickup_location ?: '-' }}</td></tr>
+    {{-- HEADER --}}
+    <table class="head">
+        <tr>
+            <td class="brand">{{ $platform }}</td>
+            <td class="right subtitle">{{ __('ui.ticket_car_subtitle') }}</td>
+        </tr>
     </table>
 
-    <h2>Sewa / Rental</h2>
-    <table class="info">
-        <tr><td class="label">Tanggal ambil / Pick-up date</td><td>{{ $booking->check_in->format('d/m/Y') }}</td></tr>
-        <tr><td class="label">Batas kembali / Return by</td><td>{{ $booking->due_at ? $booking->due_at->format('d/m/Y H:i') : $booking->check_out->format('d/m/Y') }}</td></tr>
-        <tr><td class="label">Hari / Days</td><td>{{ $booking->nights }}</td></tr>
-        <tr><td class="label">Penumpang / Passengers</td><td>{{ $booking->guests }}</td></tr>
-        <tr><td class="label">Nama penyewa / Renter</td><td>{{ $booking->guest_name }}</td></tr>
-        <tr><td class="label">Jam ambil / Pick-up time</td><td>{{ $booking->arrival_time ? substr($booking->arrival_time, 0, 5) : '-' }}</td></tr>
-        @if ($booking->destination)<tr><td class="label">Tujuan / Destination</td><td>{{ $booking->destination }}</td></tr>@endif
-        <tr><td class="label">Kontak / Contact</td><td>{{ $booking->contact_phone ?: '-' }}</td></tr>
+    {{-- KODE PESANAN --}}
+    <table class="code-box">
+        <tr>
+            <td>
+                <div class="small">{{ __('ui.ticket_booking_code') }}</div>
+                <div class="code">{{ $booking->booking_code }}</div>
+            </td>
+            <td class="right">
+                <span class="status">{{ __('ui.ticket_confirmed') }}</span>
+            </td>
+        </tr>
     </table>
 
+    {{-- KENDARAAN --}}
+    <h2>{{ __('ui.ticket_vehicle') }}</h2>
+    <div class="car-name">{{ $booking->hotel_name }}</div>
+    <div>{{ $booking->with_driver ? __('ui.ticket_with_driver') : __('ui.ticket_self_drive') }}</div>
+    <div class="muted">{{ __('ui.ticket_pickup_location') }}: {{ $booking->pickup_location ?: '-' }}</div>
+
+    {{-- TANGGAL SEWA --}}
+    <h2>{{ __('ui.ticket_rental') }}</h2>
+    <table class="dates">
+        <tr>
+            <td>
+                <div class="small">{{ __('ui.ticket_pickup_date') }}</div>
+                <div class="date">{{ $booking->check_in->format('d/m/Y') }}</div>
+                <div class="muted">{{ __('ui.ticket_time') }}: {{ $booking->arrival_time ? substr($booking->arrival_time, 0, 5) : '-' }}</div>
+            </td>
+            <td class="gap"></td>
+            <td>
+                <div class="small">{{ __('ui.ticket_return_by') }}</div>
+                <div class="date">{{ $booking->due_at ? $booking->due_at->format('d/m/Y') : $booking->check_out->format('d/m/Y') }}</div>
+                @if ($booking->due_at)
+                    <div class="muted">{{ __('ui.ticket_time') }}: {{ $booking->due_at->format('H:i') }}</div>
+                @endif
+            </td>
+        </tr>
+    </table>
+
+    {{-- DATA PENYEWA --}}
+    <h2>{{ __('ui.ticket_renter') }}</h2>
+    <table class="info">
+        <tr><td class="label">{{ __('ui.ticket_renter_name') }}</td><td class="value">{{ $booking->guest_name }}</td></tr>
+        <tr><td class="label">{{ __('ui.ticket_contact') }}</td><td class="value">{{ $booking->contact_phone ?: '-' }}</td></tr>
+        <tr><td class="label">{{ __('ui.ticket_passengers') }}</td><td class="value">{{ $booking->guests }}</td></tr>
+        <tr><td class="label">{{ __('ui.ticket_days') }}</td><td class="value">{{ $booking->nights }}</td></tr>
+        @if ($booking->destination)
+            <tr><td class="label">{{ __('ui.ticket_destination') }}</td><td class="value">{{ $booking->destination }}</td></tr>
+        @endif
+    </table>
+
+    {{-- PERPANJANGAN --}}
     @if ($booking->extensions->isNotEmpty())
-        <h2>Perpanjangan / Extensions</h2>
+        <h2>{{ __('ui.ticket_extensions') }}</h2>
         <table class="info">
             @foreach ($booking->extensions as $extension)
                 <tr>
                     <td class="label">{{ $extension->created_at->format('d/m/Y') }}</td>
                     <td>
-                        +{{ $extension->days }} hari / day(s), sampai / until {{ $extension->new_check_out->format('d/m/Y') }}
-                        ({{ format_price($extension->amount, 'IDR') }})
+                        {{ __('ui.ticket_extension_line', [
+                            'days'   => $extension->days,
+                            'date'   => $extension->new_check_out->format('d/m/Y'),
+                            'amount' => format_price($extension->amount, 'IDR'),
+                        ]) }}
                     </td>
                 </tr>
             @endforeach
         </table>
     @endif
 
-    <h2>Pembayaran / Payment</h2>
+    {{-- PEMBAYARAN --}}
+    <h2>{{ __('ui.ticket_payment') }}</h2>
+    <table class="total">
+        <tr>
+            <td class="muted">{{ __('ui.ticket_rental_paid') }}</td>
+            <td class="right amount">{{ format_price($booking->total_price, 'IDR') }}</td>
+        </tr>
+    </table>
     <table class="info">
-        <tr><td class="label">Total sewa dibayar / Rental paid</td><td>{{ format_price($booking->total_price, 'IDR') }}</td></tr>
-        <tr><td class="label">Setara / Equivalent</td><td>{{ $booking->displayTotal() }}</td></tr>
-        <tr><td class="label">Referensi / Reference</td><td>{{ $booking->payment_reference }}</td></tr>
-        <tr><td class="label">Dibayar pada / Paid at</td><td>{{ $booking->paid_at?->format('d/m/Y H:i') }}</td></tr>
+        {{-- Hanya tampil bila berbeda dengan total IDR --}}
+        @if ($booking->displayTotal() !== format_price($booking->total_price, 'IDR'))
+            <tr><td class="label">{{ __('ui.ticket_equivalent') }}</td><td class="value">{{ $booking->displayTotal() }}</td></tr>
+        @endif
+        <tr><td class="label">{{ __('ui.ticket_reference') }}</td><td class="value">{{ $booking->payment_reference }}</td></tr>
+        <tr><td class="label">{{ __('ui.ticket_paid_at') }}</td><td class="value">{{ $booking->paid_at?->format('d/m/Y H:i') }}</td></tr>
     </table>
 
-    <h2>Biaya tambahan / Extra costs</h2>
+    {{-- BIAYA TAMBAHAN --}}
+    <h2>{{ __('ui.ticket_extra_costs') }}</h2>
     <table class="info">
         <tr>
-            <td class="label">Dibayar langsung ke vendor / Paid directly to vendor</td>
+            <td class="label">{{ __('ui.ticket_paid_to_vendor') }}</td>
             <td>
                 @if ($booking->with_driver && $booking->driver_fee_per_day !== null)
-                    Biaya supir sekitar {{ format_price($booking->driver_fee_per_day, 'IDR') }} per hari / Driver fee about {{ format_price($booking->driver_fee_per_day, 'IDR') }} per day.<br>
+                    {{ __('ui.ticket_driver_fee', ['amount' => format_price($booking->driver_fee_per_day, 'IDR')]) }}<br>
                 @endif
-                BBM, tol, dan parkir tidak termasuk total sewa. / Fuel, tolls and parking are not included in the rental total.
+                {{ __('ui.ticket_not_included') }}
             </td>
         </tr>
         <tr>
-            <td class="label">Keterlambatan / Late return</td>
+            <td class="label">{{ __('ui.ticket_late_return') }}</td>
             <td>
                 @if ($booking->late_fee_percent > 0)
-                    Terlambat lebih dari {{ $booking->late_grace_minutes }} menit dikenai denda {{ $booking->late_fee_percent }}% dari harga harian per jam (maksimal satu hari penuh per 24 jam), dibayar langsung ke vendor.<br>
-                    Returns more than {{ $booking->late_grace_minutes }} minutes late are charged {{ $booking->late_fee_percent }}% of the daily price per hour (up to one full day per 24 hours), paid directly to the vendor.
+                    {{ __('ui.ticket_late_policy', [
+                        'minutes' => $booking->late_grace_minutes,
+                        'percent' => $booking->late_fee_percent,
+                    ]) }}
                 @else
-                    Tidak ada denda keterlambatan. / No late fee applies.
+                    {{ __('ui.ticket_no_late_fee') }}
                 @endif
 
                 @if ($booking->returned_at && $booking->late_fee > 0)
-                    <br><strong>Denda tercatat / Late fee recorded: {{ format_price($booking->late_fee, 'IDR') }}</strong>
-                    (dibayar langsung ke vendor / paid directly to the vendor)
+                    <br><strong>{{ __('ui.ticket_late_recorded', ['amount' => format_price($booking->late_fee, 'IDR')]) }}</strong>
                 @endif
             </td>
         </tr>
     </table>
 
-    <h2>Pembatalan / Cancellation</h2>
+    {{-- PEMBATALAN --}}
+    <h2>{{ __('ui.ticket_cancellation') }}</h2>
     <table class="info">
         <tr>
-            <td class="label">Gratis sampai / Free until</td>
-            <td>{{ $booking->freeCancelDeadline()->format('d/m/Y') }}</td>
+            <td class="label">{{ __('ui.ticket_free_until') }}</td>
+            <td class="value">{{ $booking->freeCancelDeadline()->format('d/m/Y') }}</td>
         </tr>
     </table>
 
-    <p class="note">
-        Tunjukkan e-ticket ini dan identitas diri saat pengambilan. Untuk lepas kunci, bawa juga SIM yang masih berlaku.<br>
-        Please show this e-ticket and your ID at pick-up. For self-drive, also bring a valid driving licence.<br>
-        Dokumen simulasi untuk pengembangan aplikasi. / Simulated document for application development.
-    </p>
+    <div class="note">
+        {{ __('ui.ticket_car_show_note') }}<br>
+        {{ __('ui.ticket_simulation_note') }}
+    </div>
 </body>
 </html>

@@ -1,21 +1,22 @@
 @php
     $activeTab = $activeTab ?? ((old('pickup_date') || request('tab') === 'cars') ? 'cars' : 'hotels');
-    $tabBase   = 'inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition';
+    $tabBase   = 'inline-flex items-center gap-2 px-1 pb-3 -mb-px text-sm font-semibold border-b-2 transition focus:outline-none';
 @endphp
 
 <div id="search-widget" data-active="{{ $activeTab }}">
-    <div class="flex gap-2 mb-4" role="tablist">
+    {{-- Tab bergaya teks + garis bawah (fungsi tab tetap lewat data-tab) --}}
+    <div class="flex flex-wrap gap-x-8 gap-y-2 mb-5 border-b border-slate-200" role="tablist">
         <button type="button" role="tab" data-tab="hotels" class="{{ $tabBase }}">
-            <i class="fa-solid fa-hotel"></i> {{ __('ui.tab_hotels') }}
+            <i class="fa-solid fa-hotel"></i> Hotels &amp; Villa
         </button>
         <button type="button" role="tab" data-tab="cars" class="{{ $tabBase }}">
-            <i class="fa-solid fa-car"></i> {{ __('ui.tab_cars') }}
+            <i class="fa-solid fa-car"></i> Sewa Mobil / Car Rental
         </button>
     </div>
 
     {{-- Form hotel memakai $cities dan $params dari halaman --}}
     <div data-panel="hotels">
-        @include('partials.search-form', ['action' => route('home') . '#results', 'tab' => 'hotels'])
+        @include('partials.search-form', ['action' => ($hotelAction ?? (route('home') . '#results')), 'tab' => 'hotels'])
     </div>
 
     {{-- Form mobil memakai daftar kota dan parameter armada sendiri --}}
@@ -38,8 +39,8 @@
         const tabs    = widget.querySelectorAll('[data-tab]');
         const panels  = widget.querySelectorAll('[data-panel]');
         const results = document.querySelectorAll('[data-results-for]');
-        const onClasses  = ['bg-sagara-navy', 'text-white', 'shadow-md'];
-        const offClasses = ['bg-slate-100', 'text-slate-600', 'hover:bg-slate-200'];
+        const onClasses  = ['text-sagara-navy', 'border-sagara-navy'];
+        const offClasses = ['text-slate-500', 'border-transparent', 'hover:text-slate-700'];
 
         function show(name, updateUrl) {
             tabs.forEach(tab => {

@@ -8,6 +8,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
@@ -50,6 +51,10 @@ class AppServiceProvider extends ServiceProvider
                 });
         });
 
+                // @adminroute('admin.partners.index') ... @endadminroute: tampil hanya jika admin ini boleh membuka rute itu
+        Blade::if('adminroute', fn (string $name) => auth()->check()
+            && \App\Support\AdminAbilities::allowsRoute(auth()->user(), $name));
+
         // Email reset password dalam bahasa aplikasi
         ResetPassword::toMailUsing(function (object $notifiable, string $token) {
             $url = route('password.reset', [
@@ -78,5 +83,8 @@ class AppServiceProvider extends ServiceProvider
         // Satu tampilan pagination untuk seluruh aplikasi
         Paginator::defaultView('vendor.pagination.sekalago');
         Paginator::defaultSimpleView('vendor.pagination.sekalago-simple');
+
+        // @canmanage ... @endcanmanage: hanya tampil untuk admin yang boleh mengubah data (bukan Manager)
+        Blade::if('canmanage', fn () => auth()->check() && ! \App\Support\AdminAbilities::isViewOnly(auth()->user()));
     }
 }

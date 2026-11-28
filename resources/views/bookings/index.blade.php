@@ -7,7 +7,8 @@
             <h1 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-sm">{{ __('ui.my_bookings') }}</h1>
 
             {{-- Tautan ke daftar laporan kendala (putih karena latarnya biru; text-sky-600 tidak terbaca di sini) --}}
-            <a href="{{ route('issues.index') }}" class="text-sm font-bold text-white/90 hover:text-white hover:underline">
+            <a href="{{ route('issues.index') }}"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-sky-700 text-sm font-bold shadow-lg hover:bg-sky-50 transition">
                 <i class="fa-solid fa-life-ring"></i> {{ __('ui.issue_my_reports') }}
             </a>
         </div>

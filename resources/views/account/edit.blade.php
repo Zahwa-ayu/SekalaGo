@@ -9,6 +9,12 @@
         $card  = 'bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8';
     @endphp
 
+    <div>
+        <a href="{{ route('account.settings') }}" class="inline-flex items-center gap-2 text-sm font-bold text-sky-600 hover:underline">
+            <i class="fa-solid fa-arrow-left"></i> {{ __('ui.back') }}
+        </a>
+    </div>
+
     {{-- EDIT AKUN --}}
     <form method="POST" action="{{ route('account.update') }}" class="{{ $card }} space-y-6">
         @csrf

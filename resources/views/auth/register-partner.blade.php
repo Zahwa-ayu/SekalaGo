@@ -498,15 +498,7 @@
                     </div>
 
                 {{-- Bantuan --}}
-                <div class="p-4 rounded-2xl bg-black/30 backdrop-blur-md border border-white/15 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-circle-info text-sky-300 text-base"></i>
-                        <span class="text-xs font-semibold text-white/90">Butuh bantuan pendaftaran?</span>
-                    </div>
-                    <a href="https://wa.me/" target="_blank" class="text-xs font-extrabold text-sky-300 hover:text-sky-200 hover:underline flex items-center gap-1">
-                        Hubungi Kami <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </a>
-                </div>
+                @include('partials.register-help')
 
             </div>
         </section>

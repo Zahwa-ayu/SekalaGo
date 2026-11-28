@@ -47,7 +47,8 @@
                                     <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-slate-100 text-slate-600">{{ $company->company_users_count }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-xs font-bold">
-                                    <a href="{{ route('admin.companies.show', $company) }}" class="text-sagara-blue hover:underline">
+                                    <a href="{{ route('admin.companies.show', $company) }}"
+                                       class="px-3 py-1.5 text-xs font-bold border border-sagara-blue text-sagara-blue hover:bg-sagara-blue hover:text-white rounded-lg transition whitespace-nowrap">
                                         {{ __('ui.review') }} <i class="fa-solid fa-chevron-right ml-1"></i>
                                     </a>
                                 </td>

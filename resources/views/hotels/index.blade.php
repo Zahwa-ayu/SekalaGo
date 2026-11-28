@@ -21,17 +21,17 @@
         ];
     @endphp
 
-    {{-- HERO: foto latar penuh + form pencarian di dalamnya (sama seperti beranda) --}}
-    <section class="relative bg-slate-900 text-white min-h-[520px] pt-24 pb-14 px-4 sm:px-6 lg:px-8 flex flex-col justify-between overflow-hidden">
+    {{-- HERO: foto latar penuh + form pencarian di dalamnya (tampilan sama seperti beranda) --}}
+    <section class="relative bg-slate-900 text-white min-h-[600px] pt-24 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-start overflow-hidden">
         <div class="absolute inset-0 z-0">
-        <img src="{{ \App\Models\SiteBanner::urlFor('hotels') }}"
-            onerror="this.onerror=null;this.src='{{ \App\Models\SiteBanner::defaultUrl('hotels') }}'"
-            alt="" class="w-full h-full object-cover object-center scale-105">
+            <img src="{{ \App\Models\SiteBanner::urlFor('hotels') }}"
+                onerror="this.onerror=null;this.src='{{ \App\Models\SiteBanner::defaultUrl('hotels') }}'"
+                alt="" class="w-full h-full object-cover object-center scale-105">
             <div class="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/40 to-slate-950/75"></div>
         </div>
 
-        <div class="max-w-7xl mx-auto relative z-10 text-center pt-4 mb-8">
-            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight max-w-3xl mx-auto text-white drop-shadow-md">
+        <div class="max-w-7xl mx-auto relative z-10 text-center pt-14 mb-12">
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight max-w-4xl mx-auto text-white drop-shadow-md" style="text-wrap: balance;">
                 {{ __('ui.hotel_page_title') }}
             </h1>
         </div>

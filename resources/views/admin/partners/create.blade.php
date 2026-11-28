@@ -2,9 +2,10 @@
 
 @section('content')
     @php
-        $input = 'w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30 focus:border-sky-500';
+        $card  = 'bg-white rounded-3xl border border-slate-100 shadow-md p-6';
+        $input = 'w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue';
         $label = 'block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1';
-        $file  = 'block w-full text-sm text-slate-600 file:mr-3 file:px-4 file:py-2.5 file:rounded-xl file:border-0 file:bg-sky-50 file:text-sky-700 file:font-bold hover:file:bg-sky-100';
+        $file  = 'block w-full text-sm text-slate-600 file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-slate-100 file:text-slate-700 file:font-bold hover:file:bg-slate-200';
 
         // Kolom per bagian: dipakai skrip validasi di bawah
         $formFields = [
@@ -21,182 +22,202 @@
         .field-error select { border-color: #f87171 !important; background-color: #fef2f2 !important; }
     </style>
 
-    <section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        <a href="{{ route('admin.partners.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
+            <i class="fa-solid fa-arrow-left"></i> {{ __('ui.verify_partners') }}
+        </a>
+
         <div>
-            <a href="{{ route('admin.partners.index') }}" class="text-xs font-bold text-sky-600 hover:underline"><i class="fa-solid fa-chevron-left mr-1"></i> {{ __('ui.verify_partners') }}</a>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">{{ __('ui.partner_add') }}</h1>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ __('ui.partner_add') }}</h1>
             <p class="text-sm text-slate-500 mt-1">{{ __('ui.partner_add_hint') }}</p>
         </div>
 
-        @if ($errors->any())
-            <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">
-                @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
-            </ul>
-        @endif
-
         {{-- novalidate: pengecekan dikerjakan skrip di bawah, dengan pesan di bawah tiap kolom --}}
-        <form id="partner-form" method="POST" action="{{ route('admin.partners.store') }}" enctype="multipart/form-data" novalidate
-              class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8 space-y-8">
+        <form id="partner-form" method="POST" action="{{ route('admin.partners.store') }}" enctype="multipart/form-data" novalidate class="space-y-6">
             @csrf
 
-            {{-- DATA USAHA --}}
-            <div class="space-y-4">
-                <h2 class="font-extrabold text-slate-900">{{ __('ui.partner_business_data') }}</h2>
+            @if ($errors->any())
+                <ul class="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs list-disc list-inside">
+                    @foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+                </ul>
+            @endif
 
-                <div class="grid sm:grid-cols-3 gap-4">
-                    <div data-box class="sm:col-span-2">
-                        <label class="{{ $label }}">{{ __('ui.company_name_legal') }}</label>
-                        <input name="company_name" required maxlength="255" value="{{ old('company_name') }}" class="{{ $input }}">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.legal_form') }}</label>
-                        <select name="legal_form" required class="{{ $input }}">
-                            <option value="">-</option>
-                            @foreach ($legalForms as $form)
-                                <option value="{{ $form }}" @selected(old('legal_form') === $form)>{{ $form }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
+            <div class="grid lg:grid-cols-3 gap-6 items-start">
+                {{-- KOLOM KIRI: ISIAN --}}
+                <div class="lg:col-span-2 space-y-6">
 
-                <div>
-                    <label class="{{ $label }}">{{ __('ui.business_type') }}</label>
-                    <div data-box class="rounded-xl">
-                        <div class="grid sm:grid-cols-3 gap-2">
-                            @foreach ($businessTypes as $type)
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="business_type" value="{{ $type }}" required class="peer sr-only" @checked(old('business_type') === $type)>
-                                    <span class="block text-center px-4 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 peer-checked:border-sky-500 peer-checked:bg-sky-50 peer-checked:text-sky-600 hover:bg-slate-50 transition">{{ __('ui.business_type_' . $type) }}</span>
-                                </label>
-                            @endforeach
+                    {{-- DATA USAHA --}}
+                    <div class="{{ $card }} space-y-4">
+                        <h2 class="font-extrabold text-slate-900">{{ __('ui.partner_business_data') }}</h2>
+
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div data-box class="sm:col-span-2">
+                                <label class="{{ $label }}">{{ __('ui.company_name_legal') }}</label>
+                                <input name="company_name" required maxlength="255" value="{{ old('company_name') }}" class="{{ $input }}">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.legal_form') }}</label>
+                                <select name="legal_form" required class="{{ $input }}">
+                                    <option value="">-</option>
+                                    @foreach ($legalForms as $form)
+                                        <option value="{{ $form }}" @selected(old('legal_form') === $form)>{{ $form }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="{{ $label }}">{{ __('ui.business_type') }}</label>
+                            <div data-box class="rounded-xl">
+                                <div class="grid sm:grid-cols-3 gap-2">
+                                    @foreach ($businessTypes as $type)
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="business_type" value="{{ $type }}" required class="peer sr-only" @checked(old('business_type') === $type)>
+                                            <span class="block text-center px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 peer-checked:border-sagara-blue peer-checked:bg-slate-50 peer-checked:text-sagara-blue hover:bg-slate-50 transition">{{ __('ui.business_type_' . $type) }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.tax_id') }}</label>
+                                <input name="tax_id" required inputmode="numeric" maxlength="25" value="{{ old('tax_id') }}" placeholder="00.000.000.0-000.000" class="{{ $input }} font-mono">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.business_license_no') }}</label>
+                                <input name="business_license_no" required maxlength="30" value="{{ old('business_license_no') }}" class="{{ $input }} font-mono">
+                            </div>
+                        </div>
+
+                        <div data-box>
+                            <label class="{{ $label }}">{{ __('ui.company_address') }}</label>
+                            <input name="address" required maxlength="255" value="{{ old('address') }}" class="{{ $input }}">
+                        </div>
+
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.city_name') }}</label>
+                                <select name="city_id" required class="{{ $input }}">
+                                    <option value="">{{ __('ui.choose_city') }}</option>
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}" @selected((int) old('city_id') === $city->id)>{{ $city->name }}@if ($city->province), {{ $city->province }}@endif</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.company_phone') }}</label>
+                                <input name="phone" required inputmode="tel" maxlength="20" value="{{ old('phone') }}" class="{{ $input }}">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.website') }}</label>
+                                <input type="url" name="website" maxlength="255" value="{{ old('website') }}" placeholder="https://" class="{{ $input }}">
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="grid sm:grid-cols-2 gap-4">
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.tax_id') }}</label>
-                        <input name="tax_id" required inputmode="numeric" maxlength="25" value="{{ old('tax_id') }}" placeholder="00.000.000.0-000.000" class="{{ $input }} font-mono">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.business_license_no') }}</label>
-                        <input name="business_license_no" required maxlength="30" value="{{ old('business_license_no') }}" class="{{ $input }} font-mono">
-                    </div>
-                </div>
-
-                <div data-box>
-                    <label class="{{ $label }}">{{ __('ui.company_address') }}</label>
-                    <input name="address" required maxlength="255" value="{{ old('address') }}" class="{{ $input }}">
-                </div>
-
-                <div class="grid sm:grid-cols-3 gap-4">
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.city_name') }}</label>
-                        <select name="city_id" required class="{{ $input }}">
-                            <option value="">{{ __('ui.choose_city') }}</option>
-                            @foreach ($cities as $city)
-                                <option value="{{ $city->id }}" @selected((int) old('city_id') === $city->id)>{{ $city->name }}@if ($city->province), {{ $city->province }}@endif</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.company_phone') }}</label>
-                        <input name="phone" required inputmode="tel" maxlength="20" value="{{ old('phone') }}" class="{{ $input }}">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.website') }}</label>
-                        <input type="url" name="website" maxlength="255" value="{{ old('website') }}" placeholder="https://" class="{{ $input }}">
-                    </div>
-                </div>
-            </div>
-
-            {{-- DOKUMEN (OPSIONAL) --}}
-            <div class="space-y-3">
-                <div>
-                    <h2 class="font-extrabold text-slate-900">{{ __('ui.corporate_documents') }} <span class="text-xs font-semibold text-slate-400">({{ __('ui.optional') }})</span></h2>
-                    <p class="text-xs text-slate-500">{{ __('ui.partner_add_documents_hint') }}</p>
-                </div>
-
-                <div class="grid sm:grid-cols-3 gap-4">
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.tax_document') }}</label>
-                        <input type="file" name="tax_document" accept=".pdf,image/jpeg,image/png,image/webp" class="{{ $file }}">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.license_document') }}</label>
-                        <input type="file" name="license_document" accept=".pdf,image/jpeg,image/png,image/webp" class="{{ $file }}">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.supporting_document') }}</label>
-                        <input type="file" name="supporting_document" accept=".pdf,image/jpeg,image/png,image/webp" class="{{ $file }}">
-                    </div>
-                </div>
-
-                @if ($errors->any())
-                    <p class="text-[11px] text-amber-600"><i class="fa-solid fa-triangle-exclamation"></i> Setelah halaman dimuat ulang, file perlu dipilih kembali.</p>
-                @endif
-            </div>
-
-            {{-- PENANGGUNG JAWAB DAN AKUN --}}
-            <div class="space-y-4">
-                <h2 class="font-extrabold text-slate-900">{{ __('ui.partner_contact_account') }}</h2>
-
-                <div class="grid sm:grid-cols-2 gap-4">
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.contact_person') }}</label>
-                        <input name="contact_name" required maxlength="255" value="{{ old('contact_name') }}" class="{{ $input }}">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.contact_phone') }}</label>
-                        <input name="phone_number" required inputmode="tel" maxlength="20" value="{{ old('phone_number') }}" class="{{ $input }}">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.email') }}</label>
-                        <input type="email" name="email" required maxlength="255" value="{{ old('email') }}" class="{{ $input }}">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.partner_temp_password') }}</label>
-                        <div class="flex gap-2">
-                            <input name="password" id="tempPassword" required minlength="8" maxlength="100" value="{{ old('password') }}" autocomplete="off" class="{{ $input }} font-mono">
-                            <button type="button" onclick="generatePassword()" class="px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold whitespace-nowrap transition">{{ __('ui.generate_password') }}</button>
+                    {{-- DOKUMEN (OPSIONAL) --}}
+                    <div class="{{ $card }} space-y-4">
+                        <div>
+                            <h2 class="font-extrabold text-slate-900">
+                                {{ __('ui.corporate_documents') }}
+                                <span class="ml-1 text-[11px] font-bold text-slate-400">{{ __('ui.optional') }}</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-1">{{ __('ui.partner_add_documents_hint') }}</p>
                         </div>
-                        <p class="text-[11px] text-slate-400 mt-1">{{ __('ui.partner_temp_password_hint') }}</p>
+
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.tax_document') }}</label>
+                                <input type="file" name="tax_document" accept=".pdf,image/jpeg,image/png,image/webp" class="{{ $file }}">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.license_document') }}</label>
+                                <input type="file" name="license_document" accept=".pdf,image/jpeg,image/png,image/webp" class="{{ $file }}">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.supporting_document') }}</label>
+                                <input type="file" name="supporting_document" accept=".pdf,image/jpeg,image/png,image/webp" class="{{ $file }}">
+                            </div>
+                        </div>
+
+                        @if ($errors->any())
+                            <p class="text-[11px] text-amber-600"><i class="fa-solid fa-triangle-exclamation"></i> Setelah halaman dimuat ulang, file perlu dipilih kembali.</p>
+                        @endif
+                    </div>
+
+                    {{-- PENANGGUNG JAWAB DAN AKUN --}}
+                    <div class="{{ $card }} space-y-4">
+                        <h2 class="font-extrabold text-slate-900">{{ __('ui.partner_contact_account') }}</h2>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.contact_person') }}</label>
+                                <input name="contact_name" required maxlength="255" value="{{ old('contact_name') }}" class="{{ $input }}">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.contact_phone') }}</label>
+                                <input name="phone_number" required inputmode="tel" maxlength="20" value="{{ old('phone_number') }}" class="{{ $input }}">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.email') }}</label>
+                                <input type="email" name="email" required maxlength="255" value="{{ old('email') }}" class="{{ $input }}">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.partner_temp_password') }}</label>
+                                <div class="flex gap-2">
+                                    <input name="password" id="tempPassword" required minlength="8" maxlength="100" value="{{ old('password') }}" autocomplete="off" class="{{ $input }} font-mono">
+                                    <button type="button" onclick="generatePassword()" class="px-3 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-bold whitespace-nowrap transition">{{ __('ui.generate_password') }}</button>
+                                </div>
+                                <p class="text-[11px] text-slate-400 mt-1">{{ __('ui.partner_temp_password_hint') }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- REKENING (OPSIONAL) --}}
+                    <div class="{{ $card }} space-y-4">
+                        <div>
+                            <h2 class="font-extrabold text-slate-900">
+                                {{ __('ui.payout_bank_account') }}
+                                <span class="ml-1 text-[11px] font-bold text-slate-400">{{ __('ui.optional') }}</span>
+                            </h2>
+                            <p class="text-xs text-slate-500 mt-1">{{ __('ui.bank_account_hint') }}</p>
+                        </div>
+
+                        <div class="grid sm:grid-cols-3 gap-4">
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.bank_name') }}</label>
+                                <input name="bank_name" list="bank-list" maxlength="60" value="{{ old('bank_name') }}" class="{{ $input }}">
+                                <datalist id="bank-list">@foreach (config('sekalago.banks') as $bank)<option value="{{ $bank }}"></option>@endforeach</datalist>
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.bank_account_no') }}</label>
+                                <input name="bank_account_no" inputmode="numeric" maxlength="50" value="{{ old('bank_account_no') }}" class="{{ $input }} font-mono">
+                            </div>
+                            <div data-box>
+                                <label class="{{ $label }}">{{ __('ui.bank_account_name') }}</label>
+                                <input name="bank_account_name" maxlength="100" value="{{ old('bank_account_name') }}" class="{{ $input }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- AKSI --}}
+                    <div class="flex flex-wrap gap-3">
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition">
+                            <i class="fa-solid fa-check"></i> {{ __('ui.partner_add') }}
+                        </button>
+                        <a href="{{ route('admin.partners.index') }}" class="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-bold transition">
+                            {{ __('ui.cancel') }}
+                        </a>
                     </div>
                 </div>
-            </div>
 
-            {{-- REKENING (OPSIONAL) --}}
-            <div class="space-y-3">
-                <div>
-                    <h2 class="font-extrabold text-slate-900">{{ __('ui.payout_bank_account') }} <span class="text-xs font-semibold text-slate-400">({{ __('ui.optional') }})</span></h2>
-                    <p class="text-xs text-slate-500">{{ __('ui.bank_account_hint') }}</p>
+                {{-- KOLOM KANAN: LANGKAH BERIKUTNYA --}}
+                <div class="{{ $card }} space-y-2 text-xs text-slate-600 lg:sticky lg:top-24">
+                    <div class="font-extrabold text-slate-900 text-sm"><i class="fa-solid fa-circle-info text-sagara-blue"></i> {{ __('ui.partner_add_next_title') }}</div>
+                    <p>{{ __('ui.partner_add_next_steps') }}</p>
                 </div>
-
-                <div class="grid sm:grid-cols-3 gap-4">
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.bank_name') }}</label>
-                        <input name="bank_name" list="bank-list" maxlength="60" value="{{ old('bank_name') }}" class="{{ $input }}">
-                        <datalist id="bank-list">@foreach (config('sekalago.banks') as $bank)<option value="{{ $bank }}"></option>@endforeach</datalist>
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.bank_account_no') }}</label>
-                        <input name="bank_account_no" inputmode="numeric" maxlength="50" value="{{ old('bank_account_no') }}" class="{{ $input }} font-mono">
-                    </div>
-                    <div data-box>
-                        <label class="{{ $label }}">{{ __('ui.bank_account_name') }}</label>
-                        <input name="bank_account_name" maxlength="100" value="{{ old('bank_account_name') }}" class="{{ $input }}">
-                    </div>
-                </div>
-            </div>
-
-            <div class="rounded-2xl bg-sky-50 border border-sky-100 px-5 py-4 text-xs text-sky-900 space-y-1">
-                <div class="font-extrabold"><i class="fa-solid fa-circle-info"></i> {{ __('ui.partner_add_next_title') }}</div>
-                <p>{{ __('ui.partner_add_next_steps') }}</p>
-            </div>
-
-            <div class="flex flex-wrap gap-3">
-                <button type="submit" class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold shadow-md shadow-sky-500/20 transition">{{ __('ui.partner_add') }}</button>
-                <a href="{{ route('admin.partners.index') }}" class="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-bold transition">{{ __('ui.cancel') }}</a>
             </div>
         </form>
     </section>
@@ -324,7 +345,7 @@
                 box.classList.remove('field-error');
             }
 
-            // Pesan hilang begitu kolomnya diperbaiki; rekening saling terkait, jadi ketiganya diperiksa ulang
+            // Pesan hilang begitu kolomnya diperbaiki
             form.addEventListener('input',  (event) => clearError(event.target));
             form.addEventListener('change', (event) => clearError(event.target));
 

@@ -14,8 +14,8 @@
     {{-- BANNER BIRU (senada dengan hero Beranda dan halaman pesanan hotel) --}}
     <div class="bg-gradient-to-br from-sky-500 via-sky-600 to-sky-700 pt-8 pb-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
-            <a href="{{ $backUrl }}" class="text-xs font-bold text-sky-100 hover:text-white transition">
-                <i class="fa-solid fa-chevron-left mr-1"></i> {{ $vehicle->name }}
+            <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 text-sm font-bold text-white hover:underline">
+                <i class="fa-solid fa-arrow-left"></i> {{ $vehicle->name }}
             </a>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-white drop-shadow-sm">{{ __('ui.confirm_car_booking') }}</h1>
         </div>

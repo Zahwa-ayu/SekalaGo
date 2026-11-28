@@ -20,20 +20,28 @@ class AdminAbilities
         self::FINANCE => ['analytics', 'bookings', 'companies', 'finance'],
     ];
 
-    /** Peran hanya lihat: halaman dengan kemampuan ini boleh dibuka (GET), tanpa pernah mengubah data. */
-    private const VIEW_ONLY = [
-        self::MANAGER => ['analytics', 'operations', 'bookings', 'companies', 'finance', 'system'],
-    ];
-
-    /** Halaman yang tidak dibuka untuk peran hanya lihat walau kemampuannya cocok: Master Data dan CMS. */
-    private const VIEW_ONLY_HIDDEN = [
-        'admin.cities.*', 'admin.facilities.*', 'admin.currencies.*', 'admin.bank-accounts.*',
-        'admin.social-media.*', 'admin.faqs.*', 'admin.banners.*', 'admin.pages.*',
+    /**
+     * Peran hanya lihat: daftar halaman yang boleh dibuka (hanya GET, tidak pernah mengubah data).
+     * Mau menambah atau mengurangi akses Manager? Ubah daftar ini saja. Contoh yang bisa ditambahkan:
+     *   'admin.payments.*', 'admin.payouts.*', 'admin.topups.*'   (keuangan)
+     *   'admin.activity.*'                                         (log aktivitas)
+     *   'admin.partners.*', 'admin.hotels.*', 'admin.vehicles.*'   (mitra dan produk)
+     */
+    private const VIEW_ONLY_PAGES = [
+        self::MANAGER => [
+            'admin.dashboard',
+            'admin.analytics.*',
+            'admin.bookings.*',
+            'admin.companies.index',
+            'admin.companies.show',
+            'admin.reviews.*',
+            'admin.issues.*',
+        ],
     ];
 
     /**
-     * Kemampuan yang dibutuhkan tiap rute admin. Pola yang cocok lebih dulu menang, jadi yang spesifik ditulis di atas.
-     * 'any' = semua admin. Rute admin yang tidak terdaftar di sini hanya bisa dibuka super admin.
+     * Kemampuan yang dibutuhkan tiap rute admin (untuk peran yang bisa mengubah data).
+     * Pola yang cocok lebih dulu menang. 'any' = semua admin. Rute yang tidak terdaftar hanya untuk super admin.
      */
     private const ROUTES = [
         'admin.dashboard'        => 'any',
@@ -79,7 +87,7 @@ class AdminAbilities
 
     public static function isViewOnly(User $user): bool
     {
-        return $user->user_type === 'admin' && isset(self::VIEW_ONLY[self::roleOf($user)]);
+        return $user->user_type === 'admin' && isset(self::VIEW_ONLY_PAGES[self::roleOf($user)]);
     }
 
     /** Hak mengubah data. Peran hanya lihat tidak pernah punya. */
@@ -105,6 +113,14 @@ class AdminAbilities
             return false;
         }
 
+        $role = self::roleOf($user);
+
+        // Peran hanya lihat: hanya membaca, dan hanya halaman yang ada di daftarnya
+        if (isset(self::VIEW_ONLY_PAGES[$role])) {
+            return in_array(strtoupper($method), ['GET', 'HEAD'], true)
+                && Str::is(self::VIEW_ONLY_PAGES[$role], $routeName);
+        }
+
         $ability = null;
 
         foreach (self::ROUTES as $pattern => $needed) {
@@ -112,23 +128,6 @@ class AdminAbilities
                 $ability = $needed;
                 break;
             }
-        }
-
-        $role = self::roleOf($user);
-
-        // Peran hanya lihat: hanya membaca (GET atau HEAD), tidak pernah mengubah data, dan tidak membuka Master Data dan CMS
-        if (isset(self::VIEW_ONLY[$role])) {
-            if (! in_array(strtoupper($method), ['GET', 'HEAD'], true)) {
-                return false;
-            }
-
-            foreach (self::VIEW_ONLY_HIDDEN as $pattern) {
-                if (Str::is($pattern, $routeName)) {
-                    return false;
-                }
-            }
-
-            return $ability === 'any' || ($ability !== null && in_array($ability, self::VIEW_ONLY[$role], true));
         }
 
         return match (true) {

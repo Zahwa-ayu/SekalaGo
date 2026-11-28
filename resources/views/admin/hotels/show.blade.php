@@ -232,30 +232,32 @@
             {{-- ============ KOLOM SAMPING ============ --}}
             <div class="space-y-6 lg:sticky lg:top-24">
 
-                {{-- KEPUTUSAN --}}
-                <div class="{{ $card }}">
-                    <h2 class="{{ $title }}">{{ __('ui.decision') }}</h2>
+                {{-- KEPUTUSAN: disembunyikan seluruhnya untuk peran hanya-lihat (Manager) --}}
+                @canmanage
+                    <div class="{{ $card }}">
+                        <h2 class="{{ $title }}">{{ __('ui.decision') }}</h2>
 
-                    @if ($hotel->status !== 'approved')
-                        <form method="POST" action="{{ route('admin.hotels.approve', $hotel) }}">
-                            @csrf
-                            <button class="w-full px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md transition">
-                                <i class="fa-solid fa-circle-check mr-1"></i> {{ __('ui.approve') }}
-                            </button>
-                        </form>
-                    @endif
+                        @if ($hotel->status !== 'approved')
+                            <form method="POST" action="{{ route('admin.hotels.approve', $hotel) }}">
+                                @csrf
+                                <button class="w-full px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold shadow-md transition">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> {{ __('ui.approve') }}
+                                </button>
+                            </form>
+                        @endif
 
-                    @if ($hotel->status !== 'rejected')
-                        <form method="POST" action="{{ route('admin.hotels.reject', $hotel) }}" class="space-y-2">
-                            @csrf
-                            <textarea name="rejection_reason" rows="3" maxlength="500" required placeholder="{{ __('ui.rejection_reason_label') }}"
-                                      class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">{{ old('rejection_reason') }}</textarea>
-                            <button class="w-full px-5 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">
-                                <i class="fa-solid fa-ban mr-1"></i> {{ __('ui.reject') }}
-                            </button>
-                        </form>
-                    @endif
-                </div>
+                        @if ($hotel->status !== 'rejected')
+                            <form method="POST" action="{{ route('admin.hotels.reject', $hotel) }}" class="space-y-2">
+                                @csrf
+                                <textarea name="rejection_reason" rows="3" maxlength="500" required placeholder="{{ __('ui.rejection_reason_label') }}"
+                                          class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/30">{{ old('rejection_reason') }}</textarea>
+                                <button class="w-full px-5 py-2.5 rounded-xl bg-white border border-red-200 text-red-600 hover:bg-red-50 text-sm font-bold transition">
+                                    <i class="fa-solid fa-ban mr-1"></i> {{ __('ui.reject') }}
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                @endcanmanage
 
                 {{-- KELENGKAPAN --}}
                 <div class="{{ $card }}">

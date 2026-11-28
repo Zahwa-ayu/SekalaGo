@@ -142,19 +142,36 @@ class DashboardMenu
         $hotels = $partner->offersHotels();
         $cars   = $partner->offersCars();
 
+        // Judul kelompok yang tidak punya menu di bawahnya otomatis dibuang oleh filter()
         return array_values(array_filter([
+            // Ringkasan (tanpa judul, selalu paling atas)
             ['fa-gauge', 'ui.dashboard', 'partner.dashboard', ['partner.dashboard']],
-            $hotels ? ['fa-hotel', 'ui.my_hotels', 'partner.hotels.index', ['partner.hotels.*', 'partner.room-types.*']] : null,
+
+            // Pekerjaan harian mitra
+            ['section' => 'ui.menu_bookings'],
             ['fa-receipt', 'ui.incoming_bookings', 'partner.bookings.index', ['partner.bookings.*']],
             $hotels ? ['fa-bell-concierge', 'ui.guests_page', 'partner.stays.index', ['partner.stays.*']] : null,
-            $cars ? ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']] : null,
             $cars ? ['fa-car-on', 'ui.rentals', 'partner.rentals.index', ['partner.rentals.*']] : null,
+
+            // Yang disewakan
+            ['section' => 'ui.menu_products'],
+            $hotels ? ['fa-hotel', 'ui.my_hotels', 'partner.hotels.index', ['partner.hotels.*', 'partner.room-types.*']] : null,
+            $cars ? ['fa-car', 'ui.my_vehicles', 'partner.vehicles.index', ['partner.vehicles.*', 'partner.blackouts.*']] : null,
+
+            // Uang
+            ['section' => 'ui.menu_finance'],
             ['fa-wallet', 'ui.payouts', 'partner.payouts.index', ['partner.payouts.*']],
             ['fa-chart-column', 'ui.partner_reports', 'partner.reports.index', ['partner.reports.*']],
+
+            // Masukan dan kendala
+            ['section' => 'ui.menu_feedback'],
             ['fa-star', 'ui.reviews', 'partner.reviews.index', ['partner.reviews.*']],
             ['fa-life-ring', 'ui.issue_reports', 'partner.issues.index', ['partner.issues.*']],
-            ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
+
+            // Akun dan legalitas
+            ['section' => 'ui.menu_account'],
             ['fa-id-card', 'ui.partner_profile', 'partner.profile.edit', ['partner.profile.*']],
+            ['fa-file-signature', 'ui.mou_menu', 'partner.agreement.show', ['partner.agreement.*']],
             self::ACCOUNT_SETTINGS,
         ]));
     }

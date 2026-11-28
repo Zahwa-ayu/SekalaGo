@@ -2,12 +2,11 @@
 
 @section('content')
     @php
-        $box = 'bg-slate-50 p-3 rounded-2xl border border-slate-200 focus-within:border-sagara-blue transition';
         $label = 'block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1';
-        $input = 'w-full bg-transparent font-semibold text-slate-800 text-sm focus:outline-none';
+        $input = 'w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sagara-blue';
     @endphp
 
-    <section class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         <a href="{{ route('corporate.positions.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-sagara-blue hover:text-sagara-navy transition">
             <i class="fa-solid fa-arrow-left"></i> {{ __('ui.positions_limits') }}
         </a>
@@ -22,37 +21,40 @@
             </ul>
         @endif
 
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6 sm:p-8">
-            <form method="POST" action="{{ route('corporate.positions.update', $position) }}" class="space-y-4">
-                @csrf
-                @method('PUT')
+        <form method="POST" action="{{ route('corporate.positions.update', $position) }}" class="space-y-6">
+            @csrf
+            @method('PUT')
 
-                <div class="{{ $box }}">
-                    <label class="{{ $label }}"><i class="fa-solid fa-id-badge text-sagara-blue"></i> {{ __('ui.position_name') }}</label>
-                    <input name="name" value="{{ old('name', $position->name) }}" required class="{{ $input }}">
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-md p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+                    <div>
+                        <label for="name" class="{{ $label }}">{{ __('ui.position_name') }}</label>
+                        <input id="name" name="name" value="{{ old('name', $position->name) }}" required class="{{ $input }}">
+                    </div>
+
+                    <div>
+                        <label for="booking_limit" class="{{ $label }}">{{ __('ui.booking_limit') }}</label>
+                        <input id="booking_limit" type="number" name="booking_limit" min="0" required class="{{ $input }}"
+                               value="{{ old('booking_limit', $position->booking_limit) }}">
+                    </div>
+
+                    <div>
+                        <label for="monthly_budget" class="{{ $label }}">{{ __('ui.monthly_budget') }}</label>
+                        <input id="monthly_budget" type="number" name="monthly_budget" min="0" class="{{ $input }}"
+                               value="{{ old('monthly_budget', $position->monthly_budget) }}">
+                        <p class="text-[11px] text-slate-400 mt-1">{{ __('ui.monthly_budget_hint') }}</p>
+                    </div>
                 </div>
+            </div>
 
-                <div class="{{ $box }}">
-                    <label class="{{ $label }}"><i class="fa-solid fa-coins text-sagara-blue"></i> {{ __('ui.booking_limit') }}</label>
-                    <input type="number" name="booking_limit" min="0" required class="{{ $input }}"
-                           value="{{ old('booking_limit', $position->booking_limit) }}">
-                </div>
-
-                <p>
-                    <label>{{ __('ui.monthly_budget') }}<br>
-                        <input type="number" name="monthly_budget" min="0"
-                            value="{{ old('monthly_budget', $position->monthly_budget) }}">
-                    </label>
-                    <small>{{ __('ui.monthly_budget_hint') }}</small>
-                </p>
-
-                <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
-                    <button class="px-8 py-3 bg-gradient-to-r from-sagara-blue to-sagara-teal hover:from-sagara-navy hover:to-sagara-blue text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> {{ __('ui.save') }}
-                    </button>
-                    <a href="{{ route('corporate.positions.index') }}" class="px-6 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">{{ __('ui.cancel') }}</a>
-                </div>
-            </form>
-        </div>
+            <div class="flex flex-wrap gap-3">
+                <button type="submit" class="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white text-sm font-bold shadow-md shadow-sky-500/20 transition">
+                    <i class="fa-solid fa-check"></i> {{ __('ui.save') }}
+                </button>
+                <a href="{{ route('corporate.positions.index') }}" class="px-6 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-bold transition">
+                    {{ __('ui.cancel') }}
+                </a>
+            </div>
+        </form>
     </section>
 @endsection
